@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>D9 Revenue Shield · Hospitality Revenue Verification in Hurghada</title>
+<meta name="description" content="Administrative checks that match reservations, payouts and commission invoices for small hotels and holiday-home owners in Hurghada.">
+<meta name="theme-color" content="#0f2a33">
+<link rel="icon" href="../img/favicon.png">
+<link rel="stylesheet" href="assets/collection.css">
+<style>
+.dash{background:#fff;border:1px solid #d5ddda;border-radius:26px;overflow:hidden;box-shadow:0 30px 70px rgba(15,42,51,.16)}
+.dh{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding:20px 22px;border-bottom:1px solid #e3e9e7;background:#0f2a33;color:#e8eeec}
+.dh b{font:600 1.05rem var(--sans)}
+.dh span{font-size:.8rem;color:#9fb3b6}
+.kp{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:#e3e9e7}
+@media(min-width:820px){.kp{grid-template-columns:repeat(4,1fr)}}
+.kp div{background:#fff;padding:18px 20px}
+.kp small{display:block;font-size:.72rem;color:#5d6b6e;letter-spacing:.04em}
+.kp strong{display:block;font:600 2rem/1.2 var(--sans);font-variant-numeric:tabular-nums;color:#0f2a33}
+.kp em{font-style:normal;font-size:.72rem;color:#8a5a12;background:#fbf0dc;padding:2px 7px;border-radius:5px}
+.db{display:grid;gap:0}
+@media(min-width:980px){.db{grid-template-columns:300px 1fr}}
+.cats{padding:20px 22px;border-right:1px solid #e3e9e7}
+.cats h4,.list h4{font:700 .7rem var(--sans);letter-spacing:.16em;text-transform:uppercase;color:#5d6b6e;margin:0 0 12px}
+.cat{display:flex;justify-content:space-between;align-items:center;width:100%;border:1px solid #e3e9e7;background:#fff;border-radius:12px;padding:10px 12px;margin-bottom:8px;font:600 .86rem var(--sans);color:#0f2a33;cursor:pointer;text-align:left}
+.cat.on{border-color:#1e8c8a;background:#e8f4f3}
+.cat i{font-style:normal;font-variant-numeric:tabular-nums;background:#0f2a33;color:#fff;border-radius:999px;min-width:26px;text-align:center;padding:2px 8px;font-size:.74rem}
+.bars{margin-top:16px}
+.bars div{display:grid;grid-template-columns:1fr 64px;gap:8px;align-items:center;font-size:.76rem;margin-bottom:6px;color:#5d6b6e}
+.bars span{height:7px;border-radius:7px;background:#1e8c8a;display:block}
+.list{padding:20px 22px}
+.row{border:1px solid #e3e9e7;border-radius:14px;padding:14px 16px;margin-bottom:10px;display:grid;gap:6px}
+@media(min-width:700px){.row{grid-template-columns:110px 1fr 110px 120px;align-items:center;gap:14px}}
+.row code{font:700 .8rem var(--sans);color:#0f2a33}
+.row p{margin:0;font-size:.88rem}
+.row p small{display:block;color:#5d6b6e;font-size:.76rem;margin-top:2px}
+.amt{font:600 1rem var(--sans);font-variant-numeric:tabular-nums}
+.st{justify-self:start;font:800 .64rem var(--sans);letter-spacing:.08em;text-transform:uppercase;padding:4px 9px;border-radius:6px}
+.s1{background:#fbf0dc;color:#8a5a12}.s2{background:#f6dede;color:#7a2222}.s3{background:#e2efe6;color:#245c3c}
+.disc{background:#0f2a33;color:#e8eeec;padding:16px 22px;font-size:.84rem}
+.disc b{color:#9fe0dc}
+.shield{width:60px;height:60px}
+.calc{display:grid;gap:12px;margin-top:30px}
+@media(min-width:820px){.calc{grid-template-columns:repeat(3,1fr)}}
+.calc div{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px}
+.calc strong{display:block;font:600 1.7rem var(--sans);color:var(--ink)}
+</style>
+</head>
+<body class="rs">
+
+<header class="bar">
+  <a class="brand" href="index.html"><span class="mono">D9</span>Revenue Shield</a>
+  <a class="btn btn-gold" href="#request"><span>Review my</span> revenue records</a>
+</header>
+
+<section class="hero">
+  <div class="ph"><img src="img/rs-hero.jpg" srcset="img/rs-hero-s.jpg 800w, img/rs-hero.jpg 1600w" sizes="100vw" alt="Financial report, calculator and glasses on a desk"></div>
+  <div class="in">
+    <div class="eyebrow">D9 Revenue Shield · Hospitality Revenue Verification</div>
+    <h1>Every reservation counts. <em>Every detail matters.</em></h1>
+    <p class="sub">Bring clarity and confidence to your hospitality revenue.</p>
+    <div class="ctas"><a class="btn btn-gold" href="#request">Review My Revenue Records</a><a class="btn btn-ghost" href="#dashboard">See the control overview</a></div>
+  </div>
+  <span class="credit">Illustrative photography</span>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow rv">The problem</div>
+    <h2 class="rv" style="max-width:20ch;margin-top:.3em">Bookings come from five places. Money arrives from three. Nobody matches them line by line.</h2>
+    <div class="cards3">
+      <div class="pcard rv"><span class="n">i</span><h3>The payout that never came</h3><p>A three-night stay is in your calendar and your channel manager. The platform payout for it is not on your bank statement.</p></div>
+      <div class="pcard rv"><span class="n">ii</span><h3>Commission on a cancelled stay</h3><p>The guest cancelled in time, but the commission invoice still charges you for the booking.</p></div>
+      <div class="pcard rv"><span class="n">iii</span><h3>The rate that changed</h3><p>You sold the room at one price. The payout is lower, and the difference is never explained.</p></div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--soft)">
+  <div class="wrap split">
+    <div class="rv">
+      <div class="eyebrow">The solution</div>
+      <h2 style="margin:.3em 0 .5em">We match every reservation with what was actually received.</h2>
+      <p class="lead">You share read-only exports from your booking channels, channel manager and bank or payout statements. We reconcile them line by line and flag every difference with the evidence next to it.</p>
+      <ul class="pill-list">
+        <li><b>1</b><span>Reservations that do not match a recorded payment</span></li>
+        <li><b>2</b><span>Commission invoices that need checking</span></li>
+        <li><b>3</b><span>Cancellations, duplicates and unexplained differences</span></li>
+      </ul>
+      <p class="small muted" style="margin-top:22px">Revenue Shield is about financial control, not about getting more bookings.</p>
+    </div>
+    <div class="photo rv"><img src="img/rs-1.jpg" alt="A person checking documents with a calculator" loading="lazy"></div>
+  </div>
+</section>
+
+<section id="dashboard">
+  <div class="wrap">
+    <div class="eyebrow rv">What you receive</div>
+    <h2 class="rv" style="max-width:20ch;margin-top:.3em">A control overview with evidence for every flag.</h2>
+    <div class="demo-wrap rv">
+      <span class="ribbon">DEMO · FICTIONAL DATA</span>
+      <div class="dash">
+        <div class="dh"><div><b>Revenue Review · Example Apartments</b><br><span>Period: 1–31 March 2026 · Sources: 2 booking platforms, channel manager, bank statement</span></div><span>Report RS-0007</span></div>
+        <div class="kp">
+          <div><small>Reservation lines checked</small><strong>120</strong></div>
+          <div><small>Flagged for review</small><strong>7</strong></div>
+          <div><small>Possible impact</small><strong>€186.40</strong><em>hypothetical</em></div>
+          <div><small>Verified so far</small><strong>2 of 7</strong></div>
+        </div>
+        <div class="db">
+          <div class="cats">
+            <h4>Flags by category</h4>
+            <button class="cat on" data-c="all">All flags <i>7</i></button>
+            <button class="cat" data-c="Commission">Commission invoice <i>2</i></button>
+            <button class="cat" data-c="Payment">Payment not matched <i>2</i></button>
+            <button class="cat" data-c="Cancellation">Cancellation processing <i>1</i></button>
+            <button class="cat" data-c="Rate">Rate difference <i>1</i></button>
+            <button class="cat" data-c="Duplicate">Duplicate entry <i>1</i></button>
+            <div class="bars">
+              <div><span style="width:69%"></span>€69.00</div>
+              <div><span style="width:60%"></span>€60.40</div>
+              <div><span style="width:42%"></span>€42.00</div>
+              <div><span style="width:15%"></span>€15.00</div>
+              <div><span style="width:1%"></span>€0.00</div>
+            </div>
+            <p class="small muted" style="margin-top:6px">Possible impact per category: payment, commission, cancellation, rate, duplicate.</p>
+          </div>
+          <div class="list">
+            <h4>Flags, evidence and next step</h4>
+            <div id="rows"></div>
+          </div>
+        </div>
+        <div class="disc"><b>Important.</b> €186.40 is the sum of possible differences found in this example. It is not a proven or recoverable amount. Each flag must first be verified with the platform, the bank or your accountant.</div>
+      </div>
+      <p class="demo-note">All reservation codes, amounts and names in this example are fictional.</p>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--soft)">
+  <div class="wrap">
+    <div class="eyebrow rv">Packages</div>
+    <h2 class="rv" style="margin-top:.3em">From a one-time check to monthly control.</h2>
+    <div class="pk">
+      <div class="pkg rv"><span class="tag">Revenue Check</span><h3>One month, one clear answer</h3><div class="price">EGP 6,500 <small>≈ €105</small></div><span class="muted small">Report within 5 working days</span>
+        <ul><li>One month of data</li><li>Up to 150 reservation lines</li><li>One booking channel plus bank or payout statement</li><li>Flags with evidence and next steps</li></ul>
+        <a class="btn btn-ink" href="#request">Request a check</a></div>
+      <div class="pkg feat rv"><span class="tag">Revenue Review</span><h3>The complete picture</h3><div class="price">EGP 16,000 <small>≈ €260</small></div><span class="muted small">Report within 10 working days</span>
+        <ul><li>Up to three months of data</li><li>Up to 600 reservation lines, all channels</li><li>Commission invoices checked line by line</li><li>60-minute findings meeting</li></ul>
+        <a class="btn btn-gold" href="#request">Request a review</a></div>
+      <div class="pkg rv"><span class="tag">Revenue Monitor</span><h3>Control every month</h3><div class="price">EGP 5,500 <small>≈ €90 / month</small></div><span class="muted small">Minimum three months</span>
+        <ul><li>Monthly check, up to 300 lines</li><li>New flags within 5 working days of month end</li><li>Quarterly summary of trends</li><li>Cancel monthly after the first three months</li></ul>
+        <a class="btn btn-ink" href="#request">Start monitoring</a></div>
+    </div>
+    <p class="small muted rv" style="margin-top:22px">Introductory prices, excluding VAT. Try it first: a <strong>pilot check of 30 reservation lines for EGP 1,500</strong>, fully credited if you continue with a Revenue Review within 30 days.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow rv">How it works</div>
+    <h2 class="rv" style="margin-top:.3em">Read-only data. Clear evidence.</h2>
+    <div class="steps" style="--n:5">
+      <div class="step rv"><h3>Agree</h3><p>We sign a service and confidentiality agreement and fix the period and sources.</p></div>
+      <div class="step rv"><h3>Share</h3><p>You send exports or read-only access. We never ask for passwords to payment accounts.</p></div>
+      <div class="step rv"><h3>Match</h3><p>Every reservation is matched with a payout, invoice or bank line.</p></div>
+      <div class="step rv"><h3>Flag</h3><p>Each difference gets a category, the evidence and a status.</p></div>
+      <div class="step rv"><h3>Report</h3><p>You receive the overview and the next step for every flag.</p></div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--soft)">
+  <div class="wrap">
+    <div class="eyebrow rv">Clear boundaries</div>
+    <h2 class="rv" style="margin-top:.3em;max-width:20ch">An administrative control service — and nothing it is not.</h2>
+    <div class="trust">
+      <div class="rv"><i>✓</i><p style="margin:0"><b>Not a statutory audit</b><span>Revenue Shield is not accounting, tax advice or a financial audit. Where needed we advise involving your licensed accountant.</span></p></div>
+      <div class="rv"><i>✓</i><p style="margin:0"><b>Indications, not claims</b><span>Flags show where to look. Amounts are never presented as proven or recoverable.</span></p></div>
+      <div class="rv"><i>✓</i><p style="margin:0"><b>Your data stays yours</b><span>Read-only exports, encrypted storage, deleted 30 days after the report unless agreed otherwise.</span></p></div>
+      <div class="rv"><i>✓</i><p style="margin:0"><b>Only with your permission</b><span>We check only the sources you share. We never contact platforms or guests on your behalf without written approval.</span></p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow rv">Behind the overview</div>
+    <h2 class="rv" style="margin-top:.3em">Careful, line-by-line work.</h2>
+    <div class="gal">
+      <figure class="rv"><img src="img/rs-3.jpg" alt="Workspace with financial documents and a laptop" loading="lazy"><figcaption>Booking and payout exports</figcaption></figure>
+      <figure class="rv"><img src="img/rs-2-s.jpg" alt="Hands using a calculator on a report" loading="lazy"><figcaption>Reconciliation</figcaption></figure>
+      <figure class="rv"><img src="img/rs-hero-s.jpg" alt="Report with charts, calculator and glasses" loading="lazy"><figcaption>Clear reporting</figcaption></figure>
+    </div>
+    <p class="small muted" style="margin-top:12px">Illustrative photography (Pexels, free licence).</p>
+  </div>
+</section>
+
+<section style="background:var(--soft)">
+  <div class="wrap ad">
+    <img class="rv" src="ads/revenue-shield.jpg" alt="Advertisement: D9 Revenue Shield" loading="lazy">
+    <div class="rv">
+      <div class="eyebrow">Campaign</div>
+      <h2 style="margin:.3em 0 .5em">Do you know which bookings were never paid?</h2>
+      <p class="lead">For owners of small hotels, apartment buildings and holiday homes in Hurghada who sell through more than one booking channel.</p>
+      <div class="ar" style="margin-top:26px">
+        <h3>كل حجز مهم، وكل تفصيلة لها قيمة</h3>
+        <p style="margin:0">نطابق كل حجز مع ما تم استلامه فعليًا من المنصات والبنك، ونحدد كل فرق مع الدليل والخطوة التالية. هذه خدمة مراجعة إدارية وليست تدقيقًا محاسبيًا قانونيًا.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="final" id="request">
+  <div class="bgimg"><img src="img/rs-3-s.jpg" alt="" loading="lazy"></div>
+  <div class="wrap">
+    <div class="eyebrow">D9 Revenue Shield</div>
+    <h2>Start with 30 reservation lines.</h2>
+    <p>Tell us how many units you have and which channels you use. We reply with a proposal and a confidentiality agreement.</p>
+    <a class="btn btn-gold" data-wa="Hello D9, I would like to review my revenue records with Revenue Shield. Units: ... Booking channels: ...">Review My Revenue Records</a>
+  </div>
+</section>
+
+<footer><div class="wrap">
+  <span>D9 Revenue Shield is an administrative reconciliation service of D9 Luxury Suites, Hurghada, Egypt. It is not accounting, tax advice or a statutory audit.</span>
+  <span>Demo content is marked as such. Prices are introductory and exclude VAT. Photography: Pexels (free licence), illustrative only.</span>
+  <span>Website by VormVivo Studios · <a href="index.html">The D9 Collection</a></span>
+</div></footer>
+
+<div class="stick"><a class="btn btn-gold" href="#request">Review My Revenue Records</a></div>
+<script src="../assets/config.js"></script>
+<script src="assets/collection.js"></script>
+<script>
+(function(){
+  var F=[
+    {id:"AB-2210",c:"Payment",t:"Platform payout not found on bank statement",e:"Reservation export line 14 · payout report March",a:54.00,s:2,n:"Ask the platform for the payout reference"},
+    {id:"BK-1042",c:"Commission",t:"Commission charged on a stay cancelled in time",e:"Commission invoice line 9 · cancellation record",a:38.50,s:1,n:"Check the cancellation date with the platform"},
+    {id:"BK-1101",c:"Cancellation",t:"Non-refundable booking, no cancellation fee recorded",e:"Booking conditions · payout report",a:42.00,s:1,n:"Confirm the rate plan that was booked"},
+    {id:"BK-1077",c:"Commission",t:"Commission 18% while the agreed rate is 15%",e:"Commission invoice line 21 · contract terms",a:21.90,s:1,n:"Compare with your current platform agreement"},
+    {id:"CM-0420",c:"Rate",t:"Channel manager rate €45, payout based on €40 for 3 nights",e:"Rate calendar · payout line 31",a:15.00,s:1,n:"Check whether a promotion was active"},
+    {id:"AB-2232",c:"Payment",t:"Cleaning fee missing from payout",e:"Reservation detail · payout line 40",a:15.00,s:1,n:"Check the fee settings for this listing"},
+    {id:"DR-0315",c:"Duplicate",t:"Direct deposit recorded twice in the sales report",e:"Sales report lines 3 and 4 · one bank line",a:0.00,s:3,n:"Correct the sales report; no money missing"}
+  ];
+  var S={1:["To verify","s1"],2:["Verified gap","s2"],3:["Explained","s3"]};
+  var box=document.getElementById("rows");
+  function draw(c){
+    box.innerHTML=F.filter(function(f){return c==="all"||f.c===c;}).map(function(f){
+      return '<div class="row"><code>'+f.id+'</code><p>'+f.t+'<small>Evidence: '+f.e+' · Next: '+f.n+'</small></p><span class="amt">€'+f.a.toFixed(2)+'</span><span class="st '+S[f.s][1]+'">'+S[f.s][0]+'</span></div>';
+    }).join("");
+  }
+  document.querySelectorAll(".cat").forEach(function(b){b.addEventListener("click",function(){document.querySelectorAll(".cat").forEach(function(x){x.classList.remove("on");});b.classList.add("on");draw(b.getAttribute("data-c"));});});
+  draw("all");
+})();
+</script>
+</body>
+</html>

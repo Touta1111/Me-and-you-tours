@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>D9 Service Academy · Practical Hospitality Training in Hurghada</title>
+<meta name="description" content="Practical training for hotel, restaurant and beach-club staff in Hurghada: welcome, communication, complaint recovery, service standards and hospitality sales.">
+<meta name="theme-color" content="#2b211b">
+<link rel="icon" href="../img/favicon.png">
+<link rel="stylesheet" href="assets/collection.css">
+<style>
+.mod{background:#fff;border:1px solid var(--line);border-radius:26px;overflow:hidden;box-shadow:0 30px 70px rgba(43,33,27,.14)}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:14px;background:#2b211b;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:0 0 auto;border:1px solid rgba(255,255,255,.18);background:transparent;color:#efe5d8;border-radius:999px;padding:9px 14px;font:700 .78rem var(--sans);cursor:pointer}
+.tabs button.on{background:#b08d57;border-color:#b08d57;color:#2b211b}
+.mb{padding:24px 22px 26px}
+@media(min-width:760px){.mb{padding:34px 38px}}
+.meta{display:flex;justify-content:space-between;align-items:center;gap:12px;font:700 .72rem var(--sans);letter-spacing:.14em;text-transform:uppercase;color:#8a6a3a}
+.prog{height:4px;background:#efe5d8;border-radius:4px;margin:12px 0 22px;overflow:hidden}
+.prog i{display:block;height:100%;background:#b08d57;transition:width .4s}
+.situ{font:500 1.7rem/1.25 var(--serif);margin:0 0 20px}
+.opts{display:grid;gap:10px}
+.opt{text-align:left;border:1px solid var(--line);background:#fdfbf7;border-radius:16px;padding:16px 18px;font:500 .98rem/1.5 var(--sans);color:#2b211b;cursor:pointer;transition:border-color .2s,background .2s}
+.opt:hover{border-color:#b08d57}
+.opt.right{border-color:#2f7d5b;background:#e6f2ea}
+.opt.wrong{border-color:#b33a3a;background:#f8e3e3}
+.opt[disabled]{cursor:default}
+.fb{display:none;margin-top:16px;border-radius:16px;padding:16px 18px;background:#2b211b;color:#efe5d8;font-size:.95rem}
+.fb.on{display:block}
+.fb b{color:#d9b97c}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:18px}
+.done{text-align:center;padding:10px 0}
+.done .big{font:500 3.6rem var(--serif)}
+.proof{margin:20px auto 0;max-width:460px;border:1px solid #d8c6a8;border-radius:18px;padding:24px;background:linear-gradient(180deg,#fffdf8,#f6efe3);text-align:center}
+.proof small{display:block;font:700 .64rem var(--sans);letter-spacing:.2em;color:#8a6a3a}
+.proof strong{display:block;font:500 1.9rem var(--serif);margin:8px 0}
+.proof p{font-size:.8rem;color:#6f6052;margin:8px 0 0}
+.five{display:grid;gap:12px;margin-top:36px}
+@media(min-width:900px){.five{grid-template-columns:repeat(5,1fr)}}
+.five div{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px}
+.five b{font:500 1.35rem/1.15 var(--serif);display:block;margin-bottom:8px}
+.five span{font-size:.88rem;color:var(--muted)}
+.kit{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.kit span{border:1px solid var(--line);border-radius:999px;padding:7px 13px;font-size:.84rem;background:var(--card)}
+</style>
+</head>
+<body class="sa">
+
+<header class="bar">
+  <a class="brand" href="index.html"><span class="mono">D9</span>Service Academy</a>
+  <a class="btn btn-gold" href="#request"><span>Explore</span> Staff Training</a>
+</header>
+
+<section class="hero">
+  <div class="ph"><img src="img/sa-hero.jpg" srcset="img/sa-hero-s.jpg 800w, img/sa-hero.jpg 1600w" sizes="100vw" alt="A professional waiter serving drinks in an elegant restaurant"></div>
+  <div class="in">
+    <div class="eyebrow">D9 Service Academy · The Art of Exceptional Hospitality</div>
+    <h1>Train better. Serve better. <em>Stand apart.</em></h1>
+    <p class="sub">Practical hospitality training that transforms everyday service into memorable guest experiences.</p>
+    <div class="ctas"><a class="btn btn-gold" href="#request">Explore Staff Training</a><a class="btn btn-ghost" href="#module">Try a lesson</a></div>
+  </div>
+  <span class="credit">Illustrative photography</span>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow rv">The problem</div>
+    <h2 class="rv" style="max-width:19ch;margin-top:.3em">Good people, no time to train them, and guests who notice.</h2>
+    <div class="cards3">
+      <div class="pcard rv"><span class="n">i</span><h3>New every season</h3><p>New staff start in the busiest weeks. They learn from whoever is on shift — good habits and bad ones.</p></div>
+      <div class="pcard rv"><span class="n">ii</span><h3>The words that cost a review</h3><p>"That's not my problem" takes two seconds to say and stays online for years.</p></div>
+      <div class="pcard rv"><span class="n">iii</span><h3>No training manager</h3><p>Large hotel chains have learning teams. Independent hotels, restaurants and beach clubs usually do not.</p></div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--soft)">
+  <div class="wrap split">
+    <div class="photo rv"><img src="img/sa-1.jpg" alt="A waiter serving water to guests in a restaurant" loading="lazy"></div>
+    <div class="rv">
+      <div class="eyebrow">The solution</div>
+      <h2 style="margin:.3em 0 .5em">Short, practical lessons built on real moments from the floor.</h2>
+      <p class="lead">Every training uses situations your team meets every day: what the guest says, what not to answer, what a professional answers — and why. Staff practise in role plays and short digital lessons, and managers receive a clear report.</p>
+      <div class="kit"><span>Lessons</span><span>Short video scripts</span><span>Role plays</span><span>Interactive questions</span><span>Staff checklists</span><span>Evaluation forms</span><span>Management report</span><span>Proof of participation</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow rv">Five trainings</div>
+    <h2 class="rv" style="margin-top:.3em">Each with ten real practice situations.</h2>
+    <div class="five">
+      <div class="rv"><b>The Perfect Welcome</b><span>Receive every guest professionally, warmly and efficiently.</span></div>
+      <div class="rv"><b>Professional Guest Communication</b><span>Clear, polite English in person, by phone and in writing.</span></div>
+      <div class="rv"><b>Complaint Recovery</b><span>Respond to problems, mistakes and unhappy guests.</span></div>
+      <div class="rv"><b>Premium Service Standards</b><span>The same high standard on every shift.</span></div>
+      <div class="rv"><b>Hospitality Sales Skills</b><span>Recommend the right extras without pushing.</span></div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--soft)" id="module">
+  <div class="wrap">
+    <div class="eyebrow rv">Try a lesson</div>
+    <h2 class="rv" style="margin-top:.3em;max-width:18ch">Which answer would your team give?</h2>
+    <div class="demo-wrap rv">
+      <span class="ribbon">DEMO MODULE</span>
+      <div class="mod">
+        <div class="tabs" id="tabs"></div>
+        <div class="mb" id="mb"></div>
+      </div>
+      <p class="demo-note">Demo of the digital module. The full programme includes role plays, a trainer on location and a management report.</p>
+    </div>
+  </div>
+</section>
+
+<section id="packages">
+  <div class="wrap">
+    <div class="eyebrow rv">Packages</div>
+    <h2 class="rv" style="margin-top:.3em">For one person, one team, or all year.</h2>
+    <div class="pk">
+      <div class="pkg rv"><span class="tag">Open session</span><h3>Per participant</h3><div class="price">EGP 1,200 <small>≈ €19</small></div><span class="muted small">Half day, one training, small group</span>
+        <ul><li>One of the five trainings</li><li>Role plays with feedback</li><li>Staff checklist to take home</li><li>Proof of participation</li></ul>
+        <a class="btn btn-ink" href="#request">Book a seat</a></div>
+      <div class="pkg feat rv"><span class="tag">Team on location</span><h3>Your team, your floor</h3><div class="price">EGP 13,500 <small>≈ €220</small></div><span class="muted small">Half day, up to 12 staff</span>
+        <ul><li>Training at your hotel, restaurant or beach club</li><li>Situations adapted to your venue</li><li>Practical test at the end</li><li>Management report with next steps</li></ul>
+        <a class="btn btn-gold" href="#request">Plan a team training</a></div>
+      <div class="pkg rv"><span class="tag">Academy membership</span><h3>Keep standards high</h3><div class="price">EGP 4,500 <small>≈ €73 / month</small></div><span class="muted small">Up to 15 staff, minimum 6 months</span>
+        <ul><li>All five digital modules for new staff</li><li>One 60-minute refresher on location each month</li><li>Quarterly observation and report</li><li>Digital module only: EGP 450 per person</li></ul>
+        <a class="btn btn-ink" href="#request">Ask about membership</a></div>
+    </div>
+    <p class="small muted rv" style="margin-top:22px">Introductory prices, excluding VAT. A proof of participation confirms attendance. It is not an accredited diploma or certificate.</p>
+  </div>
+</section>
+
+<section style="background:var(--soft)">
+  <div class="wrap">
+    <div class="eyebrow rv">How it works</div>
+    <h2 class="rv" style="margin-top:.3em">From first conversation to measured result.</h2>
+    <div class="steps" style="--n:4">
+      <div class="step rv"><h3>Listen</h3><p>We talk with the manager and observe a shift to choose the right training.</p></div>
+      <div class="step rv"><h3>Prepare</h3><p>We adapt the situations to your venue, menu and guests.</p></div>
+      <div class="step rv"><h3>Train</h3><p>Short theory, many role plays and a practical test.</p></div>
+      <div class="step rv"><h3>Measure</h3><p>Observation and feedback after four weeks, in a short report.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow rv">Our standards</div>
+    <h2 class="rv" style="margin-top:.3em;max-width:18ch">Honest about what training can do.</h2>
+    <div class="trust">
+      <div class="rv"><i>✓</i><p style="margin:0"><b>Reviewed by a professional</b><span>Every lesson is reviewed by an experienced hospitality professional before it is taught.</span></p></div>
+      <div class="rv"><i>✓</i><p style="margin:0"><b>Measured, not promised</b><span>We measure with practical tests, observation and feedback. We do not promise better reviews or higher revenue.</span></p></div>
+      <div class="rv"><i>✓</i><p style="margin:0"><b>Clear about certificates</b><span>Participants receive a proof of participation, not an accredited diploma.</span></p></div>
+      <div class="rv"><i>✓</i><p style="margin:0"><b>Respect for staff</b><span>Reports describe skills and next steps, never personal judgements.</span></p></div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--soft)">
+  <div class="wrap">
+    <div class="eyebrow rv">On the floor</div>
+    <h2 class="rv" style="margin-top:.3em">Training where service happens.</h2>
+    <div class="gal">
+      <figure class="rv"><img src="img/sa-2.jpg" alt="A waiter carrying plates in a busy restaurant" loading="lazy"><figcaption>Restaurant service</figcaption></figure>
+      <figure class="rv"><img src="img/sa-3-s.jpg" alt="Room service at a hotel room door" loading="lazy"><figcaption>Room service</figcaption></figure>
+      <figure class="rv"><img src="img/sa-4-s.jpg" alt="A waiter serving guests at a table" loading="lazy"><figcaption>Guest care</figcaption></figure>
+    </div>
+    <p class="small muted" style="margin-top:12px">Illustrative photography (Pexels, free licence). Not D9 staff or clients.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap ad">
+    <img class="rv" src="ads/service-academy.jpg" alt="Advertisement: D9 Service Academy" loading="lazy">
+    <div class="rv">
+      <div class="eyebrow">Campaign</div>
+      <h2 style="margin:.3em 0 .5em">Two sentences can decide a review.</h2>
+      <p class="lead">For owners and managers of independent hotels, restaurants and beach clubs in Hurghada without their own training department.</p>
+      <div class="ar" style="margin-top:26px">
+        <h3>درّب أفضل، اخدم أفضل، وتميّز</h3>
+        <p style="margin:0">تدريب عملي لفرق الفنادق والمطاعم والشواطئ: الاستقبال، والتواصل، والتعامل مع الشكاوى، ومعايير الخدمة، والبيع دون إلحاح. يحصل المشاركون على إثبات حضور، وليس شهادة معتمدة.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="final" id="request">
+  <div class="bgimg"><img src="img/sa-hero-s.jpg" alt="" loading="lazy"></div>
+  <div class="wrap">
+    <div class="eyebrow">D9 Service Academy</div>
+    <h2>Give your team the words for every moment.</h2>
+    <p>Tell us your venue and team size. We suggest the right training and a date.</p>
+    <a class="btn btn-gold" data-wa="Hello D9, I would like to explore staff training with the Service Academy. Venue: ... Team size: ...">Explore Staff Training</a>
+  </div>
+</section>
+
+<footer><div class="wrap">
+  <span>D9 Service Academy is a training service of D9 Luxury Suites, Hurghada, Egypt. Proof of participation is not an accredited certificate.</span>
+  <span>Demo content is marked as such. Prices are introductory and exclude VAT. Photography: Pexels (free licence), illustrative only.</span>
+  <span>Website by VormVivo Studios · <a href="index.html">The D9 Collection</a></span>
+</div></footer>
+
+<div class="stick"><a class="btn btn-gold" href="#request">Explore Staff Training</a></div>
+<script src="../assets/config.js"></script>
+<script src="assets/academy-data.js"></script>
+<script src="assets/collection.js"></script>
+<script>
+(function(){
+  var T=window.ACADEMY,cur=0,i=0,score=0,answered=false;
+  var tabs=document.getElementById("tabs"),mb=document.getElementById("mb");
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+  tabs.innerHTML=T.map(function(t,k){return '<button data-k="'+k+'"'+(k===0?' class="on"':'')+'>'+esc(t.name)+'</button>';}).join("");
+  tabs.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;cur=+b.dataset.k;i=0;score=0;tabs.querySelectorAll("button").forEach(function(x){x.classList.toggle("on",x===b);});draw();});
+  function draw(){
+    var t=T[cur],n=t.items.length;answered=false;
+    if(i>=n){
+      mb.innerHTML='<div class="done"><div class="meta" style="justify-content:center">'+esc(t.name)+'</div><div class="big">'+score+' / '+n+'</div><p class="muted">'+(score>=8?"Excellent. You chose the professional answer almost every time.":"Good start. Review the explanations and try again.")+'</p>'+
+      '<div class="proof"><small>D9 SERVICE ACADEMY · PROOF OF PARTICIPATION</small><strong id="pn">Your name</strong><span>'+esc(t.name)+' · digital practice module</span><p>Confirms participation only. Not an accredited diploma or certificate. Demo.</p></div>'+
+      '<div class="nav" style="justify-content:center;margin-top:20px"><input id="nm" placeholder="Type your name" style="font:500 1rem var(--sans);padding:12px 14px;border:1px solid var(--line);border-radius:14px;max-width:220px"><button class="btn btn-ink" id="again">Start again</button></div></div>';
+      document.getElementById("nm").oninput=function(){document.getElementById("pn").textContent=this.value||"Your name";};
+      document.getElementById("again").onclick=function(){i=0;score=0;draw();};
+      return;
+    }
+    var it=t.items[i],flip=(i+cur)%2===0,opts=flip?[["good",it.good],["bad",it.bad]]:[["bad",it.bad],["good",it.good]];
+    mb.innerHTML='<div class="meta"><span>'+esc(t.name)+'</span><span>'+(i+1)+' / '+n+'</span></div><div class="prog"><i style="width:'+(i/n*100)+'%"></i></div>'+
+      '<p class="situ">'+esc(it.s)+'</p><div class="opts">'+opts.map(function(o){return '<button class="opt" data-v="'+o[0]+'">'+esc(o[1])+'</button>';}).join("")+'</div>'+
+      '<div class="fb" id="fb"></div><div class="nav"><span class="small muted">'+esc(t.goal)+'</span><button class="btn btn-ink" id="next" style="visibility:hidden">Next</button></div>';
+    mb.querySelectorAll(".opt").forEach(function(b){b.onclick=function(){
+      if(answered)return;answered=true;var ok=b.dataset.v==="good";if(ok)score++;
+      mb.querySelectorAll(".opt").forEach(function(x){x.disabled=true;x.classList.add(x.dataset.v==="good"?"right":"wrong");});
+      var fb=document.getElementById("fb");fb.className="fb on";fb.innerHTML='<b>'+(ok?"Professional choice.":"Not quite.")+'</b> '+esc(it.why);
+      document.getElementById("next").style.visibility="visible";};});
+    document.getElementById("next").onclick=function(){i++;draw();};
+  }
+  draw();
+})();
+</script>
+</body>
+</html>
