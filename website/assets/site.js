@@ -176,11 +176,12 @@
         if (!a.width) { c.animate([{ opacity: 0, transform: "scale(.94)" }, { opacity: 1, transform: "none" }], { duration: 500, easing: "cubic-bezier(.22,.8,.2,1)" }); return; }
         c.animate([{ transform: `translate(${a.left - b.left}px,${a.top - b.top}px)` }, { transform: "none" }], { duration: 600, easing: "cubic-bezier(.22,.8,.2,1)" });
       });
-      if (push) { const u = new URL(location); f === "all" ? u.searchParams.delete("f") : u.searchParams.set("f", f); history.replaceState(null, "", u); }
+      if (push) { try { history.replaceState(null, "", f === "all" ? location.pathname : "#" + f); } catch (e) {} }
     }
     bs.forEach(b => b.addEventListener("click", () => apply(b.dataset.f, true)));
-    const q = new URLSearchParams(location.search).get("f");
+    const q = location.hash.slice(1) || new URLSearchParams(location.search).get("f");
     if (q && bs.some(b => b.dataset.f === q)) apply(q, false);
+    addEventListener("hashchange", () => { const h = location.hash.slice(1); if (bs.some(b => b.dataset.f === h)) apply(h, false); });
   }
 
   /* ---------- composer ---------- */
@@ -211,7 +212,7 @@
     ta.value = cmpCtx ? expText() : text;
     $("[data-wa]", cmp).hidden = !CFG.whatsapp;
     $("[data-mail]", cmp).hidden = !CFG.email;
-    cmp.classList.add("open"); cmp.setAttribute("aria-hidden", "false"); document.body.style.overflow = "hidden";
+    cmp.classList.add("open"); cmp.setAttribute("aria-hidden", "false"); cmp.dispatchEvent(new Event("cmp:open")); document.body.style.overflow = "hidden";
     setTimeout(() => (cmpCtx ? $("[name=cdate]", cmp) : ta).focus(), 250);
   }
   function closeCmp() { if (!cmp || !cmp.classList.contains("open")) return; cmp.classList.remove("open"); cmp.setAttribute("aria-hidden", "true"); document.body.style.overflow = ""; cmpFocus && cmpFocus.focus(); }
@@ -219,14 +220,17 @@
     $(".x", cmp).addEventListener("click", closeCmp);
     cmp.addEventListener("click", e => { if (e.target === cmp) closeCmp(); });
     const x = $(".extra", cmp);
-    if (x) { x.addEventListener("input", () => { ta.value = expText(); }); x.addEventListener("click", () => setTimeout(() => { ta.value = expText(); }, 0)); }
-    $("[data-wa]", cmp).addEventListener("click", () => { const u = waLink(ta.value); if (u) window.open(u, "_blank", "noopener"); });
-    $("[data-ig]", cmp).addEventListener("click", async () => {
-      const ok = await copy(ta.value);
-      window.open(`https://ig.me/m/${CFG.instagram}`, "_blank", "noopener");
-      say(ok ? T.copied : T.copiedOnly);
-    });
-    $("[data-mail]", cmp).addEventListener("click", () => { location.href = `mailto:${CFG.email}?subject=${encodeURIComponent("Me & You Tours Egypt")}&body=${encodeURIComponent(ta.value)}`; });
+    if (x) { x.addEventListener("input", () => { ta.value = expText(); ta.dispatchEvent(new Event("input")); }); x.addEventListener("click", () => setTimeout(() => { ta.value = expText(); ta.dispatchEvent(new Event("input")); }, 0)); }
+    const wa = $("[data-wa]", cmp), ig = $("[data-ig]", cmp), ml = $("[data-mail]", cmp);
+    const refresh = () => {
+      if (CFG.whatsapp) wa.href = waLink(ta.value);
+      if (CFG.email) ml.href = `mailto:${CFG.email}?subject=${encodeURIComponent("Me & You Tours Egypt")}&body=${encodeURIComponent(ta.value)}`;
+    };
+    ta.addEventListener("input", refresh); cmp.addEventListener("cmp:open", refresh);
+    wa.addEventListener("click", refresh);
+    ig.href = `https://ig.me/m/${CFG.instagram}`;
+    ig.addEventListener("click", () => { copy(ta.value).then(ok => say(ok ? T.copied : T.copiedOnly)); });
+    if (CFG.email) { const sh = $("[data-mailaddr]", cmp); if (sh) { sh.hidden = false; sh.textContent = CFG.email; } }
     $("[data-copy]", cmp).addEventListener("click", async () => { if (await copy(ta.value)) say(T.copiedOnly); });
   }
   $$("[data-msg]").forEach(b => b.addEventListener("click", e => {
@@ -311,7 +315,7 @@
     form.addEventListener("input", e => { summary(); if (e.target.getAttribute("aria-invalid")) err(e.target, ""); });
     form.addEventListener("change", e => { summary(); const fs = e.target.closest("fieldset[aria-invalid]"); if (fs) err(fs, ""); });
     form.addEventListener("submit", e => { e.preventDefault(); next.click(); });
-    const pre = new URLSearchParams(location.search).get("x");
+    const pre = location.hash.slice(1) || new URLSearchParams(location.search).get("x");
     if (pre) { const c = $(`input[name="acts"][value="${CSS.escape(pre)}"]`, form); if (c) c.checked = true; }
     summary(); go(0, false);
   }
