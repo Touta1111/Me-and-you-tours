@@ -1,6 +1,8 @@
 /* D9 Luxury Suites – central settings. Change these values in one place. */
 window.D9 = {
   name: "D9 Luxury Suites",
+  // Public address of the website (used for guest links made in the dashboard).
+  siteUrl: "https://touta1111.github.io/Me-and-you-tours/d9/",
   // WhatsApp number in international format without + or spaces, e.g. "201001234567".
   // Leave empty until the owner confirms the number: links then open WhatsApp's own share screen.
   whatsapp: "",
