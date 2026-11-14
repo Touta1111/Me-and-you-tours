@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>D9 Luxury Suites · Hurghada</title>
+<meta name="description" content="Suites and apartments with pool and garden in Hurghada, about 1 km from Hurghada Airport. Book direct with a personal host.">
+<meta name="theme-color" content="#0f1d26">
+<link rel="icon" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Noto+Kufi+Arabic:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/d9.css">
+<style>
+header.top{position:sticky;top:0;z-index:20;background:rgba(15,29,38,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#fff}
+.top .bar{display:flex;align-items:center;gap:16px;height:64px}
+.logo{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;font-family:var(--serif);font-size:1.15rem}
+.logo img{width:34px;height:34px;border-radius:50%}
+.top nav{display:flex;gap:18px;margin-inline-start:auto}
+.top nav a{color:#e6ecef;text-decoration:none;font-size:.92rem}
+.top nav a:hover{color:var(--gold2)}
+.burger{display:none;margin-inline-start:auto;background:none;border:0;color:#fff;font-size:1.6rem;cursor:pointer}
+@media(max-width:860px){.top nav{display:none;position:absolute;top:64px;left:0;right:0;background:var(--night);flex-direction:column;padding:12px 20px 18px;gap:12px}.top nav.open{display:flex}.burger{display:block}.top .lang{margin-inline-start:0}}
+.hero{position:relative;color:#fff;min-height:min(86vh,720px);display:flex;align-items:flex-end;overflow:hidden;background:var(--night)}
+.hero .art{position:absolute;inset:0}.hero .art svg{width:100%;height:100%}
+.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,29,38,.15) 0%,rgba(15,29,38,.25) 45%,rgba(15,29,38,.88) 100%)}
+.hero .wrap{position:relative;z-index:2;padding-bottom:56px;padding-top:120px}
+.hero p.lead{max-width:640px;font-size:1.12rem;color:#eef2f3}
+.hero .eyebrow{color:var(--gold2)}
+.hero h1,.hero .eyebrow,.hero p.lead{text-shadow:0 2px 14px rgba(15,29,38,.55)}
+.feats{grid-template-columns:repeat(3,1fr)}@media(max-width:900px){.feats{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.feats{grid-template-columns:1fr}}
+.badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.badges>span{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);padding:.45em .9em;border-radius:999px;font-size:.85rem}
+.badges b{color:var(--gold2)}
+.ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px}
+.feat .ic{width:44px;height:44px;border-radius:12px;background:var(--sand2);display:grid;place-items:center;font-size:1.3rem;margin-bottom:12px}
+.unit{padding:0;overflow:hidden;display:flex;flex-direction:column}
+.unit .pic{position:relative;aspect-ratio:5/3;background:var(--sand2)}.unit .pic svg{width:100%;height:100%}
+.unit .pic .tag{position:absolute;bottom:8px;inset-inline-end:8px;background:rgba(255,255,255,.85);font-size:.7rem;padding:.15em .55em;border-radius:6px;color:var(--muted)}
+.unit .body{padding:20px;display:flex;flex-direction:column;gap:8px;flex:1}
+.unit .facts{display:flex;flex-wrap:wrap;gap:6px}
+.unit .btn{margin-top:auto;align-self:flex-start}
+.dark{background:var(--night);color:#e9eef0}.dark .muted{color:#a9b8bf}.dark .card{background:var(--night2);border-color:#24485a;color:#e9eef0}
+.exp{padding:0;overflow:hidden}.exp .pic{aspect-ratio:5/3}.exp .pic svg{width:100%;height:100%}.exp .body{padding:20px}
+.exp .row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;flex-wrap:wrap}
+.exp .btn.on{background:var(--ok);color:#fff;border-color:var(--ok)}
+.exc{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center}
+@media(max-width:820px){.exc{grid-template-columns:1fr}}
+.exc ul{list-style:none;padding:0;margin:0 0 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.exc li{background:#fff;border:1px solid var(--line);border-radius:12px;padding:.7em .9em;font-weight:600;font-size:.92rem}
+.score{display:flex;align-items:center;gap:18px;margin-bottom:18px}
+.score .big{font-family:var(--serif);font-size:3.4rem;color:var(--gold);line-height:1}
+.revlinks a{display:flex;justify-content:space-between;align-items:center;text-decoration:none;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:10px;font-weight:600}
+.revlinks a:hover{border-color:var(--gold)}
+.map{border:0;width:100%;height:360px;border-radius:var(--radius);background:var(--sand2)}
+.loclist{list-style:none;padding:0;margin:0 0 18px}.loclist li{padding:8px 0;border-bottom:1px solid var(--line)}
+.bookbox{display:grid;grid-template-columns:1.1fr 1fr;gap:28px}
+@media(max-width:820px){.bookbox{grid-template-columns:1fr}}
+.bookbox>*,.two>*,.exc>*{min-width:0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.chk{display:flex;flex-wrap:wrap;gap:8px}
+.chk label{display:flex;align-items:center;gap:6px;background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:.4em .85em;font-weight:500;cursor:pointer;margin:0}
+.chk input{width:auto}
+.err{color:var(--bad);font-size:.88rem;min-height:1.2em}
+.pol li{margin-bottom:8px}
+details{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:10px}
+summary{cursor:pointer;font-weight:600}
+.fab{position:fixed;bottom:18px;inset-inline-end:18px;z-index:30;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+</style>
+</head>
+<body>
+<header class="top">
+ <div class="wrap bar">
+  <a class="logo" href="#home"><img src="img/icon-192.png" alt="">D9 Luxury Suites</a>
+  <nav id="nav">
+   <a href="#suites" data-i="nav_suites">Suites</a><a href="#experiences" data-i="nav_exp">Experiences</a><a href="#excursions" data-i="nav_exc">Excursions</a><a href="#location" data-i="nav_loc">Location</a><a href="#book" data-i="nav_book">Book</a>
+   <div class="lang" id="lang" role="group" aria-label="Language"><button data-l="en">EN</button><button data-l="ar">AR</button><button data-l="nl">NL</button><button data-l="de">DE</button></div>
+  </nav>
+  <button class="burger" id="burger" aria-label="Menu">☰</button>
+ </div>
+</header>
+
+<main id="home">
+<section class="hero">
+ <div class="art" id="heroArt"></div>
+ <div class="wrap">
+  <div class="eyebrow" data-i="hero_eyebrow">Hurghada · Red Sea</div>
+  <h1 data-i="hero_title">Your private retreat by the Red Sea</h1>
+  <p class="lead" data-i="hero_sub"></p>
+  <div class="ctas"><a class="btn btn-gold" href="#book" data-i="btn_request">Request to book</a><a class="btn btn-ghost" id="heroWa" href="#" target="_blank" rel="noopener" data-i="btn_whatsapp">Chat on WhatsApp</a></div>
+  <div class="badges"><span><b id="ratingVal">9.1</b>/10 <span data-i="badge_rating"></span></span><span data-i="badge_pool"></span><span data-i="badge_airport"></span></div>
+ </div>
+</section>
+
+<section>
+ <div class="wrap">
+  <div class="eyebrow" data-i="why_eyebrow"></div><h2 data-i="why_title"></h2>
+  <div class="grid feats" style="margin-top:24px">
+   <div class="card feat"><div class="ic">🌴</div><h3 data-i="f1_t"></h3><p class="muted" data-i="f1_d"></p></div>
+   <div class="card feat"><div class="ic">❄️</div><h3 data-i="f2_t"></h3><p class="muted" data-i="f2_d"></p></div>
+   <div class="card feat"><div class="ic">✈️</div><h3 data-i="f3_t"></h3><p class="muted" data-i="f3_d"></p></div>
+   <div class="card feat"><div class="ic">💬</div><h3 data-i="f4_t"></h3><p class="muted" data-i="f4_d"></p></div>
+   <div class="card feat"><div class="ic">👨‍👩‍👧</div><h3 data-i="f5_t"></h3><p class="muted" data-i="f5_d"></p></div>
+   <div class="card feat"><div class="ic">🔑</div><h3 data-i="f6_t"></h3><p class="muted" data-i="f6_d"></p></div>
+  </div>
+ </div>
+</section>
+
+<section id="suites" style="background:#fff">
+ <div class="wrap">
+  <div class="eyebrow" data-i="suites_eyebrow"></div><h2 data-i="suites_title"></h2><p class="muted" data-i="suites_sub"></p>
+  <div class="grid g3" style="margin-top:24px">
+   <article class="card unit"><div class="pic" data-art="studio"><span class="tag" data-i="illus"></span></div><div class="body"><h3 data-i="camellia_t"></h3><p class="muted" data-i="camellia_d"></p><div class="facts"><span class="pill">👤 3</span><span class="pill">🛏 1</span><span class="pill">🛁 1</span></div><a class="btn btn-dark btn-sm" href="#book" data-unit="Camellia Studio" data-i="btn_this"></a></div></article>
+   <article class="card unit"><div class="pic" data-art="apt2"><span class="tag" data-i="illus"></span></div><div class="body"><h3 data-i="lotus_t"></h3><p class="muted" data-i="lotus_d"></p><div class="facts"><span class="pill">🚪 2</span><span class="pill">🛏 3</span><span class="pill">🛁 1</span></div><a class="btn btn-dark btn-sm" href="#book" data-unit="Lotus (2 bedrooms)" data-i="btn_this"></a></div></article>
+   <article class="card unit"><div class="pic" data-art="apt3"><span class="tag" data-i="illus"></span></div><div class="body"><h3 data-i="lily_t"></h3><p class="muted" data-i="lily_d"></p><div class="facts"><span class="pill">🚪 3</span><span class="pill">🍳</span><span class="pill">🏊</span></div><a class="btn btn-dark btn-sm" href="#book" data-unit="Lily (3 bedrooms)" data-i="btn_this"></a></div></article>
+  </div>
+  <p class="muted small" style="margin-top:16px" data-i="unit_more"></p>
+ </div>
+</section>
+
+<section id="experiences" class="dark">
+ <div class="wrap">
+  <div class="eyebrow" data-i="exp_eyebrow"></div><h2 data-i="exp_title"></h2><p class="muted" data-i="exp_sub"></p>
+  <div class="grid g4" style="margin-top:24px" id="expGrid">
+   <article class="card exp" data-x="romantic"><div class="pic" data-art="romance"></div><div class="body"><h3 data-i="rom_t"></h3><p class="muted small" data-i="rom_d"></p><div class="row"><span class="pill" data-i="price_req"></span><button class="btn btn-ghost btn-sm" data-add="romantic" data-i="add_req"></button></div></div></article>
+   <article class="card exp" data-x="birthday"><div class="pic" data-art="birthday"></div><div class="body"><h3 data-i="bday_t"></h3><p class="muted small" data-i="bday_d"></p><div class="row"><span class="pill" data-i="price_req"></span><button class="btn btn-ghost btn-sm" data-add="birthday" data-i="add_req"></button></div></div></article>
+   <article class="card exp" data-x="vip"><div class="pic" data-art="vip"></div><div class="body"><h3 data-i="vip_t"></h3><p class="muted small" data-i="vip_d"></p><div class="row"><span class="pill" data-i="price_req"></span><button class="btn btn-ghost btn-sm" data-add="vip" data-i="add_req"></button></div></div></article>
+   <article class="card exp" data-x="comfort"><div class="pic" data-art="comfort"></div><div class="body"><h3 data-i="com_t"></h3><p class="muted small" data-i="com_d"></p><div class="row"><span class="pill" data-i="price_req"></span><button class="btn btn-ghost btn-sm" data-add="comfort" data-i="add_req"></button></div></div></article>
+  </div>
+ </div>
+</section>
+
+<section id="excursions">
+ <div class="wrap exc">
+  <div><div class="eyebrow" data-i="exc_eyebrow"></div><h2 data-i="exc_title"></h2><p class="muted" data-i="exc_sub"></p>
+   <ul id="excList"></ul><p class="small muted" data-i="exc_note"></p><a class="btn btn-dark" id="excWa" href="#" target="_blank" rel="noopener" data-i="exc_btn"></a></div>
+  <div class="grid" style="grid-template-columns:1fr 1fr;gap:14px"><div class="card" style="padding:0;overflow:hidden" data-art="sea"></div><div class="card" style="padding:0;overflow:hidden" data-art="desert"></div></div>
+ </div>
+</section>
+
+<section id="reviews" style="background:#fff">
+ <div class="wrap" style="max-width:760px">
+  <div class="eyebrow" data-i="rev_eyebrow"></div><h2 data-i="rev_title"></h2>
+  <div class="score"><div class="big" id="ratingBig">9.1</div><div class="muted"><span data-i="rev_score_label"></span><br><span class="small">/ 10</span></div></div>
+  <p data-i="rev_sub"></p>
+  <div class="revlinks"><a id="lnkLotus" target="_blank" rel="noopener" href="#"><span data-i="rev_lotus"></span><span>↗</span></a><a id="lnkLily" target="_blank" rel="noopener" href="#"><span data-i="rev_lily"></span><span>↗</span></a><a id="lnkCam" target="_blank" rel="noopener" href="#"><span data-i="rev_camellia"></span><span>↗</span></a></div>
+ </div>
+</section>
+
+<section id="location">
+ <div class="wrap grid g2" style="align-items:start">
+  <div><div class="eyebrow" data-i="loc_eyebrow"></div><h2 data-i="loc_title"></h2>
+   <ul class="loclist"><li><b data-i="loc_addr"></b>: <span id="addr"></span></li><li data-i="loc_d1"></li><li data-i="loc_d2"></li><li data-i="loc_d3"></li></ul>
+   <a class="btn btn-dark" id="mapsBtn" target="_blank" rel="noopener" href="#" data-i="loc_btn"></a></div>
+  <iframe class="map" id="map" title="Map" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+ </div>
+</section>
+
+<section id="book" style="background:var(--sand2)">
+ <div class="wrap bookbox">
+  <div><div class="eyebrow" data-i="book_eyebrow"></div><h2 data-i="book_title"></h2><p class="muted" data-i="book_sub"></p>
+   <div class="card pol" style="margin-top:20px"><div class="eyebrow" data-i="pol_eyebrow"></div><h3 data-i="pol_title"></h3><ul id="polList" class="small"></ul></div>
+  </div>
+  <form class="card" id="bookForm" novalidate>
+   <div class="field"><label for="fSuite" data-i="f_suite"></label><select id="fSuite"><option value="" data-i="f_any"></option><option>Camellia Studio</option><option>Lotus (2 bedrooms)</option><option>Lily (3 bedrooms)</option></select></div>
+   <div class="two"><div class="field"><label for="fIn" data-i="f_in"></label><input type="date" id="fIn"></div><div class="field"><label for="fOut" data-i="f_out"></label><input type="date" id="fOut"></div></div>
+   <div class="two"><div class="field"><label for="fGuests" data-i="f_guests"></label><input type="number" id="fGuests" min="1" max="12" value="2"></div><div class="field"><label for="fName" data-i="f_name"></label><input id="fName" autocomplete="name"></div></div>
+   <div class="field"><label for="fContact" data-i="f_contact"></label><input id="fContact" autocomplete="email"></div>
+   <div class="field"><label data-i="f_extras"></label><div class="chk" id="extras">
+    <label><input type="checkbox" value="romantic"><span data-i="rom_t"></span></label><label><input type="checkbox" value="birthday"><span data-i="bday_t"></span></label><label><input type="checkbox" value="vip"><span data-i="vip_t"></span></label><label><input type="checkbox" value="comfort"><span data-i="com_t"></span></label></div></div>
+   <div class="field"><label for="fMsg" data-i="f_msg"></label><textarea id="fMsg"></textarea></div>
+   <div class="err" id="err" role="alert"></div>
+   <div class="ctas"><button class="btn btn-wa" type="submit" data-i="f_send"></button><button class="btn btn-ghost" type="button" id="copyBtn" data-i="f_copy"></button></div>
+  </form>
+ </div>
+</section>
+
+<section style="background:#fff">
+ <div class="wrap" style="max-width:760px"><h2 data-i="faq_title"></h2><div id="faq"></div></div>
+</section>
+</main>
+
+<footer class="footer">
+ <div class="wrap grid g3">
+  <div><div class="logo" style="margin-bottom:10px"><img src="img/icon-192.png" alt="">D9 Luxury Suites</div><p data-i="footer_tag"></p></div>
+  <div><p id="faddr"></p><p><a id="fwa" href="#" target="_blank" rel="noopener" data-i="btn_whatsapp"></a></p></div>
+  <div><p><a href="welcome.html" data-i="footer_guest"></a></p><p><a href="dashboard.html" data-i="footer_staff"></a></p></div>
+ </div>
+ <div class="wrap credit" data-i="credit">Website by VormVivo Studios</div>
+</footer>
+<a class="btn btn-wa fab" id="fab" href="#" target="_blank" rel="noopener" aria-label="WhatsApp">💬 WhatsApp</a>
+
+<script src="assets/config.js"></script>
+<script src="assets/art.js"></script>
+<script src="assets/i18n-site.js"></script>
+<script>
+(function(){
+ var D=window.D9, T=window.D9T, $=function(s){return document.querySelector(s)}, $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
+ var lang=D.store.get('d9_lang','en'); if(!T[lang]) lang='en';
+ var chosen={};
+ $('#heroArt').innerHTML=D9Art.hero();
+ $$('[data-art]').forEach(function(el){var a=D9Art[el.getAttribute('data-art')]; if(a) el.insertAdjacentHTML('afterbegin',a());});
+ $('#ratingVal').textContent=D.rating; $('#ratingBig').textContent=D.rating;
+ $('#addr').textContent=D.address; $('#faddr').textContent=D.address;
+ $('#mapsBtn').href=D.maps;
+ $('#map').src='https://www.google.com/maps?q='+D.lat+','+D.lng+'&z=15&output=embed';
+ $('#lnkLotus').href=D.listings.lotus; $('#lnkLily').href=D.listings.lily; $('#lnkCam').href=D.listings.camellia;
+ function t(k){return (T[lang][k]!==undefined?T[lang][k]:T.en[k]);}
+ function setWa(){var hi=t('msg_intro').replace(/:$/,'.');['#heroWa','#fwa','#fab'].forEach(function(s){$(s).href=D.wa(hi);});$('#excWa').href=D.wa(t('exc_btn')+' — D9 Luxury Suites');}
+ function render(){
+  document.documentElement.lang=lang; document.documentElement.dir=(lang==='ar'?'rtl':'ltr');
+  $$('[data-i]').forEach(function(el){var v=t(el.getAttribute('data-i')); if(typeof v==='string') el.textContent=v;});
+  $('#excList').innerHTML=t('exc_list').map(function(x){return '<li>'+x+'</li>';}).join('');
+  $('#polList').innerHTML=t('pol').map(function(x){return '<li>'+x+'</li>';}).join('');
+  $('#faq').innerHTML=t('faq').map(function(q){return '<details><summary>'+q[0]+'</summary><p class="muted" style="margin:.6em 0 0">'+q[1]+'</p></details>';}).join('');
+  $$('#lang button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-l')===lang);});
+  $$('[data-add]').forEach(function(b){var k=b.getAttribute('data-add'); b.classList.toggle('on',!!chosen[k]); b.textContent=chosen[k]?t('added'):t('add_req');});
+  setWa();
+ }
+ $$('#lang button').forEach(function(b){b.addEventListener('click',function(){lang=b.getAttribute('data-l');D.store.set('d9_lang',lang);render();$('#nav').classList.remove('open');});});
+ $('#burger').addEventListener('click',function(){$('#nav').classList.toggle('open');});
+ $$('#nav a').forEach(function(a){a.addEventListener('click',function(){$('#nav').classList.remove('open');});});
+ $$('[data-unit]').forEach(function(a){a.addEventListener('click',function(){$('#fSuite').value=a.getAttribute('data-unit');});});
+ function syncBoxes(){$$('#extras input').forEach(function(c){c.checked=!!chosen[c.value];});}
+ $$('[data-add]').forEach(function(b){b.addEventListener('click',function(){var k=b.getAttribute('data-add');chosen[k]=!chosen[k];syncBoxes();render();});});
+ $$('#extras input').forEach(function(c){c.addEventListener('change',function(){chosen[c.value]=c.checked;render();});});
+ var today=new Date().toISOString().slice(0,10); $('#fIn').min=today; $('#fOut').min=today;
+ $('#fIn').addEventListener('change',function(){$('#fOut').min=$('#fIn').value||today;});
+ function build(){
+  var name=$('#fName').value.trim(), c=$('#fContact').value.trim(), i=$('#fIn').value, o=$('#fOut').value;
+  if(!name||!c||!i||!o){$('#err').textContent=t('err_req');return null;}
+  if(o<=i){$('#err').textContent=t('err_dates');return null;}
+  $('#err').textContent='';
+  var ex=$$('#extras input').filter(function(x){return x.checked;}).map(function(x){return x.parentNode.textContent.trim();});
+  var nights=Math.round((Date.parse(o)-Date.parse(i))/864e5);
+  var rec={id:D.uid(),created:new Date().toISOString(),type:'booking_request',suite:$('#fSuite').value||'-',checkin:i,checkout:o,nights:nights,guests:$('#fGuests').value,name:name,contact:c,extras:ex,message:$('#fMsg').value.trim(),lang:lang,source:'website'};
+  var txt=t('msg_intro')+'\n• '+t('f_suite')+': '+(rec.suite==='-'?t('f_any'):rec.suite)+'\n• '+t('f_in')+': '+i+'\n• '+t('f_out')+': '+o+' ('+nights+')\n• '+t('f_guests')+': '+rec.guests+'\n• '+t('f_name')+': '+name+'\n• '+t('f_contact')+': '+c+'\n• '+t('f_extras')+': '+(ex.length?ex.join(', '):t('msg_none'))+(rec.message?'\n• '+rec.message:'');
+  return {rec:rec,txt:txt};
+ }
+ $('#bookForm').addEventListener('submit',function(e){e.preventDefault();var b=build();if(!b)return;D.store.push('d9_inbox',b.rec);window.open(D.wa(b.txt),'_blank','noopener');D.toast(t('ok_sent'));});
+ $('#copyBtn').addEventListener('click',function(){var b=build();if(!b)return;D.store.push('d9_inbox',b.rec);
+  var done=function(){D.toast(t('ok_copy'));};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(b.txt).then(done,function(){fallback(b.txt);done();});}else{fallback(b.txt);done();}});
+ function fallback(s){var ta=document.createElement('textarea');ta.value=s;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);}
+ render();
+ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){});}
+})();
+</script>
+</body>
+</html>

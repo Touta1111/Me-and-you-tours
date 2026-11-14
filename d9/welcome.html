@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Welcome · D9 Luxury Suites</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0f1d26">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Noto+Kufi+Arabic:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/d9.css">
+<style>
+body{background:#efe8dc}
+.app{max-width:520px;margin:0 auto;min-height:100vh;background:var(--sand);padding-bottom:calc(84px + env(safe-area-inset-bottom));position:relative}
+.head{background:var(--night);color:#fff;padding:calc(18px + env(safe-area-inset-top)) 20px 26px;border-radius:0 0 26px 26px;position:relative;overflow:hidden}
+.head .art{position:absolute;inset:0;opacity:.35}.head .art svg{width:100%;height:100%}
+.head>*{position:relative}
+.head .row{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.head .brand{display:flex;align-items:center;gap:8px;font-family:var(--serif)}.head .brand img{width:30px;height:30px;border-radius:50%}
+.head h1{font-size:1.9rem;margin:0}
+.head p{margin:.3em 0 0;color:#d6e0e4}
+.demo{margin:14px 16px 0;background:#fff7e6;border:1px solid #f0d9a8;color:#7a5a1d;border-radius:12px;padding:10px 12px;font-size:.82rem}
+.pane{display:none;padding:16px}.pane.on{display:block}
+.card{margin-bottom:14px;padding:18px}
+.card h2{font-size:1.2rem;margin-bottom:.6em}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kv div{background:var(--sand);border-radius:12px;padding:10px 12px}
+.kv span{display:block;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+[dir=rtl] .kv span{letter-spacing:0}
+.kv b{font-size:1rem}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.wifi{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.wifi:last-child{border:0}
+.xitem{display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--line)}
+.xitem:last-child{border:0}
+.xitem .t{flex:1}.xitem h3{font-size:1rem;margin:0 0 2px;font-family:var(--sans)}
+.xform{display:none;margin-top:10px}.xitem.open .xform{display:block}
+.exc{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.exc button{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:12px;text-align:start;font:600 .9rem var(--sans);cursor:pointer;color:var(--ink)}
+.exc button small{display:block;color:var(--sea);font-weight:600;margin-top:4px}
+.place{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.place:last-child{border:0}
+.chat{background:var(--sand);border-radius:14px;padding:12px;height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.msg{max-width:85%;padding:9px 12px;border-radius:14px;font-size:.92rem}
+.msg.bot{background:#fff;border:1px solid var(--line);align-self:flex-start}
+.msg.me{background:var(--night);color:#fff;align-self:flex-end}
+.ask{display:flex;gap:8px;margin-top:10px}.ask input{flex:1}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:10}
+.nav button{background:none;border:0;padding:8px 2px;font:600 .72rem var(--sans);color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;border-radius:12px}
+.nav button i{font-style:normal;font-size:1.25rem}
+.nav button.on{color:var(--night);background:var(--sand)}
+.lang{background:rgba(255,255,255,.12)}
+.foot{text-align:center;font-size:.75rem;color:var(--muted);padding:6px 0 16px}
+.foot a{color:var(--muted)}
+.toast{bottom:calc(96px + env(safe-area-inset-bottom))}
+</style>
+</head>
+<body>
+<div class="app">
+ <div class="head">
+  <div class="art" id="art"></div>
+  <div class="row"><div class="brand"><img src="img/icon-192.png" alt="">D9 Luxury Suites</div>
+   <div class="lang" id="lang"><button data-l="en">EN</button><button data-l="ar">AR</button><button data-l="nl">NL</button><button data-l="de">DE</button></div></div>
+  <h1><span data-i="hello"></span>, <span id="gname"></span></h1>
+  <p id="gsub"></p>
+ </div>
+ <div class="demo" id="demo" data-i="demo"></div>
+
+ <div class="pane on" id="p-home">
+  <div class="card"><h2 data-i="your_stay"></h2>
+   <div class="kv"><div><span data-i="suite"></span><b id="vSuite">—</b></div><div><span data-i="nights"></span><b id="vNights">—</b></div><div><span data-i="arrive"></span><b id="vIn">—</b></div><div><span data-i="depart"></span><b id="vOut">—</b></div></div>
+   <p class="small muted" style="margin:12px 0 0"><b data-i="status"></b>: <span data-i="status_v"></span></p></div>
+  <div class="card"><div class="kv"><div><span data-i="checkin"></span><b data-i="checkin_v"></b></div><div><span data-i="checkout"></span><b data-i="checkout_v"></b></div></div><p class="small muted" style="margin:10px 0 0" data-i="late"></p></div>
+  <div class="card"><h2 data-i="wifi"></h2><div id="wifiBox"></div></div>
+  <div class="card"><h2 data-i="route"></h2><p class="muted" id="addr"></p><p class="small" data-i="route_d"></p><div class="btns"><a class="btn btn-dark btn-sm" id="routeBtn" target="_blank" rel="noopener" href="#" data-i="route_btn"></a><button class="btn btn-ghost btn-sm" id="transferBtn" data-i="transfer_btn"></button></div></div>
+  <div class="card"><h2 data-i="rules"></h2><ul id="rules" class="small" style="margin:0;padding-inline-start:18px"></ul></div>
+  <div class="card"><h2 data-i="contact"></h2><p class="small muted" data-i="contact_d"></p><a class="btn btn-wa btn-sm" id="waBtn" target="_blank" rel="noopener" href="#" data-i="wa"></a></div>
+ </div>
+
+ <div class="pane" id="p-extras">
+  <div class="card"><h2 data-i="extras_t"></h2><p class="small muted" data-i="extras_d"></p><div id="xlist"></div></div>
+ </div>
+
+ <div class="pane" id="p-explore">
+  <div class="card"><h2 data-i="explore_t"></h2><p class="small muted" data-i="explore_d"></p><div class="exc" id="exc"></div></div>
+  <div class="card"><h2 data-i="places"></h2><p class="small muted" data-i="places_d"></p><div id="places"></div></div>
+ </div>
+
+ <div class="pane" id="p-help">
+  <div class="card"><h2 data-i="help_t"></h2><p class="small muted" data-i="help_d"></p>
+   <div class="chat" id="chat" aria-live="polite"></div>
+   <form class="ask" id="askForm"><input id="askIn" autocomplete="off"><button class="btn btn-dark btn-sm" data-i="send"></button></form>
+   <a class="btn btn-wa btn-sm" id="chatWa" style="margin-top:10px" target="_blank" rel="noopener" href="#" data-i="wa"></a></div>
+  <div class="card"><h2 data-i="problem"></h2><p class="small muted" data-i="problem_d"></p>
+   <div class="field"><label for="pCat" data-i="p_cat"></label><select id="pCat"></select></div>
+   <div class="field"><label for="pDesc" data-i="p_desc"></label><textarea id="pDesc"></textarea></div>
+   <div class="err" id="pErr" style="color:var(--bad);font-size:.85rem;min-height:1.1em"></div>
+   <button class="btn btn-dark btn-sm" id="pSend" data-i="p_send"></button></div>
+  <div class="card"><h2 data-i="emerg"></h2><ul id="emerg" style="margin:0;padding-inline-start:18px"></ul></div>
+ </div>
+ <div class="foot"><a href="index.html" data-i="site"></a> · <span data-i="credit"></span></div>
+ <nav class="nav" id="nav">
+  <button class="on" data-p="home"><i>🏠</i><span data-i="tab_home"></span></button>
+  <button data-p="extras"><i>✨</i><span data-i="tab_extras"></span></button>
+  <button data-p="explore"><i>🧭</i><span data-i="tab_explore"></span></button>
+  <button data-p="help"><i>💬</i><span data-i="tab_help"></span></button>
+ </nav>
+</div>
+<script src="assets/config.js"></script>
+<script src="assets/art.js"></script>
+<script src="assets/i18n-welcome.js"></script>
+<script>
+(function(){
+ var D=window.D9,T=window.D9W,$=function(s){return document.querySelector(s)},$$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
+ var q=new URLSearchParams(location.search);
+ var G={name:q.get('name')||'',unit:q.get('unit')||'',ci:q.get('in')||'',co:q.get('out')||''};
+ var isDemo=!G.name;
+ var lang=q.get('lang')||D.store.get('d9_lang','en'); if(!T[lang]) lang='en';
+ var tab=(location.hash||'#home').slice(1); if(!$('#p-'+tab)) tab='home';
+ var places=[["Hurghada Marina","Hurghada Marina"],["Hurghada Grand Aquarium","Hurghada Grand Aquarium"],["Sand City Hurghada","Sand City Hurghada"],["El Dahar (old town)","El Dahar Hurghada"],["Senzo Mall","Senzo Mall Hurghada"],["Giftun Islands National Park","Giftun Island Hurghada"]];
+ function t(k){return T[lang][k]!==undefined?T[lang][k]:T.en[k];}
+ function fmt(d){if(!d) return '—'; var x=new Date(d+'T12:00:00'); if(isNaN(x)) return d; try{return x.toLocaleDateString(lang==='ar'?'ar-EG':lang,{day:'numeric',month:'short',year:'numeric'});}catch(e){return d;}}
+ function ctx(){return (G.name?G.name+' · ':'')+(G.unit?G.unit+' · ':'')+(G.ci?G.ci+'→'+G.co:'');}
+ function save(type,detail){D.store.push('d9_inbox',{id:D.uid(),created:new Date().toISOString(),type:type,name:G.name||'(demo guest)',suite:G.unit||'-',checkin:G.ci,checkout:G.co,detail:detail,source:'welcome',lang:lang});}
+ $('#art').innerHTML=D9Art.hero();
+ $('#addr').textContent=D.address; $('#routeBtn').href='https://www.google.com/maps/dir/?api=1&destination='+D.lat+','+D.lng;
+ var chatLog=[];
+ function render(){
+  document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';
+  $$('[data-i]').forEach(function(el){var v=t(el.getAttribute('data-i'));if(typeof v==='string')el.textContent=v;});
+  $('#gname').textContent=G.name||t('guest');
+  $('#gsub').textContent=G.unit?G.unit:'D9 Luxury Suites · Hurghada';
+  $('#demo').style.display=isDemo?'block':'none';
+  $('#vSuite').textContent=G.unit||'—';$('#vIn').textContent=fmt(G.ci);$('#vOut').textContent=fmt(G.co);
+  var n=(G.ci&&G.co)?Math.round((Date.parse(G.co)-Date.parse(G.ci))/864e5):'';$('#vNights').textContent=(n>0?n:'—');
+  var w=D.wifi||{};
+  $('#wifiBox').innerHTML=(w.network?('<div class="wifi"><div><span class="small muted">'+t('wifi_net')+'</span><br><b>'+esc(w.network)+'</b></div><button class="btn btn-ghost btn-sm" data-copy="'+esc(w.network)+'">'+t('copy')+'</button></div><div class="wifi"><div><span class="small muted">'+t('wifi_pw')+'</span><br><b>'+esc(w.password)+'</b></div><button class="btn btn-ghost btn-sm" data-copy="'+esc(w.password)+'">'+t('copy')+'</button></div>'):'<p class="small muted" style="margin:0">'+t('wifi_card')+'</p>');
+  $('#rules').innerHTML=t('rules_l').map(function(r){return '<li>'+r+'</li>';}).join('');
+  $('#waBtn').href=D.wa('D9 — '+ctx());$('#chatWa').href=$('#waBtn').href;
+  $('#xlist').innerHTML=t('x').map(function(x){return '<div class="xitem" data-x="'+x[0]+'"><div class="t"><h3>'+x[1]+'</h3><p class="small muted" style="margin:0">'+x[2]+'</p><span class="pill" style="margin-top:6px">'+t('price_req')+'</span><div class="xform"><div class="field"><label>'+t('when')+'</label><input type="date" class="xd" value="'+(G.ci||'')+'"></div><div class="field"><label>'+t('note')+'</label><input class="xn"></div><button class="btn btn-gold btn-sm xs">'+t('request')+'</button></div></div><button class="btn btn-ghost btn-sm xo">+</button></div>';}).join('');
+  $('#exc').innerHTML=t('exc').map(function(e){return '<button data-e="'+esc(e)+'">'+e+'<small>'+t('exc_btn')+' →</small></button>';}).join('');
+  $('#places').innerHTML=places.map(function(p){return '<div class="place"><span>'+p[0]+'</span><a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(p[1])+'">'+t('map')+' ↗</a></div>';}).join('');
+  $('#pCat').innerHTML=t('p_cats').map(function(c){return '<option>'+c+'</option>';}).join('');
+  $('#emerg').innerHTML=t('emerg_l').map(function(c){var num=c.replace(/\D/g,'');return '<li><a href="tel:'+num+'">'+c+'</a></li>';}).join('');
+  $('#askIn').placeholder=t('ask_ph');
+  $$('#lang button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-l')===lang);});
+  drawChat(); show(tab,true); bind();
+ }
+ function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+ function bind(){
+  $$('[data-copy]').forEach(function(b){b.onclick=function(){copy(b.getAttribute('data-copy'));};});
+  $$('.xitem').forEach(function(it){
+   it.querySelector('.xo').onclick=function(){it.classList.toggle('open');this.textContent=it.classList.contains('open')?'−':'+';};
+   it.querySelector('.xs').onclick=function(){var title=it.querySelector('h3').textContent,d=it.querySelector('.xd').value,n=it.querySelector('.xn').value.trim();
+    var txt='D9 — '+t('request')+': '+title+(d?' · '+d:'')+(n?' · '+n:'')+'\n'+ctx();save('upgrade',title+(d?' · '+d:'')+(n?' · '+n:''));window.open(D.wa(txt),'_blank','noopener');D.toast(t('requested'));};
+  });
+  $$('#exc button').forEach(function(b){b.onclick=function(){var e=b.getAttribute('data-e');save('excursion_interest',e);window.open(D.wa('D9 — '+t('exc_btn')+': '+e+'\n'+ctx()),'_blank','noopener');D.toast(t('requested'));};});
+ }
+ function copy(s){var ok=function(){D.toast(t('copied'));};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(s).then(ok,ok);}else ok();}
+ function show(p,silent){tab=p;$$('.pane').forEach(function(x){x.classList.toggle('on',x.id==='p-'+p);});$$('#nav button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-p')===p);});if(!silent){history.replaceState(null,'','#'+p);window.scrollTo(0,0);}}
+ $$('#nav button').forEach(function(b){b.addEventListener('click',function(){show(b.getAttribute('data-p'));});});
+ $$('#lang button').forEach(function(b){b.addEventListener('click',function(){lang=b.getAttribute('data-l');D.store.set('d9_lang',lang);render();});});
+ $('#transferBtn').addEventListener('click',function(){show('extras');var it=document.querySelector('.xitem[data-x="vip"]');if(it){it.classList.add('open');it.querySelector('.xo').textContent='−';it.scrollIntoView({behavior:'smooth',block:'center'});}});
+ function answer(text){
+  var s=' '+text.toLowerCase().replace(/hoe laat|what time|um wie viel uhr|wie spät/g,' time ')+' ';
+  if(window.D9FAQ_CONFIRM.some(function(w){return s.indexOf(w)!==-1;})) return t('bot_confirm');
+  for(var i=0;i<window.D9FAQ.length;i++){var f=window.D9FAQ[i];if(f.k.some(function(w){return s.indexOf(w)!==-1;}))return f.a[lang]||f.a.en;}
+  return t('bot_fallback');
+ }
+ function drawChat(){var c=$('#chat');c.innerHTML='<div class="msg bot">'+esc(t('bot_hi'))+'</div>'+chatLog.map(function(m){return '<div class="msg '+m[0]+'">'+esc(m[1])+'</div>';}).join('');c.scrollTop=c.scrollHeight;}
+ $('#askForm').addEventListener('submit',function(e){e.preventDefault();var v=$('#askIn').value.trim();if(!v)return;chatLog.push(['me',v]);chatLog.push(['bot',answer(v)]);$('#askIn').value='';drawChat();});
+ $('#pSend').addEventListener('click',function(){var d=$('#pDesc').value.trim();if(!d){$('#pErr').textContent=t('p_err');return;}$('#pErr').textContent='';var c=$('#pCat').value;save('problem',c+': '+d);window.open(D.wa('D9 — '+t('problem')+': '+c+'\n'+d+'\n'+ctx()),'_blank','noopener');$('#pDesc').value='';D.toast(t('p_ok'));});
+ render();
+ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){});}
+})();
+</script>
+</body>
+</html>

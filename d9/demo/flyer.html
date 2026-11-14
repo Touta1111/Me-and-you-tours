@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>D9 · In-suite flyer (A5)</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Noto+Kufi+Arabic:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/d9.css">
+<style>
+@page{size:A5;margin:0}
+body{background:#ddd5c7;padding:24px 12px}
+.bar{max-width:148mm;margin:0 auto 14px;display:flex;gap:8px;justify-content:space-between;align-items:center}
+.sheet{width:148mm;min-height:210mm;margin:0 auto;background:var(--sand);box-shadow:0 10px 30px rgba(0,0,0,.18);position:relative;overflow:hidden;display:flex;flex-direction:column}
+.top{background:var(--night);color:#fff;padding:12mm 10mm 9mm;position:relative}
+.top .art{position:absolute;inset:0;opacity:.35}.top .art svg{width:100%;height:100%}
+.top>*{position:relative}
+.top .eyebrow{color:var(--gold2)}
+.top h1{font-size:25pt;margin:0 0 2mm}
+.top p{margin:0;color:#d9e3e6;font-size:10pt}
+.list{padding:7mm 10mm 0;display:grid;gap:3.2mm;flex:1}
+.it{display:flex;gap:4mm;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:4mm;padding:3.2mm 4mm}
+.it .ic{font-size:15pt;line-height:1}
+.it h3{font:600 11pt var(--sans);margin:0 0 .5mm}
+.it p{margin:0;font-size:8.6pt;color:var(--muted);line-height:1.35}
+.ar{direction:rtl;font-family:"Noto Kufi Arabic",sans-serif;font-size:8.6pt;color:var(--muted);margin-top:.8mm!important}
+.qr{display:flex;align-items:center;gap:5mm;margin:6mm 10mm 0;background:#fff;border:1.5px solid var(--gold);border-radius:4mm;padding:4mm}
+.qr img{width:30mm;height:30mm}
+.qr h2{font-size:14pt;margin:0 0 1mm}
+.qr p{margin:0;font-size:9pt}
+.ft{padding:5mm 10mm 7mm;font-size:7.5pt;color:var(--muted);display:flex;justify-content:space-between}
+@media screen and (max-width:600px){.sheet{zoom:.6}.bar{max-width:89mm}}
+@media print{body{background:none;padding:0}.sheet{box-shadow:none;margin:0}.bar{display:none}}
+</style>
+</head>
+<body>
+<div class="bar noprint"><a href="index.html" class="btn btn-ghost btn-sm">← Sales kit</a><button class="btn btn-dark btn-sm" onclick="window.print()">Print / save as PDF</button></div>
+<div class="sheet">
+ <div class="top"><div class="art" id="art"></div><div class="eyebrow">D9 Luxury Suites · Hurghada</div><h1>Make your stay special</h1><p>Scan the code for your welcome page: Wi-Fi, house rules, extras and help.</p></div>
+ <div class="list">
+  <div class="it"><div class="ic">💐</div><div><h3>Romantic Experience</h3><p>Flowers, balloons, decoration and a special room set-up.</p><p class="ar">تجربة رومانسية: ورود وبالونات وديكور خاص للغرفة</p></div></div>
+  <div class="it"><div class="ic">🎂</div><div><h3>Birthday Experience</h3><p>Decoration, a cake from a local bakery and a surprise.</p><p class="ar">تجربة عيد الميلاد: ديكور وكعكة ومفاجأة</p></div></div>
+  <div class="it"><div class="ic">🚘</div><div><h3>VIP Arrival &amp; Departure</h3><p>Airport transfer with a trusted partner — the airport is about 1 km away.</p><p class="ar">توصيل VIP من وإلى المطار مع شريك موثوق</p></div></div>
+  <div class="it"><div class="ic">🥐</div><div><h3>Breakfast in your suite</h3><p>Start the day without leaving your suite.</p><p class="ar">إفطار في جناحك</p></div></div>
+  <div class="it"><div class="ic">🕛</div><div><h3>Late check-out</h3><p>Stay longer on your last day when the suite is free.</p><p class="ar">خروج متأخر حسب التوفر</p></div></div>
+  <div class="it"><div class="ic">🏜️</div><div><h3>Excursions</h3><p>Desert safari, snorkelling, yacht trips — with a licensed Egyptian tour company.</p><p class="ar">رحلات مع شركة سياحة مصرية مرخصة</p></div></div>
+ </div>
+ <div class="qr"><img src="../img/qr-welcome.svg" alt="QR code to the D9 welcome page"><div><h2>Scan to request</h2><p>Prices on request. Our team confirms availability and price before anything is charged.</p><p class="ar" style="font-size:8.6pt">امسح الكود للطلب — السعر عند الطلب</p></div></div>
+ <div class="ft"><span>Mubarak 6, Villa 165A, Hurghada</span><span>Design: VormVivo Studios</span></div>
+</div>
+<script src="../assets/art.js"></script>
+<script>document.getElementById('art').innerHTML=D9Art.hero();</script>
+</body>
+</html>

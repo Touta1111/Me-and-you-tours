@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>D9 Business Dashboard</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0f1d26">
+<link rel="icon" href="img/favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/d9.css">
+<style>
+body{background:#f3efe7}
+.shell{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+aside{background:var(--night);color:#cfd8dc;padding:20px 14px;position:sticky;top:0;height:100vh;overflow:auto}
+aside .brand{display:flex;align-items:center;gap:10px;color:#fff;font-family:var(--serif);font-size:1.05rem;margin:0 6px 22px}
+aside .brand img{width:32px;height:32px;border-radius:50%}
+aside button{display:flex;gap:10px;align-items:center;width:100%;background:none;border:0;color:inherit;font:500 .92rem var(--sans);padding:10px 12px;border-radius:10px;cursor:pointer;text-align:left}
+aside button:hover{background:rgba(255,255,255,.06)}
+aside button.on{background:var(--gold);color:#fff}
+aside button b{width:22px;display:inline-grid;place-items:center;font-size:.8rem;opacity:.85}
+aside .sep{height:1px;background:rgba(255,255,255,.1);margin:12px 6px}
+main{padding:26px 28px 60px;max-width:1200px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.top h1{font-size:1.7rem;margin:0}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:18px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.kpi .l{font-size:.78rem;color:var(--muted)}
+.kpi .v{font-size:1.6rem;font-weight:600;margin:4px 0}
+.kpi .v.na{font-size:1rem;color:var(--muted);font-weight:500}
+.src{display:inline-block;font-size:.68rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:.15em .55em;border-radius:6px}
+.src.real{background:#e2f2ea;color:var(--ok)}.src.imported{background:#e3eef8;color:#2a5f8f}.src.mixed{background:#efe7f8;color:#5e3d8f}.src.na{background:#eee;color:#777}
+.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:18px}
+.panel h2{font-size:1.15rem;font-family:var(--sans);margin:0}
+.ph{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:.74rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600}
+td.wrap{white-space:normal;min-width:180px}
+tr:hover td{background:#faf7f1}
+.act{display:flex;gap:6px}
+.act button:not(.btn){border:1px solid var(--line);background:#fff;border-radius:8px;padding:3px 8px;cursor:pointer;font-size:.8rem}
+.empty{padding:22px;text-align:center;color:var(--muted);border:1.5px dashed var(--line);border-radius:12px}
+.grid6{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.ov{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;cursor:pointer;transition:border-color .15s}
+.ov:hover{border-color:var(--gold)}
+.ov h3{font-family:var(--sans);font-size:1rem;margin:0 0 8px;display:flex;justify-content:space-between;gap:8px}
+.ov ul{margin:0;padding-left:18px;font-size:.88rem;color:var(--muted)}
+.note{background:#fff7e6;border:1px solid #f0d9a8;color:#7a5a1d;border-radius:12px;padding:10px 14px;font-size:.86rem;margin-bottom:16px}
+dialog{border:0;border-radius:18px;padding:0;width:min(560px,94vw);box-shadow:0 20px 60px rgba(0,0,0,.25)}
+dialog::backdrop{background:rgba(15,29,38,.45)}
+dialog form{padding:22px}
+dialog h2{font-family:var(--sans);font-size:1.15rem}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mt{margin-top:10px}
+.badge{display:inline-block;padding:.12em .55em;border-radius:6px;font-size:.75rem;font-weight:600;background:var(--sand2)}
+.b-open{background:#fdecd5;color:#8a5a12}.b-done{background:#e2f2ea;color:var(--ok)}.b-bad{background:#f8e1e1;color:var(--bad)}
+.mobnav{display:none}
+@media(max-width:860px){.shell{grid-template-columns:1fr}aside{display:none}.mobnav{display:flex;gap:6px;overflow-x:auto;padding:10px 12px;background:var(--night);position:sticky;top:0;z-index:5}.mobnav button{flex:0 0 auto;background:rgba(255,255,255,.08);color:#fff;border:0;border-radius:999px;padding:.45em .9em;font:600 .8rem var(--sans)}.mobnav button.on{background:var(--gold)}main{padding:18px 14px 60px}.frow{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="mobnav" id="mobnav"></div>
+<div class="shell">
+ <aside><div class="brand"><img src="img/icon-192.png" alt="">D9 Dashboard</div><div id="side"></div></aside>
+ <main id="main"></main>
+</div>
+<dialog id="dlg"><form id="dlgForm" method="dialog"></form></dialog>
+<input type="file" id="fileIn" accept=".csv,.json,text/csv,application/json" hidden>
+<script src="assets/config.js"></script>
+<script>
+(function(){
+var D=window.D9,$=function(s){return document.querySelector(s)},$$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
+var KEY='d9_dash_v1';
+var DEFAULT={bookings:[],requests:[],catalog:[
+ {id:'c1',name:'Romantic Experience',price:'',cost:'',commission:'',notes:'',src:'real'},
+ {id:'c2',name:'Birthday Experience',price:'',cost:'',commission:'',notes:'',src:'real'},
+ {id:'c3',name:'VIP Arrival',price:'',cost:'',commission:'',notes:'',src:'real'},
+ {id:'c4',name:'Breakfast in suite (per person)',price:'',cost:'',commission:'',notes:'',src:'real'},
+ {id:'c5',name:'Late check-out',price:'',cost:'',commission:'',notes:'',src:'real'},
+ {id:'c6',name:'Early check-in',price:'',cost:'',commission:'',notes:'',src:'real'},
+ {id:'c7',name:'Extra cleaning',price:'',cost:'',commission:'',notes:'',src:'real'},
+ {id:'c8',name:'Extra towels / amenities',price:'',cost:'',commission:'',notes:'',src:'real'}],
+ orders:[],partners:[],referrals:[],leads:[],finance:[],marketing:[],settings:{currency:'EUR',units:10}};
+var db=D.store.get(KEY,null)||JSON.parse(JSON.stringify(DEFAULT));
+Object.keys(DEFAULT).forEach(function(k){if(db[k]===undefined)db[k]=JSON.parse(JSON.stringify(DEFAULT[k]));});
+function save(){D.store.set(KEY,db);}
+var S={
+ bookings:{name:'reservation',f:[['guest','Guest name','text',1],['unit','Suite / unit','text'],['channel','Channel','select',['Direct','Airbnb','Booking.com','Expedia','Other']],['checkin','Check-in','date',1],['checkout','Check-out','date',1],['guests','Guests','number'],['amount','Total amount','number'],['paid','Payment','select',['Unpaid','Deposit','Paid']],['status','Status','select',['Confirmed','Cancelled']],['contact','Contact (phone/email)','text']],c:['guest','unit','channel','checkin','checkout','amount','paid','status']},
+ requests:{name:'guest request',f:[['date','Date','date',1],['guest','Guest','text',1],['unit','Suite','text'],['type','Type','select',['Upgrade','Problem','Excursion interest','Booking request','Question','Complaint']],['detail','Details','textarea',1],['status','Status','select',['Open','In progress','Done']]],c:['date','guest','unit','type','detail','status']},
+ catalog:{name:'upgrade',f:[['name','Upgrade','text',1],['price','Sales price','number'],['cost','Execution cost','number'],['commission','Commission to Hassan','number'],['notes','Notes / supplier','text']],c:['name','price','cost','commission','notes']},
+ orders:{name:'upgrade sale',f:[['date','Date','date',1],['item','Upgrade','catalog',1],['guest','Guest','text'],['qty','Quantity','number'],['status','Status','select',['Requested','Confirmed','Done','Cancelled']],['paid','Paid','select',['No','Yes']]],c:['date','item','guest','qty','status','paid']},
+ partners:{name:'excursion partner',f:[['name','Company','text',1],['license','Tourism licence no.','text'],['etaa','Checked in ETAA list','select',['No','Yes']],['insurance','Insurance proven','select',['No','Yes']],['service','Services','text'],['commission','Agreed commission','text'],['contract','Signed agreement','select',['No','Yes']],['contact','Contact','text']],c:['name','license','etaa','insurance','service','commission','contract']},
+ referrals:{name:'referral',f:[['date','Date','date',1],['guest','Guest','text',1],['excursion','Excursion','text',1],['partner','Partner','partner'],['status','Status','select',['Interest','Booked','Done','Cancelled']],['commission','Commission amount','number'],['paidout','Commission received','select',['No','Yes']]],c:['date','guest','excursion','partner','status','commission','paidout']},
+ leads:{name:'lead',f:[['business','Business','text',1],['contact','Contact','text'],['service','Service','select',['QR menu','Google Business Profile','Design','Travel guide','Website','Other']],['stage','Stage','select',['Lead','Quote sent','Client','In progress','Done','Lost']],['amount','Amount','number'],['paid','Paid','select',['No','Yes']],['date','Date','date'],['notes','Notes','textarea']],c:['business','service','stage','amount','paid','date']},
+ finance:{name:'finance entry',f:[['date','Date','date',1],['kind','Type','select',['Income','Cost']],['category','Category','select',['Stays','Upgrades','Excursions','Local services','Software','Marketing','Supplies','Other']],['description','Description','text'],['amount','Amount','number',1]],c:['date','kind','category','description','amount']},
+ marketing:{name:'marketing entry',f:[['month','Month','month',1],['visitors','Website visitors','number'],['campaign','Campaign / action','text'],['notes','Notes','textarea']],c:['month','visitors','campaign','notes']}
+};
+var PAGES=[['overview','◎','Overview'],['A','A','Reservations'],['B','B','Guest service'],['C','C','Excursions'],['D','D','Local services'],['E','E','Finance'],['F','F','Marketing'],['sep'],['upgrades','€','Upgrade prices'],['settings','⚙','Settings & backup']];
+var page=(location.hash||'#overview').slice(1); if(!PAGES.some(function(p){return p[0]===page;})) page='overview';
+var cur=function(){return db.settings.currency||'EUR';};
+function num(v){var n=parseFloat(String(v).replace(',','.'));return isNaN(n)?0:n;}
+function money(n){return cur()+' '+(Math.round(n*100)/100).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:2});}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function today(){return new Date().toISOString().slice(0,10);}
+function srcOf(list){if(!list.length)return 'na';var r=list.some(function(x){return x.src!=='imported';}),i=list.some(function(x){return x.src==='imported';});return r&&i?'mixed':(i?'imported':'real');}
+function srcTag(s){return '<span class="src '+s+'">'+({real:'Real',imported:'Imported',mixed:'Real + imported',na:'Not available'})[s]+'</span>';}
+function kpi(label,val,src,sub){return '<div class="kpi"><div class="l">'+label+'</div>'+(src==='na'?'<div class="v na">Not available yet</div>':'<div class="v">'+val+'</div>')+srcTag(src)+(sub?'<div class="small muted" style="margin-top:4px">'+sub+'</div>':'')+'</div>';}
+function nav(){
+ var h=PAGES.map(function(p){if(p[0]==='sep')return '<div class="sep"></div>';return '<button data-p="'+p[0]+'" class="'+(p[0]===page?'on':'')+'"><b>'+p[1]+'</b>'+p[2]+'</button>';}).join('');
+ $('#side').innerHTML=h+'<div class="sep"></div><a href="index.html" style="color:#e9d3a8;font-size:.85rem;padding:0 12px">← Website</a>';
+ $('#mobnav').innerHTML=PAGES.filter(function(p){return p[0]!=='sep';}).map(function(p){return '<button data-p="'+p[0]+'" class="'+(p[0]===page?'on':'')+'">'+p[2]+'</button>';}).join('');
+ $$('[data-p]').forEach(function(b){b.onclick=function(){go(b.getAttribute('data-p'));};});
+}
+function go(p){page=p;history.replaceState(null,'','#'+p);render();window.scrollTo(0,0);}
+function cellVal(type,k,r){var v=r[k];
+ if(k==='item'){var c=db.catalog.filter(function(x){return x.id===v;})[0];return esc(c?c.name:'—');}
+ if(k==='partner'){var p=db.partners.filter(function(x){return x.id===v;})[0];return esc(p?p.name:'—');}
+ if(['amount','price','cost','commission'].indexOf(k)!==-1&&v!==''&&v!=null&&!isNaN(parseFloat(v)))return money(num(v));
+ if(k==='status'||k==='stage'||k==='paid'||k==='paidout'||k==='contract'||k==='etaa'||k==='insurance'){var good=['Done','Paid','Yes','Confirmed','Client'],bad=['Cancelled','Lost','No','Unpaid'];return '<span class="badge '+(good.indexOf(v)!==-1?'b-done':bad.indexOf(v)!==-1?'b-bad':'b-open')+'">'+esc(v||'—')+'</span>';}
+ return esc(v===''||v==null?'—':v);}
+function table(type,rows,extra){
+ var s=S[type];
+ if(!rows.length)return '<div class="empty">Nothing here yet. Add the first '+s.name+' with the button above'+(type==='bookings'?' or import a CSV export from your channel manager':'')+'.</div>';
+ var heads=s.c.map(function(k){return '<th>'+s.f.filter(function(f){return f[0]===k;})[0][1]+'</th>';}).join('');
+ var body=rows.map(function(r){return '<tr>'+s.c.map(function(k){return '<td class="'+(k==='detail'||k==='notes'?'wrap':'')+'">'+cellVal(type,k,r)+'</td>';}).join('')+'<td>'+srcTag(r.src==='imported'?'imported':'real')+'</td><td><div class="act">'+(extra?extra(r):'')+'<button data-ed="'+type+':'+r.id+'">Edit</button><button data-del="'+type+':'+r.id+'">Delete</button></div></td></tr>';}).join('');
+ return '<div class="tw"><table><thead><tr>'+heads+'<th>Data</th><th></th></tr></thead><tbody>'+body+'</tbody></table></div>';
+}
+function panel(title,type,rows,opts){opts=opts||{};return '<div class="panel"><div class="ph"><h2>'+title+'</h2><div class="act">'+(opts.btns||'')+(type?'<button class="btn btn-dark btn-sm" data-add="'+type+'">+ Add '+S[type].name+'</button>':'')+'</div></div>'+(opts.pre||'')+(type?table(type,rows,opts.extra):'')+'</div>';}
+function sortDesc(a,k){return a.slice().sort(function(x,y){return String(y[k]||'').localeCompare(String(x[k]||''));});}
+/* ---------- calculations ---------- */
+function nightsIn(b,ys,ye){var s=Date.parse(b.checkin),e=Date.parse(b.checkout);if(isNaN(s)||isNaN(e))return 0;var a=Math.max(s,ys),z=Math.min(e,ye);return Math.max(0,Math.round((z-a)/864e5));}
+function calcA(){var bs=db.bookings,act=bs.filter(function(b){return b.status!=='Cancelled';});var d=new Date(),ys=Date.UTC(d.getFullYear(),d.getMonth(),1),ye=Date.UTC(d.getFullYear(),d.getMonth()+1,1);var days=(ye-ys)/864e5;var booked=act.reduce(function(s,b){return s+nightsIn(b,ys,ye);},0);
+ return {src:srcOf(bs),total:bs.length,upcoming:act.filter(function(b){return b.checkin>=today();}).length,occ:Math.round(booked/(num(db.settings.units)*days)*100),unpaid:act.filter(function(b){return b.paid!=='Paid';}).length,cancel:bs.filter(function(b){return b.status==='Cancelled';}).length,direct:act.filter(function(b){return b.channel==='Direct';}).length};}
+function catOf(id){return db.catalog.filter(function(c){return c.id===id;})[0]||{};}
+function serviceRows(){
+ var rows=[];
+ var stays=db.bookings.filter(function(b){return b.status!=='Cancelled';});
+ rows.push({s:'Stays',rev:stays.reduce(function(a,b){return a+num(b.amount);},0),cost:0,open:stays.filter(function(b){return b.paid!=='Paid';}).reduce(function(a,b){return a+num(b.amount);},0),src:srcOf(db.bookings)});
+ var ord=db.orders.filter(function(o){return o.status!=='Cancelled';});
+ rows.push({s:'Upgrades',rev:ord.reduce(function(a,o){return a+num(catOf(o.item).price)*(num(o.qty)||1);},0),cost:ord.reduce(function(a,o){var c=catOf(o.item);return a+(num(c.cost)+num(c.commission))*(num(o.qty)||1);},0),open:ord.filter(function(o){return o.paid!=='Yes';}).reduce(function(a,o){return a+num(catOf(o.item).price)*(num(o.qty)||1);},0),src:srcOf(db.orders)});
+ var ref=db.referrals.filter(function(r){return r.status==='Done'||r.status==='Booked';});
+ rows.push({s:'Excursion commissions',rev:ref.reduce(function(a,r){return a+num(r.commission);},0),cost:0,open:ref.filter(function(r){return r.paidout!=='Yes';}).reduce(function(a,r){return a+num(r.commission);},0),src:srcOf(db.referrals)});
+ var ld=db.leads.filter(function(l){return ['Client','In progress','Done'].indexOf(l.stage)!==-1;});
+ rows.push({s:'Local services',rev:ld.reduce(function(a,l){return a+num(l.amount);},0),cost:0,open:ld.filter(function(l){return l.paid!=='Yes';}).reduce(function(a,l){return a+num(l.amount);},0),src:srcOf(db.leads)});
+ var fi=db.finance.filter(function(f){return f.kind==='Income';}),fc=db.finance.filter(function(f){return f.kind==='Cost';});
+ rows.push({s:'Other income / costs (ledger)',rev:fi.reduce(function(a,f){return a+num(f.amount);},0),cost:fc.reduce(function(a,f){return a+num(f.amount);},0),open:0,src:srcOf(db.finance)});
+ return rows;
+}
+function monthResult(){var m=today().slice(0,7);var inc=0,cost=0,any=false;
+ db.finance.forEach(function(f){if((f.date||'').slice(0,7)===m){any=true;if(f.kind==='Income')inc+=num(f.amount);else cost+=num(f.amount);}});
+ db.orders.forEach(function(o){if((o.date||'').slice(0,7)===m&&o.status!=='Cancelled'){any=true;var c=catOf(o.item),q=num(o.qty)||1;inc+=num(c.price)*q;cost+=(num(c.cost)+num(c.commission))*q;}});
+ db.referrals.forEach(function(r){if((r.date||'').slice(0,7)===m&&(r.status==='Done'||r.status==='Booked')){any=true;inc+=num(r.commission);}});
+ db.leads.forEach(function(l){if((l.date||'').slice(0,7)===m&&['Client','In progress','Done'].indexOf(l.stage)!==-1){any=true;inc+=num(l.amount);}});
+ db.bookings.forEach(function(b){if((b.checkin||'').slice(0,7)===m&&b.status!=='Cancelled'){any=true;inc+=num(b.amount);}});
+ return {any:any,inc:inc,cost:cost};}
+/* ---------- pages ---------- */
+var R={};
+R.overview=function(){var a=calcA(),openReq=db.requests.filter(function(r){return r.status!=='Done';}).length,inbox=D.store.get('d9_inbox',[]).length,sr=serviceRows(),rev=sr.reduce(function(s,r){return s+r.rev;},0),cost=sr.reduce(function(s,r){return s+r.cost;},0);
+ function ov(p,t,src,items){return '<div class="ov" data-p="'+p+'"><h3><span>'+t+'</span>'+srcTag(src)+'</h3><ul>'+items.map(function(i){return '<li>'+i+'</li>';}).join('')+'</ul></div>';}
+ return '<div class="top"><h1>D9 Business Dashboard</h1><span class="muted small">'+new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+'</span></div>'+
+ '<div class="note">Every number shows where it comes from: <b>Real</b> (entered here), <b>Imported</b> (from a CSV export) or <b>Not available</b>. Nothing is estimated or invented. Data is stored in this browser — use Settings &amp; backup to export it.</div>'+
+ (inbox?'<div class="note" style="background:#e3eef8;border-color:#b9d3ea;color:#24527a">'+inbox+' new message(s) from the website or welcome page on this device. <button class="btn btn-sm btn-dark" data-p="B" style="margin-left:6px">Review in Guest service</button></div>':'')+
+ '<div class="grid6">'+
+ ov('A','A · Reservations',a.src,a.total?[a.upcoming+' upcoming arrivals',(isFinite(a.occ)?a.occ:0)+'% occupancy this month',a.unpaid+' not fully paid',a.cancel+' cancellations']:['No reservations yet','Import from Beds24 or add manually'])+
+ ov('B','B · Guest service',srcOf(db.requests.concat(db.orders)),[openReq+' open requests',db.orders.filter(function(o){return o.status==='Requested';}).length+' upgrade requests to confirm',db.requests.filter(function(r){return r.type==='Complaint'||r.type==='Problem';}).length+' problems / complaints'])+
+ ov('C','C · Excursions',srcOf(db.partners.concat(db.referrals)),[db.partners.length+' partners ('+db.partners.filter(function(p){return p.contract==='Yes';}).length+' with signed agreement)',db.referrals.length+' referrals',db.referrals.filter(function(r){return r.status==='Done';}).length+' completed'])+
+ ov('D','D · Local services',srcOf(db.leads),[db.leads.filter(function(l){return l.stage==='Lead';}).length+' leads',db.leads.filter(function(l){return l.stage==='Quote sent';}).length+' quotes sent',db.leads.filter(function(l){return l.stage==='In progress';}).length+' in progress',db.leads.filter(function(l){return l.stage==='Done';}).length+' completed'])+
+ ov('E','E · Finance',srcOf(db.bookings.concat(db.orders,db.referrals,db.leads,db.finance)),rev||cost?['Revenue recorded: '+money(rev),'Direct costs: '+money(cost),'Gross margin: '+money(rev-cost)]:['No financial data yet'])+
+ ov('F','F · Marketing',srcOf(db.marketing.concat(db.bookings)),db.marketing.length||db.bookings.length?[a.direct+' direct reservations',(db.marketing.length?db.marketing.reduce(function(s,m){return s+num(m.visitors);},0)+' website visitors recorded':'Visitors: not available')]:['No marketing data yet'])+
+ '</div>';};
+R.A=function(){var a=calcA(),src=a.src;
+ return '<div class="top"><h1>A · Reservations</h1></div><div class="kpis">'+kpi('Reservations',a.total,src)+kpi('Upcoming arrivals',a.upcoming,src)+kpi('Occupancy this month',(isFinite(a.occ)?a.occ:0)+'%',src,'Based on '+db.settings.units+' units (Settings)')+kpi('Not fully paid',a.unpaid,src)+kpi('Cancellations',a.cancel,src)+'</div>'+
+ panel('Reservations','bookings',sortDesc(db.bookings,'checkin'),{btns:'<button class="btn btn-ghost btn-sm" data-imp="bookings">Import CSV</button>',extra:function(r){return '<button data-link="'+r.id+'">Guest link</button>';}})+
+ '<p class="small muted">CSV import recognises columns such as guest/name, unit/room, channel/referer, arrival/checkin, departure/checkout, price/amount and status (for example a Beds24 booking export).</p>';};
+R.B=function(){var inbox=D.store.get('d9_inbox',[]);var openR=db.requests.filter(function(r){return r.status!=='Done';});
+ var ib=inbox.length?'<div class="panel"><div class="ph"><h2>New from website & welcome page ('+inbox.length+')</h2><button class="btn btn-gold btn-sm" id="takeInbox">Move all into requests</button></div><div class="tw"><table><thead><tr><th>Received</th><th>Type</th><th>Guest</th><th>Details</th></tr></thead><tbody>'+inbox.map(function(m){return '<tr><td>'+esc(m.created.slice(0,16).replace('T',' '))+'</td><td>'+esc(m.type)+'</td><td>'+esc(m.name)+'</td><td class="wrap">'+esc(m.detail||(m.suite+' · '+m.checkin+'→'+m.checkout+' · '+m.guests+' guests · '+(m.extras||[]).join(', ')+' · '+m.contact+(m.message?' · '+m.message:'')))+'</td></tr>';}).join('')+'</tbody></table></div></div>':'';
+ return '<div class="top"><h1>B · Guest service</h1></div><div class="kpis">'+kpi('Open requests',openR.length,srcOf(db.requests))+kpi('Upgrades to confirm',db.orders.filter(function(o){return o.status==='Requested';}).length,srcOf(db.orders))+kpi('Problems / complaints',db.requests.filter(function(r){return (r.type==='Problem'||r.type==='Complaint')&&r.status!=='Done';}).length,srcOf(db.requests))+kpi('Completed requests',db.requests.filter(function(r){return r.status==='Done';}).length,srcOf(db.requests))+'</div>'+ib+
+ panel('Guest requests','requests',sortDesc(db.requests,'date'),{btns:'<a class="btn btn-wa btn-sm" target="_blank" rel="noopener" href="https://web.whatsapp.com/">WhatsApp Web</a>'})+
+ panel('Upgrade sales','orders',sortDesc(db.orders,'date'),{pre:'<p class="small muted">Prices and costs come from <a href="#upgrades" data-p="upgrades">Upgrade prices</a>. An upgrade is only confirmed after availability and execution are checked.</p>'});};
+R.C=function(){var ref=db.referrals,exp=ref.filter(function(r){return r.status==='Booked'||r.status==='Done';}).reduce(function(s,r){return s+num(r.commission);},0),got=ref.filter(function(r){return r.paidout==='Yes';}).reduce(function(s,r){return s+num(r.commission);},0);
+ return '<div class="top"><h1>C · Excursions</h1></div><div class="note">Only work with partners that have a tourism licence (Law 38/1977), are listed with the ETAA, show insurance and signed the commission agreement.</div><div class="kpis">'+kpi('Partners',db.partners.length,srcOf(db.partners))+kpi('Referrals',ref.length,srcOf(ref))+kpi('Booked / done',ref.filter(function(r){return r.status==='Booked'||r.status==='Done';}).length,srcOf(ref))+kpi('Commission due',money(exp),srcOf(ref))+kpi('Commission received',money(got),srcOf(ref))+'</div>'+
+ panel('Partners','partners',db.partners)+panel('Referrals','referrals',sortDesc(ref,'date'));};
+R.D=function(){var L=db.leads,src=srcOf(L);var st=['Lead','Quote sent','Client','In progress','Done','Lost'];
+ return '<div class="top"><h1>D · Local services</h1></div><div class="kpis">'+st.map(function(s){return kpi(s,L.filter(function(l){return l.stage===s;}).length,src);}).join('')+'</div>'+panel('Leads, quotes and clients','leads',sortDesc(L,'date'),{pre:'<p class="small muted">Price guide (to be validated locally): QR menu €30–80 · Google Business Profile €25–75 · design €20–70 · travel guide €10–30.</p>'});};
+R.E=function(){var sr=serviceRows(),m=monthResult();
+ var t='<div class="tw"><table><thead><tr><th>Service</th><th>Revenue</th><th>Direct costs</th><th>Gross margin</th><th>Outstanding</th><th>Data</th></tr></thead><tbody>'+sr.map(function(r){return '<tr><td>'+r.s+'</td>'+(r.src==='na'?'<td colspan="4" class="muted">Not available yet</td>':'<td>'+money(r.rev)+'</td><td>'+money(r.cost)+'</td><td><b>'+money(r.rev-r.cost)+'</b></td><td>'+money(r.open)+'</td>')+'<td>'+srcTag(r.src)+'</td></tr>';}).join('')+'</tbody></table></div>';
+ var all=srcOf(db.bookings.concat(db.orders,db.referrals,db.leads,db.finance)),rev=sr.reduce(function(s,r){return s+r.rev;},0),cost=sr.reduce(function(s,r){return s+r.cost;},0),open=sr.reduce(function(s,r){return s+r.open;},0);
+ return '<div class="top"><h1>E · Finance</h1></div><div class="kpis">'+kpi('Revenue',money(rev),all)+kpi('Direct costs',money(cost),all)+kpi('Gross margin',money(rev-cost),all)+kpi('Outstanding payments',money(open),all)+kpi('This month (result)',money(m.inc-m.cost),m.any?all:'na')+'</div>'+
+ '<div class="panel"><div class="ph"><h2>Per service</h2></div>'+t+'<p class="small muted" style="margin-top:8px">Upgrade costs include execution cost and Hassan’s commission from Upgrade prices.</p></div>'+
+ panel('Ledger (other income and costs)','finance',sortDesc(db.finance,'date'),{btns:'<button class="btn btn-ghost btn-sm" data-imp="finance">Import CSV</button>',pre:'<p class="small muted">For payouts from Paymob, software (e.g. Beds24), supplies and other items. CSV columns: date, description, amount, type (income/cost).</p>'});};
+R.F=function(){var a=calcA(),M=db.marketing,vis=M.reduce(function(s,m){return s+num(m.visitors);},0);var guests={};db.bookings.forEach(function(b){var k=(b.contact||b.guest||'').toLowerCase().trim();if(k)guests[k]=(guests[k]||0)+1;});var rep=Object.keys(guests).filter(function(k){return guests[k]>1;}).length;
+ return '<div class="top"><h1>F · Marketing</h1></div><div class="kpis">'+kpi('Website visitors',vis,srcOf(M),'Enter monthly from your website statistics')+kpi('Direct reservations',a.direct,srcOf(db.bookings))+kpi('Conversion (direct / visitors)',vis?((a.direct/vis*100).toFixed(1)+'%'):'',vis&&db.bookings.length?'real':'na')+kpi('Repeat guests',rep,srcOf(db.bookings))+'</div>'+panel('Monthly marketing log','marketing',sortDesc(M,'month'));};
+R.upgrades=function(){var rows=db.catalog;
+ var t=rows.length?'<div class="tw"><table><thead><tr><th>Upgrade</th><th>Sales price</th><th>Execution cost</th><th>Commission</th><th>Payment fee 2.75%</th><th>Gross profit</th><th></th></tr></thead><tbody>'+rows.map(function(c){var set=c.price!==''&&c.price!=null;var fee=num(c.price)*0.0275;return '<tr><td>'+esc(c.name)+'</td><td>'+(set?money(num(c.price)):'<span class="muted">set by owner</span>')+'</td><td>'+(c.cost!==''?money(num(c.cost)):'—')+'</td><td>'+(c.commission!==''?money(num(c.commission)):'—')+'</td><td>'+(set?money(fee):'—')+'</td><td><b>'+(set?money(num(c.price)-num(c.cost)-num(c.commission)-fee):'—')+'</b></td><td><div class="act"><button data-ed="catalog:'+c.id+'">Edit</button><button data-del="catalog:'+c.id+'">Delete</button></div></td></tr>';}).join('')+'</tbody></table></div>':'<div class="empty">No upgrades yet.</div>';
+ return '<div class="top"><h1>Upgrade prices</h1></div><div class="note">The owner sets every price. Gross profit = sales price − execution cost − commission − payment fee (2.75%, Paymob card payments; the fixed 3 EGP per payment is not included).</div><div class="panel"><div class="ph"><h2>Price list</h2><button class="btn btn-dark btn-sm" data-add="catalog">+ Add upgrade</button></div>'+t+'</div>';};
+R.settings=function(){return '<div class="top"><h1>Settings & backup</h1></div><div class="panel"><h2>General</h2><div class="frow mt"><div class="field"><label for="sCur">Currency</label><select id="sCur">'+['EUR','EGP','USD'].map(function(c){return '<option'+(c===cur()?' selected':'')+'>'+c+'</option>';}).join('')+'</select></div><div class="field"><label for="sUnits">Number of rentable units</label><input id="sUnits" type="number" min="1" value="'+esc(db.settings.units)+'"></div></div><button class="btn btn-dark btn-sm" id="sSave">Save</button></div>'+
+ '<div class="panel"><h2>Backup</h2><p class="small muted">Data lives only in this browser. Export regularly and import on another device to continue there.</p><div class="act"><button class="btn btn-gold btn-sm" id="exp">Export backup (.json)</button><button class="btn btn-ghost btn-sm" data-imp="backup">Import backup</button></div></div>'+
+ '<div class="panel"><h2>Website settings</h2><p class="small muted">WhatsApp number, Wi-Fi details and address are set in <code>assets/config.js</code>. Current WhatsApp number: <b>'+(D.whatsapp?esc(D.whatsapp):'not set yet')+'</b>.</p></div>'+
+ '<div class="panel"><h2>Danger zone</h2><button class="btn btn-sm" style="background:var(--bad);color:#fff" id="wipe">Delete all dashboard data</button></div>';};
+/* ---------- forms ---------- */
+function openForm(type,id){var s=S[type],rec=id?db[type].filter(function(r){return r.id===id;})[0]:{};if(!rec)return;
+ var h='<h2>'+(id?'Edit ':'Add ')+s.name+'</h2>'+s.f.map(function(f){var k=f[0],v=rec[k]!=null?rec[k]:(f[2]==='date'?today():(f[2]==='select'?f[3][0]:'')),req=f[3]===1?' required':'';var inp;
+  if(f[2]==='select')inp='<select name="'+k+'">'+f[3].map(function(o){return '<option'+(o===v?' selected':'')+'>'+o+'</option>';}).join('')+'</select>';
+  else if(f[2]==='catalog')inp='<select name="'+k+'" required>'+db.catalog.map(function(c){return '<option value="'+c.id+'"'+(c.id===v?' selected':'')+'>'+esc(c.name)+'</option>';}).join('')+'</select>';
+  else if(f[2]==='partner')inp='<select name="'+k+'"><option value="">—</option>'+db.partners.map(function(p){return '<option value="'+p.id+'"'+(p.id===v?' selected':'')+'>'+esc(p.name)+'</option>';}).join('')+'</select>';
+  else if(f[2]==='textarea')inp='<textarea name="'+k+'"'+req+'>'+esc(v)+'</textarea>';
+  else inp='<input name="'+k+'" type="'+f[2]+'" value="'+esc(v)+'"'+req+(f[2]==='number'?' step="any" min="0"':'')+'>';
+  return '<div class="field"><label>'+f[1]+(f[3]===1?' *':'')+'</label>'+inp+'</div>';}).join('')+
+  '<div class="err" id="ferr" style="color:var(--bad);font-size:.85rem;min-height:1.1em"></div><div class="act" style="justify-content:flex-end;margin-top:8px"><button type="button" class="btn btn-ghost btn-sm" id="fCancel">Cancel</button><button type="submit" class="btn btn-dark btn-sm">Save</button></div>';
+ var form=$('#dlgForm');form.innerHTML=h;var dlg=$('#dlg');
+ $('#fCancel').onclick=function(){dlg.close();};
+ form.onsubmit=function(e){e.preventDefault();var o={};s.f.forEach(function(f){var el=form.elements[f[0]];o[f[0]]=el?el.value.trim():'';});
+  var miss=s.f.filter(function(f){return f[3]===1&&!o[f[0]];});if(miss.length){$('#ferr').textContent='Please fill in: '+miss.map(function(f){return f[1];}).join(', ');return;}
+  if(o.checkin&&o.checkout&&o.checkout<=o.checkin){$('#ferr').textContent='Check-out must be after check-in.';return;}
+  if(id){Object.keys(o).forEach(function(k){rec[k]=o[k];});}else{o.id=D.uid();o.src='real';db[type].unshift(o);}
+  save();dlg.close();render();D.toast('Saved');};
+ if(dlg.showModal)dlg.showModal();else dlg.setAttribute('open','');
+}
+/* ---------- CSV ---------- */
+function parseCSV(text){var rows=[],row=[],f='',q=false,i,c,sep=(text.split('\n')[0].split(';').length>text.split('\n')[0].split(',').length)?';':',';
+ for(i=0;i<text.length;i++){c=text[i];if(q){if(c==='"'){if(text[i+1]==='"'){f+='"';i++;}else q=false;}else f+=c;}else if(c==='"')q=true;else if(c===sep){row.push(f);f='';}else if(c==='\n'){row.push(f);rows.push(row);row=[];f='';}else if(c!=='\r')f+=c;}
+ if(f!==''||row.length){row.push(f);rows.push(row);}return rows.filter(function(r){return r.some(function(x){return x.trim()!=='';});});}
+function pick(h,row,names){for(var i=0;i<h.length;i++){var k=h[i].toLowerCase().replace(/[^a-z]/g,'');if(names.indexOf(k)!==-1)return (row[i]||'').trim();}return '';}
+function isoDate(s){if(!s)return '';var m=s.match(/^(\d{4})-(\d{2})-(\d{2})/);if(m)return m[0];m=s.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4})/);if(m)return m[3]+'-'+('0'+m[2]).slice(-2)+'-'+('0'+m[1]).slice(-2);var d=new Date(s);return isNaN(d)?'':d.toISOString().slice(0,10);}
+var impType=null;
+function doImport(type){impType=type;$('#fileIn').value='';$('#fileIn').click();}
+$('#fileIn').addEventListener('change',function(){var file=this.files[0];if(!file)return;var rd=new FileReader();rd.onload=function(){var text=String(rd.result);try{
+ if(impType==='backup'){var o=JSON.parse(text);if(!o||!o.settings)throw new Error('Not a D9 backup');db=o;Object.keys(DEFAULT).forEach(function(k){if(db[k]===undefined)db[k]=JSON.parse(JSON.stringify(DEFAULT[k]));});save();render();D.toast('Backup imported');return;}
+ var rows=parseCSV(text);if(rows.length<2)throw new Error('No rows found');var h=rows[0],n=0;
+ rows.slice(1).forEach(function(r){
+  if(impType==='bookings'){var ci=isoDate(pick(h,r,['arrival','checkin','firstnight','arrivaldate','start'])),co=isoDate(pick(h,r,['departure','checkout','lastnight','departuredate','end']));if(!ci)return;
+   var st=pick(h,r,['status']).toLowerCase();db.bookings.unshift({id:D.uid(),src:'imported',guest:pick(h,r,['guest','name','guestname','firstname','fullname'])||'—',unit:pick(h,r,['unit','room','roomname','property','unitname']),channel:(function(c){c=c.toLowerCase();return c.indexOf('airbnb')!==-1?'Airbnb':c.indexOf('booking')!==-1?'Booking.com':c.indexOf('expedia')!==-1?'Expedia':(c.indexOf('direct')!==-1||c==='')?'Direct':'Other';})(pick(h,r,['channel','referer','referrer','source','apisource'])),checkin:ci,checkout:co,guests:pick(h,r,['guests','numadult','adults','pax']),amount:pick(h,r,['price','amount','total','totalprice']),paid:'Unpaid',status:(st.indexOf('cancel')!==-1?'Cancelled':'Confirmed'),contact:pick(h,r,['email','phone','mobile'])});n++;}
+  if(impType==='finance'){var d=isoDate(pick(h,r,['date','createdat','created','transactiondate'])),a=pick(h,r,['amount','total','net','value']);if(!d||a==='')return;var ty=pick(h,r,['type','kind']).toLowerCase();var amt=num(a);
+   db.finance.unshift({id:D.uid(),src:'imported',date:d,kind:(ty.indexOf('cost')!==-1||amt<0)?'Cost':'Income',category:'Other',description:pick(h,r,['description','details','reference','merchantorderid'])||'Imported',amount:String(Math.abs(amt))});n++;}
+ });
+ save();render();D.toast(n+' rows imported');}catch(e){D.toast('Import failed: '+e.message);}};rd.readAsText(file);});
+/* ---------- events ---------- */
+function bind(){
+ $$('[data-p]').forEach(function(b){b.onclick=function(e){e.preventDefault();go(b.getAttribute('data-p'));};});
+ $$('[data-add]').forEach(function(b){b.onclick=function(){openForm(b.getAttribute('data-add'));};});
+ $$('[data-ed]').forEach(function(b){b.onclick=function(){var p=b.getAttribute('data-ed').split(':');openForm(p[0],p[1]);};});
+ $$('[data-del]').forEach(function(b){b.onclick=function(){var p=b.getAttribute('data-del').split(':');if(confirm('Delete this item?')){db[p[0]]=db[p[0]].filter(function(r){return r.id!==p[1];});save();render();}};});
+ $$('[data-imp]').forEach(function(b){b.onclick=function(){doImport(b.getAttribute('data-imp'));};});
+ $$('[data-link]').forEach(function(b){b.onclick=function(){var r=db.bookings.filter(function(x){return x.id===b.getAttribute('data-link');})[0];var base=location.href.split('#')[0].replace(/dashboard\.html.*$/,'');var url=base+'welcome.html?name='+encodeURIComponent((r.guest||'').split(' ')[0])+'&unit='+encodeURIComponent(r.unit||'')+'&in='+r.checkin+'&out='+r.checkout;
+  var done=function(){D.toast('Guest link copied');};if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(url).then(done,function(){prompt('Copy this link',url);});else prompt('Copy this link',url);};});
+ var ti=$('#takeInbox');if(ti)ti.onclick=function(){var ib=D.store.get('d9_inbox',[]);ib.forEach(function(m){db.requests.unshift({id:D.uid(),src:'real',date:(m.created||'').slice(0,10),guest:m.name||'—',unit:m.suite||'',type:({upgrade:'Upgrade',problem:'Problem',excursion_interest:'Excursion interest',booking_request:'Booking request'})[m.type]||'Question',detail:m.detail||((m.suite||'')+' · '+m.checkin+' → '+m.checkout+' · '+(m.guests||'')+' guests · extras: '+((m.extras||[]).join(', ')||'none')+' · contact: '+(m.contact||'')+(m.message?' · '+m.message:'')),status:'Open'});});D.store.set('d9_inbox',[]);save();render();D.toast(ib.length+' moved');};
+ var ss=$('#sSave');if(ss)ss.onclick=function(){db.settings.currency=$('#sCur').value;db.settings.units=Math.max(1,parseInt($('#sUnits').value,10)||1);save();render();D.toast('Settings saved');};
+ var ex=$('#exp');if(ex)ex.onclick=function(){var blob=new Blob([JSON.stringify(db,null,1)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='d9-dashboard-backup-'+today()+'.json';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},500);};
+ var wp=$('#wipe');if(wp)wp.onclick=function(){if(confirm('Delete ALL dashboard data in this browser? Export a backup first.')){db=JSON.parse(JSON.stringify(DEFAULT));save();render();}};
+}
+function render(){nav();$('#main').innerHTML=R[page]()+'<p class="small muted" style="margin-top:30px">D9 Business Dashboard · Website by VormVivo Studios</p>';bind();}
+window.addEventListener('hashchange',function(){var h=(location.hash||'#overview').slice(1);if(h!==page&&PAGES.some(function(p){return p[0]===h;})){page=h;render();window.scrollTo(0,0);}});
+render();
+})();
+</script>
+</body>
+</html>

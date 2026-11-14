@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Coral Café · Demo QR menu</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Noto+Kufi+Arabic:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/d9.css">
+<style>
+body{background:#fbf7f0}
+.m{max-width:560px;margin:0 auto;padding:0 0 40px}
+.hd{background:linear-gradient(160deg,#0e5c63,#0f1d26);color:#fff;padding:26px 20px 22px;border-radius:0 0 24px 24px}
+.hd .row{display:flex;justify-content:space-between;align-items:center}
+.hd h1{font-size:2rem;margin:.2em 0 .1em}
+.hd p{margin:0;color:#cfe6e8;font-size:.9rem}
+.demo{margin:12px 16px;background:#fff7e6;border:1px solid #f0d9a8;color:#7a5a1d;border-radius:12px;padding:8px 12px;font-size:.8rem}
+.cats{display:flex;gap:8px;overflow-x:auto;padding:8px 16px;position:sticky;top:0;background:#fbf7f0;z-index:3}
+.cats a{flex:0 0 auto;background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:.45em .95em;font-weight:600;font-size:.85rem;text-decoration:none;color:var(--ink)}
+.sec{padding:8px 16px}
+.sec h2{font-size:1.3rem;margin:16px 0 8px}
+.it{display:flex;justify-content:space-between;gap:12px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:8px}
+.it h3{font:600 1rem var(--sans);margin:0 0 2px}
+[dir=rtl] .it h3{font-family:"Noto Kufi Arabic",sans-serif}
+.it p{margin:0;font-size:.85rem;color:var(--muted)}
+.pr{font-weight:700;white-space:nowrap;color:var(--sea)}
+.tag{font-size:.7rem;background:#e2f2ea;color:var(--ok);border-radius:6px;padding:.05em .45em;margin-inline-start:6px}
+.ft{text-align:center;font-size:.75rem;color:var(--muted);margin-top:20px}
+</style>
+</head>
+<body>
+<div class="m">
+ <div class="hd"><div class="row"><span class="small">☕ Hurghada</span><div class="lang" id="lang"><button data-l="en">EN</button><button data-l="ar">عربي</button></div></div>
+  <h1>Coral Café</h1><p id="sub"></p></div>
+ <div class="demo" id="demo"></div>
+ <div class="cats" id="cats"></div>
+ <div id="menu"></div>
+ <p class="ft" id="ft"></p>
+</div>
+<script>
+(function(){
+var L={en:{sub:"Breakfast · coffee · fresh juices",demo:"Demo menu for a fictional café — example of a QR menu. Prices are examples in EGP.",ft:"Prices in EGP incl. service · Demo by VormVivo Studios",veg:"veg",
+ cats:[["Breakfast",[["Egyptian breakfast","Ful medames, taameya, eggs, baladi bread, salad","180",1],["Omelette","Three eggs with cheese, tomato and herbs","140",1],["Pancakes","With honey or chocolate and fresh fruit","150",1]]],["Coffee & tea",[["Turkish coffee","Strong, with or without sugar","60",1],["Cappuccino","Double shot espresso with milk foam","85",1],["Mint tea","Fresh mint, served in a pot","50",1]]],["Fresh juices",[["Mango","Fresh seasonal mango","110",1],["Lemon mint","Lemon, fresh mint, ice","80",1],["Sugar cane","Freshly pressed","50",1]]],["Light lunch",[["Grilled halloumi wrap","Halloumi, salad, tahini","160",1],["Chicken shawarma plate","With rice, salad and garlic sauce","220",0],["Fish of the day","Grilled Red Sea fish with rice and salad","Market",0]]]]},
+ ar:{sub:"فطور · قهوة · عصائر طازجة",demo:"قائمة تجريبية لمقهى خيالي — مثال على منيو QR. الأسعار أمثلة بالجنيه المصري.",ft:"الأسعار بالجنيه المصري شاملة الخدمة · نموذج من VormVivo Studios",veg:"نباتي",
+ cats:[["الفطور",[["فطور مصري","فول مدمس، طعمية، بيض، عيش بلدي، سلطة","180",1],["أومليت","ثلاث بيضات بالجبن والطماطم والأعشاب","140",1],["بان كيك","بالعسل أو الشوكولاتة مع فاكهة طازجة","150",1]]],["قهوة وشاي",[["قهوة تركي","قوية، بسكر أو بدون","60",1],["كابتشينو","إسبريسو مزدوج مع رغوة الحليب","85",1],["شاي بالنعناع","نعناع طازج في إبريق","50",1]]],["عصائر طازجة",[["مانجو","مانجو طازجة حسب الموسم","110",1],["ليمون نعناع","ليمون ونعناع وثلج","80",1],["قصب","معصور طازجًا","50",1]]],["غداء خفيف",[["راب حلومي مشوي","حلومي وسلطة وطحينة","160",1],["طبق شاورما فراخ","مع أرز وسلطة وثومية","220",0],["سمك اليوم","سمك من البحر الأحمر مشوي مع أرز وسلطة","حسب السوق",0]]]]}};
+var lang='en';try{lang=localStorage.getItem('coral_lang')||'en';}catch(e){}
+function r(){var t=L[lang];document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';
+ document.getElementById('sub').textContent=t.sub;document.getElementById('demo').textContent=t.demo;document.getElementById('ft').textContent=t.ft;
+ document.getElementById('cats').innerHTML=t.cats.map(function(c,i){return '<a href="#c'+i+'">'+c[0]+'</a>';}).join('');
+ document.getElementById('menu').innerHTML=t.cats.map(function(c,i){return '<div class="sec" id="c'+i+'"><h2>'+c[0]+'</h2>'+c[1].map(function(x){return '<div class="it"><div><h3>'+x[0]+(x[3]?'<span class="tag">'+t.veg+'</span>':'')+'</h3><p>'+x[1]+'</p></div><div class="pr">'+x[2]+(/^\d+$/.test(x[2])?(lang==='ar'?' ج.م':' EGP'):'')+'</div></div>';}).join('')+'</div>';}).join('');
+ Array.prototype.forEach.call(document.querySelectorAll('#lang button'),function(b){b.classList.toggle('on',b.getAttribute('data-l')===lang);});}
+Array.prototype.forEach.call(document.querySelectorAll('#lang button'),function(b){b.onclick=function(){lang=b.getAttribute('data-l');try{localStorage.setItem('coral_lang',lang);}catch(e){}r();};});
+r();})();
+</script>
+</body>
+</html>
