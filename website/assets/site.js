@@ -165,7 +165,7 @@
   /* ---------- explorer filters ---------- */
   const fl = $(".filters");
   if (fl) {
-    const cards = $$(".grid3 .card"), bs = $$("button", fl);
+    const cards = $$(".grid3:not(.qgrid) > .cardw"), bs = $$("button", fl);
     function apply(f, push) {
       const first = new Map(cards.map(c => [c, c.getBoundingClientRect()]));
       bs.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.f === f)));
@@ -256,6 +256,175 @@
   const today = new Date(Date.now() - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
   $$("input[type=date]").forEach(d => d.min = today);
 
+
+  /* ===================== v3 ===================== */
+  function wishGet() { try { return JSON.parse(localStorage.getItem("myt-wish") || "[]").filter(s => T.exps && T.exps[s]); } catch (e) { return window.__wish || []; } }
+  function wishSet(a) { window.__wish = a; try { localStorage.setItem("myt-wish", JSON.stringify(a)); } catch (e) {} }
+  window.wishGet = wishGet;
+
+  /* progress bar */
+  const pb = $(".pbar i");
+  if (pb) {
+    const upd = () => { const h = document.documentElement.scrollHeight - innerHeight; pb.style.transform = `scaleX(${h > 0 ? Math.min(1, scrollY / h) : 0})`; };
+    addEventListener("scroll", () => requestAnimationFrame(upd), { passive: true }); upd();
+  }
+
+  /* wishlist */
+  const wl = $(".wl"), wbtn = $(".wishbtn");
+  function wishRender() {
+    const a = wishGet();
+    if (wbtn) { $(".cnt", wbtn).textContent = a.length; wbtn.classList.toggle("has", a.length > 0); }
+    $$("[data-wish]").forEach(h => {
+      const on = a.includes(h.dataset.wish);
+      h.setAttribute("aria-pressed", String(on));
+      const nm = T.exps[h.dataset.wish] ? T.exps[h.dataset.wish].n : "";
+      h.setAttribute("aria-label", `${on ? T.wishRm : T.wishAdd}: ${nm}`);
+    });
+    if (!wl) return;
+    const list = $(".wl-list", wl), base = wl.dataset.base, ex = wl.dataset.exp, art = wl.dataset.art === "1";
+    list.innerHTML = "";
+    a.forEach(s => {
+      const li = document.createElement("li"), e = T.exps[s];
+      li.innerHTML = `<img src="${base}img/${e.i}-s.webp" alt="" width="64" height="64"><a href="${ex}${s}/${art ? "index.html" : ""}"></a><button type="button" aria-label="${T.wishRm}: ${e.n}">×</button>`;
+      $("a", li).textContent = e.n;
+      $("button", li).addEventListener("click", () => { wishSet(wishGet().filter(x => x !== s)); wishRender(); say(T.removed); });
+      list.appendChild(li);
+    });
+    $(".wl-empty", wl).hidden = a.length > 0;
+    $(".wl-acts", wl).hidden = a.length === 0;
+  }
+  function wlOpen(o) {
+    if (!wl) return;
+    wl.classList.toggle("open", o); wl.setAttribute("aria-hidden", String(!o)); wbtn && wbtn.setAttribute("aria-expanded", String(o));
+    document.body.style.overflow = o ? "hidden" : "";
+    if (o) setTimeout(() => $(".x", wl).focus(), 200); else wbtn && wbtn.focus();
+  }
+  if (wl) {
+    wbtn && wbtn.addEventListener("click", () => wlOpen(true));
+    $(".x", wl).addEventListener("click", () => wlOpen(false));
+    wl.addEventListener("click", e => { if (e.target === wl) wlOpen(false); });
+    addEventListener("keydown", e => { if (e.key === "Escape" && wl.classList.contains("open")) wlOpen(false); });
+    $("[data-wl-send]", wl).addEventListener("click", () => { const a = wishGet(); wlOpen(false); openCmp(T.wishMsg + "\n" + a.map(s => "• " + T.exps[s].n).join("\n")); });
+  }
+  $$("[data-wish]").forEach(h => h.addEventListener("click", e => {
+    e.preventDefault(); e.stopPropagation();
+    const s = h.dataset.wish; let a = wishGet(); const on = a.includes(s);
+    a = on ? a.filter(x => x !== s) : a.concat(s); wishSet(a); wishRender();
+    if (!on) { h.classList.remove("pop"); void h.offsetWidth; h.classList.add("pop"); if (wbtn) { wbtn.classList.remove("bump"); void wbtn.offsetWidth; wbtn.classList.add("bump"); } }
+    say(on ? T.removed : T.saved);
+  }));
+  wishRender();
+
+  /* fine-pointer effects: card spotlight + tilt, magnetic buttons, portal parallax */
+  if (!reduce && matchMedia("(hover:hover) and (pointer:fine)").matches) {
+    $$(".card").forEach(c => {
+      c.addEventListener("pointermove", e => {
+        const r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+        c.style.setProperty("--mx", x * 100 + "%"); c.style.setProperty("--my", y * 100 + "%");
+        c.style.transform = `perspective(900px) rotateX(${(.5 - y) * 6}deg) rotateY(${(x - .5) * 7}deg) translateY(-6px)`;
+      });
+      c.addEventListener("pointerleave", () => { c.style.transform = ""; });
+    });
+    $$(".hero .btn, .final .btn, .cteaser .btn").forEach(b => {
+      b.classList.add("mag");
+      b.addEventListener("pointermove", e => { const r = b.getBoundingClientRect(); b.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * .18}px,${(e.clientY - r.top - r.height / 2) * .28}px)`; });
+      b.addEventListener("pointerleave", () => { b.style.transform = ""; });
+    });
+    const hero = $(".hero"), por = hero && $(".portal", hero);
+    if (por) {
+      por.classList.add("tilt");
+      hero.addEventListener("pointermove", e => { const x = e.clientX / innerWidth - .5, y = e.clientY / innerHeight - .5; por.style.transform = `perspective(1200px) rotateY(${x * 6}deg) rotateX(${-y * 5}deg) translate3d(${x * 14}px,${y * 10}px,0)`; });
+      hero.addEventListener("pointerleave", () => { por.style.transform = ""; });
+    }
+  }
+
+  /* quiz */
+  $$("[data-quiz]").forEach(q => {
+    const steps = $$(".qstep", q), res = $(".qres", q), bar = $(".qbar i", q), score = {};
+    let i = 0;
+    function show(n) { i = n; steps.forEach((s, k) => s.classList.toggle("on", k === n)); bar.style.transform = `scaleX(${n / steps.length})`; }
+    $$(".qopt", q).forEach(o => o.addEventListener("click", () => {
+      const w = JSON.parse(o.dataset.w || "{}"); Object.entries(w).forEach(([k, v]) => score[k] = (score[k] || 0) + v);
+      if (i < steps.length - 1) { show(i + 1); $("h3", steps[i]).focus({ preventScroll: true }); return; }
+      steps.forEach(s => s.classList.remove("on")); bar.style.transform = "scaleX(1)";
+      const cards = $$(".qcard", q);
+      const ranked = cards.map(c => ({ c, s: c.dataset.c.split(" ").reduce((a, k) => a + (score[k] || 0), 0) })).sort((a, b) => b.s - a.s);
+      cards.forEach(c => c.hidden = true);
+      const top = ranked.slice(0, 3);
+      top.forEach((r, k) => { r.c.hidden = false; r.c.style.order = k; if (!reduce) r.c.animate([{ opacity: 0, transform: "translateY(30px) scale(.96)" }, { opacity: 1, transform: "none" }], { duration: 700, delay: k * 120, easing: "cubic-bezier(.22,.8,.2,1)", fill: "backwards" }); });
+      const plan = $("[data-quiz-plan]", q); if (plan) plan.href = plan.href.split("#")[0] + "#" + top[0].c.dataset.slug;
+      res.hidden = false; $("h3", res).focus({ preventScroll: true });
+    }));
+    $("[data-quiz-again]", q).addEventListener("click", () => { Object.keys(score).forEach(k => delete score[k]); res.hidden = true; show(0); $("h3", steps[0]).focus({ preventScroll: true }); });
+    show(0);
+  });
+
+  /* tabs (trip ideas) */
+  const tabs = $$("[data-tab]");
+  if (tabs.length) {
+    function sel(id, focus) {
+      tabs.forEach(t => t.setAttribute("aria-selected", String(t.dataset.tab === id)));
+      $$(".itin").forEach(p => { const on = p.id === "it-" + id; p.hidden = !on; p.classList.toggle("on", on); if (on) $$(".rv", p).forEach(r => io ? io.observe(r) : r.classList.add("in")); });
+      if (focus) { try { history.replaceState(null, "", "#" + id); } catch (e) {} }
+      tlUpd();
+    }
+    tabs.forEach((t, k) => {
+      t.addEventListener("click", () => sel(t.dataset.tab, true));
+      t.addEventListener("keydown", e => { const d = (e.key === "ArrowRight") !== rtl ? 1 : (e.key === "ArrowLeft") !== rtl ? -1 : 0; if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return; const n = tabs[(k + (e.key === "ArrowRight" ? 1 : -1) * (rtl ? -1 : 1) + tabs.length) % tabs.length]; n.focus(); sel(n.dataset.tab, true); });
+    });
+    const h = location.hash.slice(1); if (tabs.some(t => t.dataset.tab === h)) sel(h, false);
+    addEventListener("hashchange", () => { const h2 = location.hash.slice(1); if (tabs.some(t => t.dataset.tab === h2)) sel(h2, false); });
+  }
+  function tlUpd() {
+    $$(".itin.on .tl").forEach(tl => {
+      const r = tl.getBoundingClientRect(), p = Math.min(1, Math.max(0, (innerHeight * .7 - r.top) / r.height));
+      tl.style.setProperty("--tp", p.toFixed(3));
+      $$(".tl-d", tl).forEach(d => { if (d.getBoundingClientRect().top < innerHeight * .72) d.classList.add("in"); });
+    });
+  }
+  if ($(".tl")) { addEventListener("scroll", () => requestAnimationFrame(tlUpd), { passive: true }); tlUpd(); }
+
+  /* months */
+  const mos = $$(".mo");
+  if (mos.length) {
+    const mr = $(".mread"), num = $("[data-count]", mr);
+    let cur = +num.textContent;
+    function count(to) {
+      if (reduce) { num.textContent = to; cur = to; return; }
+      const from = cur, t0 = performance.now();
+      const step = now => { const k = Math.min(1, (now - t0) / 600); num.textContent = Math.round(from + (to - from) * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(step); else cur = to; };
+      requestAnimationFrame(step);
+    }
+    mos.forEach(m => m.addEventListener("click", () => {
+      mos.forEach(x => { x.classList.toggle("on", x === m); x.setAttribute("aria-pressed", String(x === m)); });
+      $(".mname", mr).textContent = $("span", m).textContent; count(+m.dataset.sea);
+      $$("[data-sd]").forEach(p => p.hidden = p.dataset.sd !== m.dataset.s);
+    }));
+    const mg = $(".months"); if (io && mg) io.observe(mg);
+  }
+
+  /* packing list */
+  const packs = $$("[data-pack]");
+  if (packs.length) {
+    let saved = {}; try { saved = JSON.parse(localStorage.getItem("myt-pack") || "{}"); } catch (e) {}
+    const done = $("[data-packdone]"), meter = $(".pmeter em");
+    const upd = () => { const n = packs.filter(c => c.checked).length; if (done) done.textContent = n; if (meter) meter.style.transform = `scaleX(${n / packs.length})`; };
+    packs.forEach(c => { c.checked = !!saved[c.dataset.pack]; c.addEventListener("change", () => { saved[c.dataset.pack] = c.checked; try { localStorage.setItem("myt-pack", JSON.stringify(saved)); } catch (e) {} upd(); }); });
+    upd();
+  }
+
+  /* phrase cards + speech */
+  const canSpeak = "speechSynthesis" in window;
+  let arVoice = null;
+  function findVoice() { if (!canSpeak) return; arVoice = speechSynthesis.getVoices().find(v => /^ar/i.test(v.lang)) || null; $$("[data-say]").forEach(s => s.hidden = !arVoice); }
+  if (canSpeak) { findVoice(); speechSynthesis.addEventListener && speechSynthesis.addEventListener("voiceschanged", findVoice); }
+  $$(".flip").forEach(f => f.addEventListener("click", e => {
+    const s = e.target.closest("[data-say]");
+    if (s && arVoice) { e.stopPropagation(); try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(s.dataset.say); u.voice = arVoice; u.lang = arVoice.lang; u.rate = .85; speechSynthesis.speak(u); } catch (x) {} return; }
+    f.classList.toggle("on"); f.setAttribute("aria-pressed", String(f.classList.contains("on")));
+  }));
+  $$(".flip").forEach(f => f.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && e.target === f) { e.preventDefault(); f.click(); } }));
+
   /* ---------- trip builder ---------- */
   const bd = $(".builder");
   if (bd) {
@@ -316,7 +485,19 @@
     form.addEventListener("change", e => { summary(); const fs = e.target.closest("fieldset[aria-invalid]"); if (fs) err(fs, ""); });
     form.addEventListener("submit", e => { e.preventDefault(); next.click(); });
     const pre = location.hash.slice(1) || new URLSearchParams(location.search).get("x");
-    if (pre) { const c = $(`input[name="acts"][value="${CSS.escape(pre)}"]`, form); if (c) c.checked = true; }
+    const tick = slug => { const c = $(`input[name="acts"][value="${CSS.escape(slug)}"]`, form); if (c) c.checked = true; };
+    function prefill(h, reset) {
+      const known = h === "wishlist" || (T.itins && T.itins[h]) || (T.exps && T.exps[h]);
+      if (!known) return;
+      if (reset) $$('input[name="acts"]', form).forEach(c => c.checked = false);
+      const w = form.elements.wishes;
+      if (h === "wishlist") wishGet().forEach(tick);
+      else if (T.itins[h]) { T.itins[h].a.forEach(tick); if (w && (!w.value || w.value.startsWith(T.basedOn))) w.value = `${T.basedOn}: ${T.itins[h].n}`; }
+      else tick(h);
+      summary();
+    }
+    prefill(pre, false);
+    addEventListener("hashchange", () => prefill(location.hash.slice(1), true));
     summary(); go(0, false);
   }
 
