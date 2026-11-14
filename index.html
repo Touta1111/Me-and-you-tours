@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Me & You">
+<meta name="theme-color" content="#062a33">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="img/icon-192.png">
+<title>Me & You Tours Egypt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --deep:#062a33;--teal:#0d4f5c;--teal2:#14707f;--sea:#2aa3b3;--sand:#e9dcc3;--sand2:#f6f0e4;
+  --gold:#c6a35c;--gold2:#e4cc94;--ink:#14262b;--muted:#5d7176;--line:#ece6da;--bg:#faf6ee;--card:#fff;
+  --ok:#2e8b57;--warn:#c98a1b;--bad:#b84a3a;
+  --r:22px;--sh:0 10px 30px rgba(60,45,20,.08);
+  --serif:"Cormorant Garamond",Georgia,serif;--sans:Inter,system-ui,-apple-system,sans-serif;--ar:"Noto Naskh Arabic",serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#062a33;overscroll-behavior:none}
+*{-webkit-tap-highlight-color:transparent}
+button,.nav,.chip,.pill,figure,.dest,.mode,.stat{-webkit-user-select:none;user-select:none}
+#splash{position:fixed;inset:0;z-index:100;background:radial-gradient(120% 80% at 50% 30%,#14707f,#062a33 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;transition:opacity .5s ease,visibility .5s}
+#splash img{width:118px;height:118px;border-radius:50%;box-shadow:0 0 0 3px #c6a35c,0 20px 50px rgba(0,0,0,.35);animation:pop .8s ease}
+#splash b{font-family:"Cormorant Garamond",Georgia,serif;font-size:34px;font-weight:600;margin-top:22px}
+#splash small{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#e4cc94;margin-top:6px}
+#splash.out{opacity:0;visibility:hidden}
+@keyframes pop{from{transform:scale(.7);opacity:0}}
+body{font-family:var(--sans);color:var(--ink);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.app{max-width:480px;margin:0 auto;min-height:100vh;background:var(--bg);position:relative;padding-bottom:calc(92px + env(safe-area-inset-bottom));box-shadow:0 0 50px rgba(0,0,0,.1);overflow-x:hidden}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+input,select,textarea{font:inherit;color:inherit}
+a{color:var(--teal2)}
+h1,h2,h3{font-family:var(--serif);font-weight:600;letter-spacing:.2px}
+.kpi b,.stat b,.fx .big,.big,footer .mono{font-variant-numeric:lining-nums}
+body *{font-variant-numeric:lining-nums}
+h2{font-size:28px;line-height:1.1}
+h3{font-size:21px;line-height:1.15}
+.hidden{display:none!important}
+.kick{font-size:11px;letter-spacing:2.2px;text-transform:uppercase;color:var(--gold);font-weight:700}
+.orn{display:flex;align-items:center;gap:10px;color:var(--gold);margin:4px 0 0}
+.orn::before,.orn::after{content:"";height:1px;flex:1;background:linear-gradient(90deg,transparent,var(--gold2),transparent)}
+
+/* header */
+.top{position:sticky;top:0;padding-top:calc(10px + env(safe-area-inset-top))!important;z-index:20;background:rgba(6,42,51,.95);backdrop-filter:blur(10px);color:#fff;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;display:flex;align-items:center;gap:8px}
+.top .brand{display:flex;align-items:center;gap:10px;flex:1;min-width:0;cursor:pointer}
+.top .brand b{font-family:var(--serif);font-size:20px;font-weight:600;white-space:nowrap;display:block;line-height:1}
+.top .brand small{display:block;font-size:9.5px;letter-spacing:1.2px;white-space:nowrap;text-transform:uppercase;opacity:.65;margin-top:3px}
+.pill{border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:6px 11px;font-size:12px;font-weight:600;color:#fff;display:flex;align-items:center;gap:5px}
+.pill.on{background:var(--gold);border-color:var(--gold);color:var(--deep)}
+.pill svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2}
+.banner{background:#fff4dc;color:#7a5410;font-size:12.5px;padding:8px 16px;border-bottom:1px solid #f0dfb5}
+
+/* bottom nav */
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:30;background:rgba(255,255,255,.97);backdrop-filter:blur(10px);border-top:1px solid var(--line);display:flex;align-items:flex-end;padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+.nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;font-size:10.5px;font-weight:600;color:var(--muted);border-radius:12px}
+.nav button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nav button.act{color:var(--teal)}
+.nav button.center .bub{width:52px;height:52px;border-radius:18px;background:linear-gradient(150deg,var(--gold2),var(--gold));display:grid;place-items:center;margin-top:-26px;box-shadow:0 8px 20px rgba(198,163,92,.45);color:var(--deep)}
+.nav button.center svg{stroke:var(--deep);width:24px;height:24px}
+.nav button.center.act .bub{background:linear-gradient(150deg,var(--sea),var(--teal))}
+.nav button.center.act svg{stroke:#fff}
+
+/* layout */
+.view{padding:18px 16px 24px}
+.sec{margin-top:38px}
+.sec-h{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:12px;gap:10px}
+.sec-h a,.link{font-size:13px;font-weight:600;color:var(--teal2);cursor:pointer;white-space:nowrap}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:16px}
+.muted{color:var(--muted)}
+.small{font-size:12.5px}
+.row{display:flex;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 18px;border-radius:13px;font-weight:600;font-size:15px;background:var(--teal);color:#fff;width:100%;text-decoration:none;transition:transform .12s}
+.btn:active{transform:scale(.98)}
+.btn.gold{background:linear-gradient(150deg,var(--gold2),var(--gold));color:var(--deep)}
+.btn.ghost{background:transparent;border:1.5px solid var(--teal);color:var(--teal)}
+.btn.wa{background:#1f9e57}
+.btn.sm{padding:8px 12px;font-size:13px;width:auto;border-radius:10px}
+.btn:disabled{opacity:.5}
+.tag{display:inline-block;font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--sand2);color:var(--teal)}
+.reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+
+/* hero */
+.hero{margin:-18px -16px 0;padding:150px 20px 70px;min-height:600px;display:flex;flex-direction:column;justify-content:flex-end;color:#fff;position:relative;overflow:hidden;
+  background:#062a33}
+.hero .ph{position:absolute;inset:0;background-position:center 55%;background-size:cover;transform:scale(1.06);animation:kb 18s ease-in-out infinite alternate}
+@keyframes kb{to{transform:scale(1.16) translateY(-10px)}}
+.hero .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,42,51,.15) 0%,rgba(6,42,51,.25) 35%,rgba(6,42,51,.88) 75%,#062a33 100%)}
+.hero>*:not(.ph):not(.shade):not(.waves){position:relative}
+.hero .sun{position:absolute;right:-30px;top:30px;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(228,204,148,.55),rgba(228,204,148,0) 70%);animation:pulse 6s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.12);opacity:.8}}
+.hero h1{font-size:42px;text-shadow:0 2px 20px rgba(0,0,0,.25);line-height:1.02;margin:12px 0 12px;position:relative}
+.hero h1 em{font-style:italic;color:var(--gold2)}
+.hero p{font-size:14.5px;opacity:.88;max-width:400px;position:relative}
+.hero .ctas{display:flex;gap:10px;margin-top:22px;position:relative}
+.trust{display:flex;gap:6px 14px;margin-top:18px;font-size:12px;opacity:.88;position:relative;flex-wrap:wrap}
+.trust span::before{content:"✓ ";color:var(--gold2)}
+.waves{position:absolute;left:0;bottom:-1px;width:200%;height:46px;display:flex}
+.waves svg{width:50%;height:100%}
+.w1{animation:drift 14s linear infinite;opacity:.35}
+.w2{animation:drift 9s linear infinite reverse;opacity:1}
+@keyframes drift{to{transform:translateX(-50%)}}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:-30px;position:relative;z-index:2}
+.stat{background:#fff;border-radius:14px;padding:12px 6px;text-align:center;box-shadow:var(--sh)}
+.stat b{display:block;font-family:var(--serif);font-size:22px;color:var(--teal);line-height:1.1}
+.stat span{font-size:11px;color:var(--muted);font-weight:600}
+
+/* modes / steps */
+.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.mode{background:#fff;border-radius:16px;padding:14px 10px;text-align:center;box-shadow:var(--sh)}
+.mode .ic{width:42px;height:42px;border-radius:13px;background:var(--sand2);display:grid;place-items:center;margin:0 auto 8px;font-size:20px}
+.mode b{display:block;font-size:13.5px}
+.mode span{font-size:11.5px;color:var(--muted)}
+.how{counter-reset:h}
+.how div{position:relative;padding:0 0 16px 46px}
+.how div::before{counter-increment:h;content:counter(h);position:absolute;left:0;top:0;width:32px;height:32px;border-radius:50%;background:var(--teal);color:#fff;display:grid;place-items:center;font-weight:700;font-size:14px}
+.how div::after{content:"";position:absolute;left:15px;top:34px;bottom:2px;width:2px;background:var(--line)}
+.how div:last-child::after{display:none}
+.how b{display:block}
+.how span{font-size:13px;color:var(--muted)}
+
+/* local card */
+.local{background:linear-gradient(160deg,#fff,var(--sand2));border-radius:var(--r);padding:18px;box-shadow:var(--sh);position:relative;overflow:hidden}
+.local .av{width:64px;height:64px;border-radius:20px;background:linear-gradient(150deg,var(--sea),var(--teal));color:#fff;display:grid;place-items:center;font-family:var(--serif);font-size:28px;font-weight:700;flex:0 0 64px}
+.local blockquote{font-family:var(--serif);font-size:19px;font-style:italic;line-height:1.3;margin:14px 0;color:var(--teal)}
+.langs{display:flex;gap:6px;flex-wrap:wrap}
+
+/* scroll rows */
+.hscroll{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -16px;padding:2px 16px 10px}
+.hscroll::-webkit-scrollbar{display:none}
+.act-card{flex:0 0 72%;scroll-snap-align:start;background:#fff;border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+.act-img{height:170px;display:grid;place-items:center;font-size:46px;position:relative}
+.act-body{padding:12px 14px 14px}
+.act-body b{display:block;font-size:15px}
+.price{font-weight:700;color:var(--teal)}
+.dest{flex:0 0 62%;scroll-snap-align:start;height:250px;border-radius:var(--r);position:relative;overflow:hidden;color:#fff;padding:14px;display:flex;flex-direction:column;justify-content:flex-end;box-shadow:var(--sh);cursor:pointer;text-align:left}
+.dest .e{position:absolute;right:12px;top:10px;font-size:40px;opacity:.9}
+.dest b{font-family:var(--serif);font-size:24px;line-height:1}
+.dest span{font-size:12px;opacity:.9;margin-top:4px}
+
+/* list items */
+.li{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.li:last-child{border-bottom:0}
+.li .ic{width:52px;height:52px;flex:0 0 52px;border-radius:15px;display:grid;place-items:center;font-size:22px}
+.li .t{flex:1;min-width:0}
+.li .t b{display:block;font-size:14.5px}
+.li .t span{font-size:12.5px;color:var(--muted)}
+
+/* chips */
+.chips{display:flex;gap:8px;overflow-x:auto;margin:0 -16px;padding:0 16px 4px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;padding:8px 14px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:13px;font-weight:600;color:var(--muted)}
+.chip.on{background:var(--teal);border-color:var(--teal);color:#fff}
+
+/* packages */
+.pkg{background:#fff;border-radius:var(--r);padding:16px;box-shadow:var(--sh);margin-bottom:12px;border:2px solid transparent}
+.pkg.feat{border-color:var(--gold)}
+.pkg .ph{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.pkg h3{font-size:22px}
+.pkg .pp{text-align:right;font-weight:700;color:var(--teal);font-size:17px;white-space:nowrap}
+.pkg .pp small{display:block;font-weight:500;font-size:11.5px;color:var(--muted)}
+.pkg ul{list-style:none;margin:10px 0 12px}
+.pkg li,.ticks li{font-size:13.5px;padding:3px 0 3px 22px;position:relative;list-style:none}
+.pkg li::before,.ticks li::before{content:"";position:absolute;left:2px;top:9px;width:10px;height:6px;border-left:2px solid var(--sea);border-bottom:2px solid var(--sea);transform:rotate(-45deg)}
+table.cmp{width:100%;border-collapse:collapse;font-size:12.5px;background:#fff;border-radius:14px;overflow:hidden}
+table.cmp th,table.cmp td{padding:8px 6px;text-align:center;border-bottom:1px solid var(--line)}
+table.cmp th{font-size:11px;color:var(--muted);font-weight:700}
+table.cmp td:first-child,table.cmp th:first-child{text-align:left;padding-left:12px}
+.yes{color:var(--ok);font-weight:700}.no{color:#c3cccd}
+
+/* forms */
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:6px}
+.inp{width:100%;padding:12px 13px;border:1.5px solid var(--line);border-radius:12px;background:#fff;font-size:15px;outline:none}
+.inp:focus{border-color:var(--sea)}
+textarea.inp{min-height:80px;resize:vertical}
+.seg{display:flex;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:3px;gap:3px}
+.seg button{flex:1;padding:9px 4px;border-radius:9px;font-size:13px;font-weight:600;color:var(--muted)}
+.seg button.on{background:var(--teal);color:#fff}
+.checks{display:flex;flex-wrap:wrap;gap:8px}
+.checks button{padding:8px 12px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-size:13px;font-weight:600;color:var(--muted)}
+.checks button.on{border-color:var(--teal);background:#e7f3f4;color:var(--teal)}
+.steps{display:flex;gap:6px;margin:4px 0 18px}
+.steps i{flex:1;height:4px;border-radius:4px;background:var(--line)}
+.steps i.on{background:var(--teal)}
+.stepper{display:flex;align-items:center;gap:12px}
+.stepper button{width:36px;height:36px;border-radius:10px;border:1.5px solid var(--line);background:#fff;font-size:18px;font-weight:600}
+.stepper b{min-width:22px;text-align:center}
+.search{position:relative}
+.search .inp{padding-left:40px}
+.search svg{position:absolute;left:13px;top:13px;width:18px;height:18px;stroke:var(--muted);fill:none;stroke-width:2}
+
+/* dark cards */
+.fx{background:linear-gradient(160deg,#0d4f5c,#062a33);color:#fff;border-radius:var(--r);padding:18px;position:relative;overflow:hidden}
+.fx .big{font-family:var(--serif);font-size:40px;font-weight:600;line-height:1}
+.fx .inp{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.25);color:#fff}
+.fx .inp::placeholder{color:rgba(255,255,255,.5)}
+.fx label{color:rgba(255,255,255,.75)}
+.tips li{font-size:13.5px;margin:7px 0 7px 18px}
+
+/* price board */
+.pb{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.pb:last-child{border-bottom:0}
+.pb .t{flex:1;min-width:0}
+.pb .t b{display:block;font-size:14.5px}
+.pb .t span{font-size:12px;color:var(--muted)}
+.pb .p{text-align:right;font-size:12.5px;white-space:nowrap}
+.pb .p s{color:var(--bad);opacity:.8}
+.pb .p b{display:block;color:var(--ok);font-size:15px}
+.save{font-size:11px;font-weight:700;background:#dff2e6;color:#20723f;border-radius:999px;padding:2px 7px}
+
+/* reviews */
+.rv{flex:0 0 82%;scroll-snap-align:start;background:#fff;border-radius:var(--r);padding:16px;box-shadow:var(--sh)}
+.stars{color:var(--gold);letter-spacing:2px;font-size:14px}
+.rv p{font-family:var(--serif);font-size:18px;line-height:1.3;margin:8px 0 10px;font-style:italic}
+
+/* faq */
+details{background:#fff;border-radius:14px;margin-bottom:8px;box-shadow:var(--sh)}
+summary{list-style:none;padding:14px 44px 14px 16px;font-weight:600;font-size:14.5px;cursor:pointer;position:relative}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";position:absolute;right:16px;top:10px;font-size:22px;color:var(--teal);font-weight:400;transition:transform .2s}
+details[open] summary::after{transform:rotate(45deg)}
+details > div{padding:0 16px 14px;font-size:13.5px;color:var(--muted)}
+
+/* phrases */
+.ph-card{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.ph-card:last-child{border-bottom:0}
+.ph-card .t{flex:1}
+.ph-card .t b{display:block;font-size:15px;color:var(--teal)}
+.ph-card .t span{font-size:12.5px;color:var(--muted)}
+.ph-card .ar{font-family:var(--ar);font-size:20px;direction:rtl;color:var(--ink)}
+
+/* weather */
+.wx{display:flex;align-items:flex-end;gap:4px;height:150px;margin-top:12px}
+.wx>div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:3px}
+.wx .bars{display:flex;gap:2px;align-items:flex-end;width:100%;height:100%}
+.wx i{flex:1;border-radius:5px 5px 2px 2px;background:linear-gradient(180deg,var(--gold2),var(--gold));display:block}
+.wx i.sea{background:linear-gradient(180deg,#7fd0da,var(--sea))}
+.wx small{font-size:9.5px;color:var(--muted);font-weight:600}
+.wx b{font-size:10px;color:var(--ink)}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+
+/* trip */
+.status{display:flex;gap:4px;margin:12px 0}
+.status div{flex:1;text-align:center;font-size:10.5px;font-weight:600;color:var(--muted)}
+.status div i{display:block;height:5px;border-radius:4px;background:var(--line);margin-bottom:5px}
+.status div.on{color:var(--teal)}
+.status div.on i{background:var(--teal)}
+table.lines{width:100%;border-collapse:collapse;font-size:13.5px}
+table.lines td{padding:8px 0;border-bottom:1px solid var(--line)}
+table.lines td:last-child{text-align:right;font-weight:600;white-space:nowrap}
+table.lines tr.tot td{border-bottom:0;font-weight:700;font-size:15px;color:var(--teal)}
+.tl{position:relative;padding-left:18px}
+.tl::before{content:"";position:absolute;left:5px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.tl .ti{position:relative;padding:6px 0 10px}
+.tl .ti::before{content:"";position:absolute;left:-17px;top:11px;width:10px;height:10px;border-radius:50%;background:var(--sea);border:2px solid #fff}
+.tl .ti b{font-size:14px}
+.tl .ti span{display:block;font-size:12.5px;color:var(--muted)}
+.pack{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:14px;cursor:pointer}
+.pack i{width:22px;height:22px;border-radius:7px;border:2px solid var(--line);flex:0 0 22px;display:grid;place-items:center;font-style:normal;font-size:13px;color:#fff}
+.pack.on i{background:var(--ok);border-color:var(--ok)}
+.pack.on span{text-decoration:line-through;color:var(--muted)}
+.rate{display:flex;gap:6px;font-size:28px;color:#d3d9da}
+.rate button.on{color:var(--gold)}
+
+/* advisor */
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kpi{background:#fff;border-radius:14px;padding:14px;box-shadow:var(--sh)}
+.kpi span{font-size:12px;color:var(--muted);font-weight:600}
+.kpi b{display:block;font-family:var(--serif);font-size:30px;line-height:1.1;color:var(--teal)}
+.st{font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;white-space:nowrap}
+.st-new{background:#fdecd2;color:#8a5a0c}.st-proposal{background:#e3effd;color:#1f5aa8}.st-booked{background:#dff2e6;color:#20723f}
+.st-travelling{background:#e7f3f4;color:var(--teal)}.st-done{background:#eceeee;color:#5d7176}.st-cancelled{background:#f7e1dd;color:var(--bad)}
+
+/* sheet */
+.sheet-bg{position:fixed;inset:0;background:rgba(6,42,51,.45);z-index:50;display:flex;align-items:flex-end;justify-content:center;animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+.sheet{background:var(--bg);width:100%;max-width:480px;max-height:92vh;overflow:auto;border-radius:24px 24px 0 0;padding:10px 16px calc(24px + env(safe-area-inset-bottom));animation:up .25s ease}
+@keyframes up{from{transform:translateY(40px)}}
+.sheet .grab{position:relative;z-index:2;width:40px;height:5px;border-radius:5px;background:#cfd8d9;margin:2px auto 14px}
+.dhero{margin:-10px -16px 16px;height:260px;display:flex;align-items:flex-end;padding:16px;color:#fff;position:relative;border-radius:24px 24px 0 0;overflow:hidden}
+.dhero .e{position:absolute;right:16px;top:16px;font-size:56px}
+.toast{position:fixed;left:50%;bottom:104px;transform:translateX(-50%);background:var(--deep);color:#fff;padding:11px 16px;border-radius:12px;font-size:13.5px;z-index:60;box-shadow:var(--sh);max-width:90%;animation:fade .2s}
+.empty{text-align:center;padding:24px 10px;color:var(--muted);font-size:13.5px}
+footer{text-align:center;font-size:11.5px;color:var(--muted);padding:28px 16px 8px}
+footer .mono{font-family:var(--serif);font-size:30px;color:var(--teal);font-weight:700;line-height:1}
+.code{font-family:ui-monospace,Menlo,monospace;font-weight:700;letter-spacing:1px;background:var(--sand2);padding:3px 8px;border-radius:8px;color:var(--teal)}
+.gal{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gal{grid-auto-flow:dense}
+.gal figure{cursor:zoom-in;position:relative;border-radius:18px;overflow:hidden;box-shadow:var(--sh);margin:0}
+.gal figure img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s}
+.gal figure:hover img{transform:scale(1.05)}
+.gal figure.tall{grid-row:span 2}
+.gal figcaption{position:absolute;left:0;right:0;bottom:0;padding:22px 10px 9px;font-size:12px;font-weight:600;color:#fff;background:linear-gradient(transparent,rgba(6,42,51,.75))}
+.split{border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);background:#fff}
+.split .pic{height:200px;background-size:cover;background-position:center}
+.insta{background:linear-gradient(135deg,#0d4f5c,#14707f 50%,#c6a35c);color:#fff;border-radius:var(--r);padding:20px;text-align:center}
+.insta h3{font-size:24px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div id="splash"><img src="img/logo.png" alt=""><b>Me &amp; You</b><small>Tours &amp; Experiences</small></div>
+<div class="app" id="app">
+  <header class="top">
+    <div class="brand" data-go="home">
+      <img src="img/logo.png" alt="Me & You" width="40" height="40" style="border-radius:50%;box-shadow:0 0 0 1.5px #c6a35c">
+      <div><b>Me &amp; You</b><small>Tours &amp; Experiences</small></div>
+    </div>
+    <button class="pill" id="tripBtn"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>My trip</button>
+    <button class="pill" id="modeBtn">Advisor</button>
+  </header>
+  <div class="banner hidden" id="banner"></div>
+  <main id="view"></main>
+  <nav class="nav" id="nav"></nav>
+</div>
+
+<script>
+/* ================= CONTENT ================= */
+const ACTIVITIES=[
+ {id:"giftun",cat:"Sea",name:"Giftun Island snorkel trip",ic:"🐠",bg:"#d7eef1",from:30,dur:"Full day",note:"Shared boat, lunch, gear and hotel pick-up"},
+ {id:"orange",cat:"Sea",name:"Orange Bay beach & snorkel",ic:"🏝️",bg:"#e3f1ee",from:35,dur:"Full day",note:"White sand, two snorkel stops"},
+ {id:"privateboat",cat:"Sea",name:"Private boat charter",ic:"🛥️",bg:"#dfe9f4",from:180,dur:"4–6 h",note:"Whole boat for your group, price per boat"},
+ {id:"dolphin",cat:"Sea",name:"Dolphin House speedboat",ic:"🐬",bg:"#d9ecf6",from:45,dur:"Half day",note:"Responsible operator only, no feeding or chasing"},
+ {id:"dive",cat:"Sea",name:"Intro dive with a PADI centre",ic:"🤿",bg:"#d4e7ec",from:55,dur:"Half day",note:"No experience needed"},
+ {id:"seascope",cat:"Sea",name:"Glass-bottom / semi-submarine",ic:"🚤",bg:"#dcecef",from:20,dur:"2 h",note:"Great for kids and non-swimmers"},
+ {id:"quad",cat:"Desert",name:"Desert quad & Bedouin dinner",ic:"🏜️",bg:"#f3e6cf",from:35,dur:"5 h",note:"Sunset ride, camel, dinner, show"},
+ {id:"horse",cat:"Desert",name:"Horse riding on the beach",ic:"🐎",bg:"#efe5d6",from:30,dur:"2 h",note:"Beginners welcome"},
+ {id:"stars",cat:"Desert",name:"Stargazing in the desert",ic:"✨",bg:"#e4e1ee",from:40,dur:"Evening",note:"Away from the lights, with dinner"},
+ {id:"luxor",cat:"Culture",name:"Luxor day trip",ic:"🏛️",bg:"#f1e3c9",from:75,dur:"Full day",note:"Karnak, Valley of the Kings, licensed Egyptologist"},
+ {id:"cairo",cat:"Culture",name:"Cairo, pyramids & Grand Egyptian Museum",ic:"🔺",bg:"#f0e2c4",from:120,dur:"Full day",note:"Licensed guide, early start"},
+ {id:"balloon",cat:"Culture",name:"Sunrise balloon over Luxor",ic:"🎈",bg:"#f6e3d3",from:90,dur:"Early morning",note:"Licensed balloon company only"},
+ {id:"market",cat:"Local",name:"Old town market with your local",ic:"🧺",bg:"#f4e4d8",from:0,dur:"3 h",note:"Fair prices and haggling help"},
+ {id:"food",cat:"Local",name:"Street food evening",ic:"🥙",bg:"#f6e2d2",from:0,dur:"3 h",note:"Koshari, fuul, fresh fish — locals' spots"},
+ {id:"beachclub",cat:"Local",name:"Beach club day",ic:"⛱️",bg:"#e6f0f0",from:20,dur:"Day",note:"We pick the club that fits your style"},
+ {id:"hammam",cat:"Local",name:"Hammam & spa afternoon",ic:"🧖",bg:"#efe6e1",from:30,dur:"3 h",note:"Traditional scrub and massage"},
+ {id:"transfer",cat:"Transfer",name:"Airport transfer",ic:"🚐",bg:"#e5ebee",from:25,dur:"One way",note:"Licensed tourist vehicle, fixed price"},
+ {id:"driver",cat:"Transfer",name:"Private driver for the day",ic:"🚘",bg:"#e8eaee",from:60,dur:"8 h",note:"Licensed tourist vehicle"}
+];
+const CATS=["All","Sea","Desert","Culture","Local","Transfer"];
+const IMG={giftun:"giftunview",orange:"orangebay",privateboat:"boats",dolphin:"dolphins2",quad:"bedouin",balloon:"balloon",luxor:"luxor",cairo:"pyramids",beachclub:"beachbar",seascope:"jetty",hurghada:"orangebay",makadi:"watertables",elgouna:"elgouna",marsaalam:"marsaalam",sharm:"sharm",aswan:"aswan"};
+const CREDIT={"elgouna": {"a": "Marc Ryckaert", "l": "CC BY 4.0", "u": "https://commons.wikimedia.org/wiki/File:El_Gouna_Hill_Villas_R10.jpg"}, "marsaalam": {"a": "Marc Ryckaert (MJJR)", "l": "CC BY 3.0", "u": "https://commons.wikimedia.org/wiki/File:Marsa_Alam_R02.jpg"}, "sharm": {"a": "Marc Ryckaert", "l": "CC BY 3.0", "u": "https://commons.wikimedia.org/wiki/File:Naama_Bay_R01.jpg"}, "aswan": {"a": "Vyacheslav Argenberg", "l": "CC BY 4.0", "u": "https://commons.wikimedia.org/wiki/File:Nile_River,_Feluccas_2,_Aswan,_Egypt.jpg"}};
+const GAL=["dolphins","pyramids","luxor","balloon","orangebay","swing","gem2","beachbar","memnon","jetty","tut","boats","giftunview","gizatemple","watertables","bedouin","gem1","signpost","dolphins2","deck"];
+const CAP={dolphins:"Dolphins in the Red Sea",pyramids:"The Pyramids of Giza",luxor:"Luxor Temple",balloon:"Sunrise balloons over Luxor",orangebay:"Orange Bay",swing:"Island swing",gem2:"Grand Egyptian Museum",beachbar:"Beach bar, Giftun",memnon:"Colossi of Memnon",jetty:"Crystal-clear shallows",tut:"Tutankhamun's treasures",boats:"Speedboats at the sandbank",giftunview:"Giftun Island",gizatemple:"Granite temple, Giza",watertables:"Lunch with your feet in the sea",bedouin:"Bedouin camp",gem1:"Pharaohs at the GEM",signpost:"Beach day",dolphins2:"Dolphins alongside the boat",deck:"Island beach club"};
+const TALL=new Set(["dolphins","balloon","swing","memnon","giftunview","bedouin"]);
+const IMGDATA=window.IMGDATA||{};const P=n=>IMGDATA[n]||("img/"+n+".jpg");
+const photo=(id,fallback,shade=.7)=>IMG[id]?`linear-gradient(180deg,rgba(6,42,51,0) 30%,rgba(6,42,51,${shade})),url(${P(IMG[id])}) center/cover`:fallback;
+const PACKAGES=[
+ {id:"digital",name:"Digital Advisor",price:"€39",per:"per trip",items:["Personal intake call","Your holiday plan, day by day","7 days of WhatsApp advice","Restaurant & activity tips"]},
+ {id:"assistant",name:"Local Assistant",price:"€79",per:"per trip",items:["Everything in Digital Advisor","We book excursions & transfers","Restaurant reservations","Price checks before you pay"]},
+ {id:"companion",name:"Personal Companion",price:"€69 / €119",per:"half day / full day",feat:true,items:["Your local comes with you","Markets, restaurants, the city","Help with haggling & language","Safe currency exchange together"]},
+ {id:"full",name:"Full Holiday Service",price:"€349",per:"per week",items:["Local Assistant included","Reachable every day","2 full companion days","Help with anything unexpected"]},
+ {id:"vip",name:"VIP Experience",price:"from €699",per:"per week",items:["Your advisor on call daily","Private driver & private boat","Premium restaurants & clubs","Fully tailor-made"]}
+];
+const CMP=[["Holiday plan",1,1,1,1,1],["WhatsApp advice",1,1,1,1,1],["Bookings arranged",0,1,0,1,1],["Local comes along",0,0,1,1,1],["Daily availability",0,0,0,1,1],["Private driver & boat",0,0,0,0,1]];
+const DESTS=[
+ {id:"hurghada",name:"Hurghada",e:"🐠",g:"linear-gradient(160deg,#2aa3b3,#0d4f5c)",tag:"Reefs, islands & the old town",best:["Snorkelling","Families","Nightlife"],hi:["Day trips to Giftun and Orange Bay","El Dahar old town and its market","Marina walk at sunset","Base for Luxor and desert trips"],tip:"Stay in town for restaurants and life; stay south for calm beaches.",dist:"Own international airport"},
+ {id:"elgouna",name:"El Gouna",e:"⛵",g:"linear-gradient(160deg,#4fb6c2,#156b78)",tag:"Lagoon town, kitesurf & cafés",best:["Couples","Kitesurf","Walkable"],hi:["Lagoons by boat taxi","Abu Tig Marina","Kitesurf schools","Car-free feeling"],tip:"Rent a bike or tuk-tuk — everything is close.",dist:"About 30 min from Hurghada airport"},
+ {id:"makadi",name:"Makadi & Sahl Hasheesh",e:"🏖️",g:"linear-gradient(160deg,#7ccfc9,#1f7f86)",tag:"Quiet bays & house reefs",best:["Relaxing","House reefs","All-inclusive"],hi:["Snorkel right from the beach","Sahl Hasheesh promenade","Quiet resort life"],tip:"Book one or two days out — it can feel far from local life.",dist:"About 30–45 min from Hurghada airport"},
+ {id:"marsaalam",name:"Marsa Alam",e:"🐢",g:"linear-gradient(160deg,#3c9fb0,#08323b)",tag:"Wild coast, turtles & dugongs",best:["Divers","Nature","Calm"],hi:["Abu Dabbab bay — turtles, sometimes a dugong","Wadi el Gemal national park","Dolphin reefs (responsible trips)"],tip:"Bring reef-safe sunscreen and patience — nature, not a show.",dist:"Own airport; about 3.5–4 h by road from Hurghada"},
+ {id:"sharm",name:"Sharm el-Sheikh",e:"🪸",g:"linear-gradient(160deg,#58a9c9,#1d4f73)",tag:"Coral, Sinai mountains & Naama Bay",best:["Diving","Nightlife","Mountains"],hi:["Ras Mohammed national park","Tiran island boat trips","Old Market","Sunrise on Mount Sinai (long night trip)"],tip:"Ras Mohammed is a must for snorkellers.",dist:"Own international airport"},
+ {id:"luxor",name:"Luxor",e:"🏛️",g:"linear-gradient(160deg,#d9b46b,#8a5a24)",tag:"The world's greatest open-air museum",best:["History","Balloon","Nile"],hi:["Karnak and Luxor temples","Valley of the Kings","West Bank by bike","Sunrise balloon ride"],tip:"Start early: temples are magical — and cool — before 9.",dist:"About 4 h by road from Hurghada"},
+ {id:"cairo",name:"Cairo & Giza",e:"🔺",g:"linear-gradient(160deg,#cfa86a,#6b4a22)",tag:"Pyramids, museums & a city that never sleeps",best:["History","Food","Markets"],hi:["Pyramids of Giza","Grand Egyptian Museum","Khan el-Khalili and Al-Muizz Street","Nile felucca at sunset"],tip:"Use ride-hailing apps in the city and agree prices up front for everything else.",dist:"About 1 h flight from Hurghada"},
+ {id:"aswan",name:"Aswan",e:"🛶",g:"linear-gradient(160deg,#e0a77a,#7a3f2a)",tag:"Nubian villages & the slow Nile",best:["Nile","Culture","Slow travel"],hi:["Philae temple","Nubian village by boat","Felucca on the Nile","Abu Simbel (early trip)"],tip:"The most relaxed city in Egypt — give it two nights.",dist:"Via Luxor or a domestic flight"}
+];
+const GEMS=[
+ {e:"🕌",n:"El Dahar old town",p:"Hurghada",d:"Real local life: spice shops, tea houses, the old mosque. Go late afternoon."},
+ {e:"🌅",n:"Sunset from the Marina",p:"Hurghada",d:"Free and beautiful — then dinner where locals eat, not on the boulevard."},
+ {e:"🐢",n:"Abu Dabbab bay",p:"Marsa Alam",d:"Snorkel from the beach with sea turtles grazing seagrass."},
+ {e:"🏜️",n:"Wadi el Gemal",p:"Marsa Alam",d:"Valley of camels: gazelles, acacias and Bedouin tea."},
+ {e:"🚲",n:"Luxor West Bank by bike",p:"Luxor",d:"Sugar cane fields, villages and temples without the coach crowds."},
+ {e:"🏮",n:"Al-Muizz Street at night",p:"Cairo",d:"Mediaeval Cairo lit up — the most atmospheric walk in the city."},
+ {e:"🐋",n:"Wadi el Hitan",p:"Fayoum, from Cairo",d:"Whale fossils in the middle of the desert. A UNESCO site few visit."}
+];
+const PHRASES=[
+ ["Hello","Ahlan","أهلاً"],["Good morning","Sabah el kheir","صباح الخير"],["Thank you","Shukran","شكراً"],["No, thank you","La', shukran","لا، شكراً"],
+ ["How much?","Bikam?","بكام؟"],["Too expensive!","Ghali awi!","غالي أوي!"],["Your last price?","Akher se'r?","آخر سعر؟"],["The bill, please","El hesab, law samaht","الحساب لو سمحت"],
+ ["Water","Mayya","مية"],["Where is…?","Fein…?","فين…؟"],["Let's go","Yalla","يلا"],["No problem","Mafish moshkela","مفيش مشكلة"],
+ ["Enough / that's it","Khalas","خلاص"],["Delicious!","Gamil awi!","جميل أوي!"],["Goodbye","Ma'a salama","مع السلامة"]
+];
+const TRAPS=[
+ {e:"🧴",t:"The 'free' perfume or papyrus visit",d:"A friendly stranger or driver brings you to a shop 'just to look'. Prices include their commission. Say la', shukran and keep walking."},
+ {e:"🚪",t:"'That place is closed today'",d:"Someone tells you the museum or market is closed and offers an alternative. Check yourself — it's usually open."},
+ {e:"🐪",t:"The camel ride that costs more at the end",d:"Agree the full price, for how long and for how many people, before you get on. Pay at the end."},
+ {e:"📸",t:"Photos that turn into a fee",d:"Posing with a camel, a costume or a 'guard' often ends with a request for money. Ask first or decline."},
+ {e:"🎁",t:"The gift that isn't free",d:"A bracelet or scarf is put in your hand as a 'gift'. Hand it back with a smile."},
+ {e:"💱",t:"Exchange on the street",d:"Better rate, fewer notes — or fake ones. Only banks and licensed bureaus."},
+ {e:"🚕",t:"The taxi without a price",d:"No meter, no price agreed = a surprise at the end. Agree first, or use a ride-hailing app in cities."},
+ {e:"🎫",t:"Unofficial 'guides' at sites",d:"Licensed guides carry an official ID. Anyone else is not allowed to guide you inside."}
+];
+const ESSENTIALS=[
+ {e:"🛂",t:"Visa",d:"Many visitors from the EU can get a visa on arrival or an e-visa. Rules change — check the official portal visa2egypt.gov.eg before you go."},
+ {e:"💵",t:"Tipping (baksheesh)",d:"Tipping is part of daily life: hotel staff, drivers, boat crews, toilets. Keep small notes ready. Ask your local for today's normal amounts."},
+ {e:"👗",t:"What to wear",d:"Beachwear at resorts is fine. In towns, markets, mosques and temples: cover shoulders and knees. A light scarf is handy."},
+ {e:"💧",t:"Water & food",d:"Drink bottled water. Peel it, cook it or leave it — but do try the street food your local recommends."},
+ {e:"☀️",t:"Sun",d:"The sun is strong all year. Hat, sunglasses, reef-safe sunscreen and water on every trip."},
+ {e:"📱",t:"SIM & internet",d:"A local SIM or eSIM is cheap and makes WhatsApp, maps and ride-hailing easy. Your local can help you set it up."},
+ {e:"🚁",t:"Drones",d:"Drones are not allowed without a permit and can be confiscated at the airport. Leave yours at home."},
+ {e:"🌙",t:"Ramadan",d:"During Ramadan, eat and drink discreetly in public during the day. Evenings are festive — a special time to visit."}
+];
+const PACKLIST=["Passport + copy","Euros in cash (small & large notes)","Bank card + backup card","Reef-safe sunscreen","Hat & sunglasses","Water shoes","Light scarf / cover-up","Power bank","Medication & plasters","Travel insurance details"];
+const WX={air:[22,23,25,29,32,34,35,35,33,30,26,23],sea:[22,21,22,23,25,27,28,29,28,27,25,23]};
+const MONTHS=["J","F","M","A","M","J","J","A","S","O","N","D"];
+const FAQ=[
+ ["Are you a tour guide?","No — and that's the point. We are your personal travel partner. Excursions and guided visits are run by licensed partners and licensed Egyptologists; your local plans, arranges, compares prices and comes along where you want company."],
+ ["How do you earn money?","From the service fee of your package, and from a transparent partner fee on excursions and transfers we book. You never pay more than the normal price — we show it on your proposal."],
+ ["Do you exchange money for me?","Never personally. We check today's rates at licensed banks and bureaus, tell you where it's fair, and can walk there with you to check the amount together."],
+ ["How do I pay?","By payment link or card through our licensed partner. No need to carry large amounts of cash, and never cash to your advisor."],
+ ["Can you help if something goes wrong?","Yes. Doctor, pharmacy, lost luggage, a problem at the hotel — message your local and we help you sort it out, in Arabic if needed."],
+ ["What if I want to cancel?","Free cancellation up to 48 hours before a service, unless a supplier has stricter rules — those are always shown in your proposal."],
+ ["Which areas do you cover?","We start on the Red Sea coast around Hurghada and arrange day trips to Luxor and Cairo. More destinations follow."]
+];
+const STATUSES=["new","proposal","booked","travelling","done","cancelled"];
+const ST_LABEL={new:"New",proposal:"Proposal sent",booked:"Booked",travelling:"Travelling",done:"Done",cancelled:"Cancelled"};
+const DEST_OPTS=["Hurghada","El Gouna","Makadi Bay","Sahl Hasheesh","Marsa Alam","Sharm el-Sheikh","Luxor","Cairo","Other"];
+
+/* ================= STATE ================= */
+const COLS={requests:"code",suppliers:"id",priceChecks:"id",reviewSubs:"id",reviews:"id"};
+const S={tab:"home",mode:"client",cat:"All",q:"",guide:"essentials",advTab:"overview",content:"prices",biz:"suppliers",reqFilter:"open",
+ db:null,canWrite:true,isAdvisor:true,demo:true,loaded:false,
+ requests:[],suppliers:[],priceChecks:[],reviewSubs:[],reviews:[],settings:{},
+ wish:new Set(),packed:new Set(),form:null,step:0,myCode:null,openReq:null,openSup:null,openDest:null,rating:5,reviewSent:false};
+const $=s=>document.querySelector(s);
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const eur=n=>{const v=Math.round((+n||0)*100)/100;return "€"+v.toLocaleString("nl-NL",{minimumFractionDigits:v%1?2:0,maximumFractionDigits:2})};
+const egp=n=>(Math.round(+n||0)).toLocaleString("en-US")+" EGP";
+const fmtDate=d=>{if(!d)return"–";const x=new Date(d+"T12:00:00");return isNaN(x)?d:x.toLocaleDateString("en-GB",{day:"numeric",month:"short"})};
+const range=(a,b)=>b?fmtDate(a)+" – "+fmtDate(b):"from "+fmtDate(a);
+const today=()=>new Date().toISOString().slice(0,10);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const num=v=>parseFloat(String(v??"").replace(",","."));
+function toast(t){document.querySelectorAll(".toast").forEach(x=>x.remove());const el=document.createElement("div");el.className="toast";el.textContent=t;document.body.appendChild(el);setTimeout(()=>el.remove(),2800)}
+try{JSON.parse(localStorage.getItem("my_wish")||"[]").forEach(x=>S.wish.add(x));JSON.parse(localStorage.getItem("my_pack")||"[]").forEach(x=>S.packed.add(x));S.myCode=localStorage.getItem("my_code")}catch(e){}
+function saveLocal(){try{localStorage.setItem("my_wish",JSON.stringify([...S.wish]));localStorage.setItem("my_pack",JSON.stringify([...S.packed]));if(S.myCode)localStorage.setItem("my_code",S.myCode);else localStorage.removeItem("my_code")}catch(e){}}
+
+/* ================= DATA ================= */
+const DATA={
+ async set(col,obj){const k=COLS[col];if(S.db)await S.db.collection(col).doc(obj[k]).set(obj);else{const a=S[col];const i=a.findIndex(x=>x[k]===obj[k]);i>=0?a[i]=obj:a.push(obj);render()}},
+ async update(col,id,patch){const k=COLS[col];if(S.db)await S.db.collection(col).doc(id).update(patch);else{Object.assign(S[col].find(x=>x[k]===id),patch);render()}},
+ async del(col,id){const k=COLS[col];if(S.db)await S.db.collection(col).doc(id).delete();else{S[col]=S[col].filter(x=>x[k]!==id);render()}},
+ async settings(patch){const next={...S.settings,...patch};if(S.db)await S.db.doc("config/settings").set(next);else{S.settings=next;render()}}
+};
+function saveDemo(){if(S.db)return;try{const o={settings:S.settings};Object.keys(COLS).forEach(c=>o[c]=S[c]);localStorage.setItem("my_demo_v5",JSON.stringify(o))}catch(e){}}
+["set","update","del","settings"].forEach(k=>{const f=DATA[k];DATA[k]=async(...a)=>{await f(...a);saveDemo()}});
+async function guarded(fn,okMsg){try{await fn();if(okMsg)toast(okMsg);return true}catch(e){
+  if(e&&e.code==="invalid_argument"){S.canWrite=false;toast("You can view this, but not change it.")}
+  else if(e&&e.code==="quota_exceeded")toast("Storage is full — remove old items first.");
+  else toast("Could not save. Please try again.");render();return false}}
+
+async function initData(){
+  let db=null,user=null;
+  try{db=await hostApi.use("db")}catch(e){}
+  try{user=await hostApi.use("user")}catch(e){}
+  if(user){try{S.isAdvisor=!!(await user.canEdit())}catch(e){}try{if((await user.can("data.write"))===false)S.canWrite=false}catch(e){}}
+  if(!db){S.loaded=true;seedDemo();render();return}
+  S.db=db;S.demo=false;
+  const timer=setTimeout(()=>{if(!S.loaded)showBanner("Data can't be reached yet — showing what is available.")},10000);
+  const total=Object.keys(COLS).length+1;let got=0;
+  const done=()=>{if(++got>=total){S.loaded=true;clearTimeout(timer);hideBanner()}};
+  const wrap=f=>{let d=false;return s=>{f(s);if(!d&&!s.metadata.fromCache){d=true;done()}render()}};
+  const err=()=>{clearTimeout(timer);S.loaded=true;showBanner("Live data is unavailable right now.");render()};
+  Object.keys(COLS).forEach(c=>db.collection(c).onSnapshot(wrap(s=>{S[c]=s.docs.map(d=>d.data())}),err));
+  db.doc("config/settings").onSnapshot(wrap(s=>{S.settings=s.exists?s.data():{}}),err);
+}
+function showBanner(t){const b=$("#banner");b.textContent=t;b.classList.remove("hidden")}
+function hideBanner(){$("#banner").classList.add("hidden")}
+function seedDemo(){
+  try{const o=JSON.parse(localStorage.getItem("my_demo_v5")||"null");if(o&&o.requests){S.settings=o.settings||{};Object.keys(COLS).forEach(c=>S[c]=o[c]||[]);return}}catch(e){}
+  S.settings={advisorName:"Hassan Abdo",bio:"",languages:"",base:"Hurghada",whatsapp:"",eurEgp:"60",usdEgp:"52",ratesDate:today()};
+  S.requests=[{code:"MY-DEMO",name:"Demo traveller",email:"",whatsapp:"",lang:"English",destination:"Hurghada",arrival:today(),departure:"",hotel:"",adults:2,kids:0,budget:"Mid",activities:["giftun","quad"],companion:"Half days",currencyHelp:true,notes:"Example request",package:"companion",status:"proposal",createdAt:Date.now(),
+   items:[{label:"Personal Companion – 2 half days",type:"fee",price:138,commission:0},{label:"Giftun Island snorkel trip (2 p.)",type:"excursion",price:60,commission:15},{label:"Airport transfer",type:"transfer",price:25,commission:10}],
+   itinerary:[{date:today(),time:"14:00",title:"Arrival & airport transfer",note:"Driver waits with a Me & You sign"},{date:today(),time:"18:30",title:"Welcome walk + currency exchange together",note:"Bring your passport"}]}];
+}
+
+/* ================= NAV ================= */
+const ICONS={
+ home:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
+ explore:'<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>',
+ plan:'<path d="M12 5v14M5 12h14"/>',
+ money:'<rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v5M18 9.5v5"/>',
+ guide:'<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/>',
+ overview:'<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>',
+ requests:'<path d="M4 5h16M4 12h16M4 19h10"/>',
+ agenda:'<rect x="4" y="4" width="16" height="17" rx="2"/><path d="M8 2v4M16 2v4M4 10h16"/>',
+ content:'<path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.9z"/>',
+ business:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'
+};
+const CLIENT_TABS=[["home","Home"],["explore","Explore"],["plan","Plan"],["money","Money"],["guide","Guide"]];
+const ADV_TABS=[["overview","Overview"],["requests","Requests"],["agenda","Agenda"],["content","Content"],["business","Business"]];
+const ALL_CLIENT=["home","explore","plan","money","guide","trip"];
+function renderNav(){
+  const tabs=S.mode==="client"?CLIENT_TABS:ADV_TABS;const cur=S.mode==="client"?S.tab:S.advTab;
+  $("#nav").innerHTML=tabs.map(([k,l])=>k==="plan"?`<button data-nav="plan" class="center ${cur===k?"act":""}"><span class="bub"><svg viewBox="0 0 24 24">${ICONS.plan}</svg></span>${l}</button>`:`<button data-nav="${k}" class="${cur===k?"act":""}"><svg viewBox="0 0 24 24">${ICONS[k]}</svg>${l}</button>`).join("");
+  const mb=$("#modeBtn");mb.textContent=S.mode==="client"?"Advisor":"Traveller";mb.classList.toggle("on",S.mode==="advisor");
+  mb.classList.toggle("hidden",!S.isAdvisor&&S.mode==="client");
+  $("#tripBtn").classList.toggle("hidden",S.mode!=="client");$("#tripBtn").classList.toggle("on",S.tab==="trip");
+}
+function go(tab){if(S.mode==="client")S.tab=tab;else S.advTab=tab;closeSheet(true);window.scrollTo(0,0);render()}
+function routeStr(){if(S.mode==="advisor")return S.openReq?"/advisor/request/"+S.openReq:"/advisor/"+S.advTab;
+ if(S.openDest)return "/destination/"+S.openDest;if(S.zoom)return "/photo/"+S.zoom;return S.tab==="home"?"/":"/"+S.tab}
+let routing=false;
+function syncHash(){if(routing)return;const h="#"+routeStr();if(location.hash===h||(h==="#/"&&!location.hash))return;try{history.pushState(null,"",h)}catch(e){}}
+function applyRoute(){routing=true;try{const parts=(location.hash||"").replace(/^#\/?/,"").split("/").filter(Boolean);
+ S.openReq=null;S.openSup=null;S.openDest=null;S.zoom=null;const sh=document.getElementById("sheet");if(sh)sh.remove();
+ if(!parts.length){S.mode="client";S.tab="home"}
+ else if(parts[0]==="advisor"){S.mode="advisor";if(parts[1]==="request"&&parts[2]){S.advTab="requests";S.openReq=decodeURIComponent(parts[2])}else if(ADV_TABS.some(([k])=>k===parts[1]))S.advTab=parts[1]}
+ else if(parts[0]==="destination"&&DESTS.some(d=>d.id===parts[1])){S.mode="client";S.openDest=parts[1]}
+ else if(parts[0]==="photo"&&GAL.includes(parts[1])){S.mode="client";S.zoom=parts[1]}
+ else if(ALL_CLIENT.includes(parts[0])){S.mode="client";S.tab=parts[0]}
+ else if(ADV_TABS.some(([k])=>k===parts[0])){S.mode="advisor";S.advTab=parts[0]}
+ render();if(S.openDest||S.zoom||S.openReq)renderSheet()}finally{routing=false}}
+
+/* ================= HELPERS ================= */
+function waLink(text){const n=(S.settings.whatsapp||"").replace(/[^\d]/g,"");return n?`https://wa.me/${n}?text=${encodeURIComponent(text)}`:null}
+function waButton(text,label="WhatsApp your local",cls="wa"){const l=waLink(text);return l?`<a class="btn ${cls}" href="${l}" target="_blank" rel="noopener">💬 ${label}</a>`:`<button class="btn ${cls}" data-act="nowa">💬 ${label}</button>`}
+function secH(kick,title,link,linkLabel){return `<div class="sec-h"><div><div class="kick">${kick}</div><h2>${title}</h2></div>${link?`<a data-go="${link}">${linkLabel||"All"} →</a>`:""}</div>`}
+const stars=n=>"★".repeat(Math.round(n||0))+"☆".repeat(5-Math.round(n||0));
+function actCard(a){return `<div class="act-card"><div class="act-img" style="background:${IMG[a.id]?`url(${P(IMG[a.id])}) center/cover`:a.bg}">${IMG[a.id]?"":a.ic}</div><div class="act-body"><span class="tag">${a.cat}</span><b style="margin-top:6px">${esc(a.name)}</b><div class="small muted">${a.dur} · ${esc(a.note)}</div><div class="row" style="justify-content:space-between;margin-top:10px"><span class="price">${a.from?"from €"+a.from:"with Companion"}</span><button class="btn sm ${S.wish.has(a.id)?"gold":"ghost"}" data-wish="${a.id}">${S.wish.has(a.id)?"✓ Added":"+ Add"}</button></div></div></div>`}
+function destCard(d){return `<button class="dest" style="background:${photo(d.id,d.g,.8)}" data-dest="${d.id}"><span class="e">${IMG[d.id]?"":d.e}</span><b>${d.name}</b><span>${d.tag}</span></button>`}
+function priceRow(p){const t=num(p.tourist),l=num(p.local);const pct=t&&l?Math.round((1-l/t)*100):0;
+  return `<div class="pb"><div class="t"><b>${esc(p.item)}</b><span>${esc(p.place||"")} · checked ${fmtDate(p.date)}${p.proof?" · "+esc(p.proof):""}</span></div><div class="p"><s>${egp(t)}</s><b>${egp(l)}</b>${pct>0?`<span class="save">−${pct}%</span>`:""}</div></div>`}
+function reviewCard(r){return `<div class="rv"><div class="stars">${stars(r.rating)}</div><p>“${esc(r.text)}”</p><div class="small"><b>${esc(r.name)}</b>${r.country?" · "+esc(r.country):""}<span class="muted"> · ${esc(r.when||"")}</span></div></div>`}
+function footer(){return `<footer><div class="mono">MY</div><div style="margin:6px 0 12px;font-family:var(--serif);font-size:16px;font-style:italic">Not a guide… your travel partner</div>
+  Prices per group of up to 4 · excursions run by licensed partners<br>We earn a transparent partner fee — you never pay more than the normal price.<br>
+  <a href="https://www.instagram.com/meandyoutoursegypt" target="_blank" rel="noopener">Instagram @meandyoutoursegypt</a><br><br><span style="font-size:10.5px">Destination photos El Gouna, Marsa Alam, Sharm el-Sheikh &amp; Aswan via Wikimedia Commons: ${Object.values(CREDIT).map(x=>`<a href="${x.u}" target="_blank" rel="noopener">${esc(x.a)}, ${esc(x.l)}</a>`).join(" · ")}</span><br><br>Built by VormVivo Studios</footer>`}
+
+/* ================= CLIENT: HOME ================= */
+function vHome(){
+  const r=S.settings,a=S.settings;const initials=a.advisorName?a.advisorName.split(/\s+/).map(w=>w[0]).join("").slice(0,2).toUpperCase():"MY";
+  const pc=S.priceChecks.slice().sort((x,y)=>(y.date||"").localeCompare(x.date||"")).slice(0,3);
+  const rv=S.reviews.slice().sort((x,y)=>(y.createdAt||0)-(x.createdAt||0));
+  const wave=c=>`<svg viewBox="0 0 400 46" preserveAspectRatio="none"><path d="M0 26 Q50 6 100 26 T200 26 T300 26 T400 26 V46 H0z" fill="${c}"/></svg>`;
+  return `<section class="hero"><div class="ph" style="background-image:url(${P("dolphins")})"></div><div class="shade"></div>
+    <div class="kick" style="color:var(--gold2);position:relative">🇪🇬 Red Sea · Desert · History</div>
+    <h1>Egypt, with your <em>own</em> local by your side</h1>
+    <p>Not a guide… your travel partner. Hidden gems, honest prices, safe currency exchange and help with anything — from the first message to the last sunset.</p>
+    <div class="ctas"><button class="btn gold" data-go="plan">Plan my trip</button><button class="btn ghost" style="border-color:rgba(255,255,255,.5);color:#fff" data-go="explore">Explore</button></div>
+    <div class="trust"><span>Licensed partners only</span><span>Honest prices</span><span>Reply within 24 h</span></div>
+    <div class="waves w1" style="bottom:6px">${wave("#fff")}${wave("#fff")}</div><div class="waves w2">${wave("#f7f5f0")}${wave("#f7f5f0")}</div>
+  </section>
+  <div class="stats"><div class="stat"><b>16.5K</b><span>on Instagram</span></div><div class="stat"><b>1</b><span>local, all yours</span></div><div class="stat"><b>7/7</b><span>on WhatsApp</span></div></div>
+
+  <div class="sec reveal">${secH("What we do","How we help")}
+    <div class="modes"><div class="mode"><div class="ic">💬</div><b>Advise</b><span>Plans & tips from a local</span></div><div class="mode"><div class="ic">🗓️</div><b>Arrange</b><span>Bookings, transfers, tables</span></div><div class="mode"><div class="ic">🤝</div><b>Come along</b><span>Markets, city, exchange</span></div></div></div>
+
+  <div class="sec reveal">${secH("🪽 Meet your guide","The Heart of Your Holiday! 🌴")}
+    <div class="local"><div class="row">${a.advisorName?`<div class="av">${esc(initials)}</div>`:`<img src="img/logo.png" alt="" style="width:64px;height:64px;border-radius:50%;box-shadow:0 0 0 2px var(--gold)">`}<div><h3>${esc(a.advisorName||"Hassan Abdo")}</h3><div class="small muted">${esc(a.base||"Hurghada")} · Red Sea coast</div></div></div>
+    <blockquote>${esc(a.bio||"From luxury suites to thrilling desert safaris and unforgettable adventures, Hassan takes care of your entire holiday experience. More than a host — your personal holiday guardian angel! ✨")}</blockquote>
+    ${a.languages?`<div class="langs">${a.languages.split(",").map(l=>`<span class="tag">${esc(l.trim())}</span>`).join("")}</div>`:""}
+    <div style="margin-top:14px">${waButton("Hi! I'd like to know more about Me & You Tours.","Say hello")}</div></div></div>
+
+  <div class="sec reveal">${secH("Simple","How it works")}
+    <div class="card how"><div><b>Tell us your wishes</b><span>Dates, hotel, budget, what you love. Takes 2 minutes.</span></div><div><b>Get your proposal</b><span>Within 24 hours, every price visible — including our partner fee.</span></div><div><b>Say yes, pay safely</b><span>Payment link via our licensed partner. No cash to carry.</span></div><div><b>Enjoy with your local</b><span>Digital, arranged or side by side — you choose per day.</span></div></div></div>
+
+  <div class="sec reveal">${secH("Example","A day with your local")}
+    <div class="split"><div class="pic" style="background-image:url(${P("watertables")});background-position:center 60%"></div><div style="padding:16px"><div class="tl">
+      <div class="ti"><b>09:00 — Breakfast tips & plan for the day</b><span>WhatsApp check-in, weather and sea conditions</span></div>
+      <div class="ti"><b>10:30 — Licensed exchange office, together</b><span>Compare the rate, count the money, keep the receipt</span></div>
+      <div class="ti"><b>11:30 — Old town market</b><span>Spices, cotton, souvenirs — at local prices</span></div>
+      <div class="ti"><b>13:30 — Lunch where locals eat</b><span>Koshari, grilled fish, fresh juice</span></div>
+      <div class="ti"><b>16:00 — Beach club or a private boat</b><span>Booked, checked and fairly priced</span></div>
+      <div class="ti"><b>19:30 — Sunset & dinner recommendation</b><span>Table reserved, taxi price agreed</span></div></div>
+      <button class="btn ghost" style="margin-top:10px" data-pkg="companion">Book a day like this</button></div></div></div>
+
+  <div class="sec reveal">${secH("Money","Today's exchange","money","Calculator")}
+    <div class="fx"><div class="row" style="justify-content:space-between;align-items:flex-end"><div><div class="small" style="opacity:.75">1 euro =</div><div class="big">${r.eurEgp?esc(r.eurEgp)+" EGP":"—"}</div></div><div style="font-size:40px">💱</div></div>
+    <div class="small" style="opacity:.75;margin-top:8px">${r.ratesDate?"Checked by your local on "+fmtDate(r.ratesDate)+" at licensed banks & bureaus":"Your local posts the checked rate every morning"}</div></div></div>
+
+  <div class="sec reveal">${secH("Moments","Egypt through our lens")}
+    <p class="small muted" style="margin:-4px 0 12px">Real moments from our trips — tap a photo to see it big.</p>
+    <div class="gal">${GAL.map(n=>`<figure class="${TALL.has(n)?"tall":""}" style="height:${TALL.has(n)?330:160}px" data-zoom="${n}"><img src="${P(n)}" alt="${esc(CAP[n])}"><figcaption>${esc(CAP[n])}</figcaption></figure>`).join("")}
+    </div>
+    <a class="btn ghost" style="margin-top:14px" href="https://www.instagram.com/meandyoutoursegypt" target="_blank" rel="noopener">More on Instagram</a></div>
+  <div class="sec reveal">${secH("Where to","Destinations","guide","Guide")}<div class="hscroll">${DESTS.map(destCard).join("")}</div></div>
+  <div class="sec reveal">${secH("Experiences","Worth your money","explore")}<div class="hscroll">${ACTIVITIES.filter(a=>["giftun","privateboat","quad","luxor","balloon","horse"].includes(a.id)).map(actCard).join("")}</div></div>
+
+  <div class="sec reveal">${secH("Honest prices","Tourist price vs local price","money","Price board")}
+    <div class="card">${pc.length?pc.map(priceRow).join(""):`<div class="empty">Our first checked price comparisons appear here — every one with a date and proof.</div>`}</div></div>
+
+  <div class="sec reveal">${secH("Packages","Choose your level of help")}${PACKAGES.map(pkgCard).join("")}
+    <details><summary>Compare all packages</summary><div style="padding:0 0 12px;overflow-x:auto">${cmpTable()}</div></details></div>
+
+  <div class="sec reveal">${secH("Guests","What travellers say")}
+    ${rv.length?`<div class="hscroll">${rv.map(reviewCard).join("")}</div>`:`<div class="card empty">Reviews from our guests appear here — only real ones, shared with their permission.</div>`}</div>
+
+  <div class="sec reveal">${secH("FAQ","Good to know")}${FAQ.map(([q,a])=>`<details><summary>${q}</summary><div>${a}</div></details>`).join("")}</div>
+
+  <div class="sec reveal insta" style="background:linear-gradient(160deg,rgba(13,79,92,.82),rgba(6,42,51,.9)),url(${P("deck")}) center/cover"><div class="kick" style="color:#fff;opacity:.8">Follow the journey</div><h3 style="margin:6px 0 8px">@meandyoutoursegypt</h3><p class="small" style="opacity:.9;margin-bottom:14px">Red Sea, desert and history — and the real prices behind them.</p>
+    <a class="btn" style="background:#fff;color:var(--teal)" href="https://www.instagram.com/meandyoutoursegypt" target="_blank" rel="noopener">Open Instagram</a></div>
+  ${footer()}`;
+}
+function pkgCard(p){return `<div class="pkg ${p.feat?"feat":""}"><div class="ph"><div>${p.feat?'<span class="tag" style="background:#f6ecd6;color:#8a6a24">Most chosen</span>':""}<h3>${p.name}</h3></div><div class="pp">${p.price}<small>${p.per}</small></div></div><ul>${p.items.map(i=>`<li>${i}</li>`).join("")}</ul><button class="btn ghost" data-pkg="${p.id}">Choose ${p.name}</button></div>`}
+function cmpTable(){const h=["Digital","Assistant","Companion","Full","VIP"];return `<table class="cmp"><tr><th></th>${h.map(x=>`<th>${x}</th>`).join("")}</tr>${CMP.map(r=>`<tr><td>${r[0]}</td>${r.slice(1).map(v=>`<td class="${v?"yes":"no"}">${v?"✓":"–"}</td>`).join("")}</tr>`).join("")}</table>`}
+
+/* ================= CLIENT: EXPLORE ================= */
+function vExplore(){
+  const q=S.q.toLowerCase();
+  const list=ACTIVITIES.filter(a=>(S.cat==="All"||a.cat===S.cat)&&(!q||(a.name+" "+a.note).toLowerCase().includes(q)));
+  return `<div class="split" style="margin:-18px -16px 16px;border-radius:0;box-shadow:none"><div class="pic" style="height:170px;background-image:linear-gradient(180deg,transparent 40%,rgba(250,246,238,1)),url(${P("orangebay")});background-position:center 45%"></div></div><div class="kick">Explore</div><h2>What would you love to do?</h2><p class="muted small" style="margin:6px 0 14px">Add what you like — your local builds it into your plan.</p>
+  <div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input class="inp" id="q" placeholder="Search snorkel, Luxor, quad…" value="${esc(S.q)}"></div>
+  <div class="chips" style="margin-top:12px">${CATS.map(c=>`<button class="chip ${S.cat===c?"on":""}" data-cat="${c}">${c}</button>`).join("")}</div>
+  <div class="card" style="margin-top:14px;padding:6px 14px">${list.length?list.map(a=>`<div class="li"><div class="ic" style="background:${IMG[a.id]?`url(${P(IMG[a.id])}) center/cover`:a.bg}">${IMG[a.id]?"":a.ic}</div><div class="t"><b>${esc(a.name)}</b><span>${a.dur} · ${a.from?"from €"+a.from:"with Companion"} · ${esc(a.note)}</span></div><button class="btn sm ${S.wish.has(a.id)?"gold":"ghost"}" data-wish="${a.id}">${S.wish.has(a.id)?"✓":"+"}</button></div>`).join(""):`<div class="empty">Nothing found — ask your local, we arrange more than we list.</div>`}</div>
+  ${S.wish.size?`<div style="position:sticky;bottom:100px;margin-top:16px;z-index:5"><button class="btn gold" data-go="plan">Plan with ${S.wish.size} selected →</button></div>`:""}
+  <div class="sec">${secH("Off the beaten track","Hidden gems")}<div class="card" style="padding:4px 14px">${GEMS.map(g=>`<div class="li"><div class="ic" style="background:var(--sand2)">${g.e}</div><div class="t"><b>${g.n}</b><span><b style="display:inline;font-size:12px;color:var(--teal)">${g.p}</b> · ${g.d}</span></div></div>`).join("")}</div></div>
+  <div class="sec">${secH("Where to","Destinations")}<div class="hscroll">${DESTS.map(destCard).join("")}</div></div>
+  <p class="small muted" style="margin-top:14px">"From" prices are typical market prices; your proposal shows the exact price per supplier before you pay.</p>`;
+}
+
+/* ================= CLIENT: PLAN ================= */
+function newForm(){return {destination:"Hurghada",arrival:"",departure:"",hotel:"",adults:2,kids:0,budget:"Mid",activities:[...S.wish],companion:"No",currencyHelp:false,package:"",name:"",email:"",whatsapp:"",lang:"English",notes:"",occasion:"None"}}
+function vPlan(){
+  if(!S.form)S.form=newForm();const f=S.form,st=S.step;
+  const seg=(key,opts)=>`<div class="seg">${opts.map(o=>`<button data-f="${key}" data-v="${o}" class="${(key==="currencyHelp"?(f.currencyHelp?"Yes":"No"):f[key])===o?"on":""}">${o}</button>`).join("")}</div>`;
+  let body="";
+  if(st===0)body=`<h3>Your trip</h3><p class="muted small" style="margin-bottom:14px">Where and when?</p>
+    <div class="field"><label>Destination</label><select class="inp" data-in="destination">${DEST_OPTS.map(d=>`<option ${f.destination===d?"selected":""}>${d}</option>`).join("")}</select></div>
+    <div class="grid2"><div class="field"><label>Arrival</label><input type="date" class="inp" data-in="arrival" value="${esc(f.arrival)}"></div><div class="field"><label>Departure</label><input type="date" class="inp" data-in="departure" value="${esc(f.departure)}"></div></div>
+    <div class="field"><label>Hotel</label><input class="inp" data-in="hotel" placeholder="Hotel name" value="${esc(f.hotel)}"></div>
+    <div class="grid2"><div class="field"><label>Adults</label><div class="stepper"><button data-cnt="adults:-1">−</button><b>${f.adults}</b><button data-cnt="adults:1">+</button></div></div><div class="field"><label>Children</label><div class="stepper"><button data-cnt="kids:-1">−</button><b>${f.kids}</b><button data-cnt="kids:1">+</button></div></div></div>
+    <div class="field"><label>Special occasion?</label><select class="inp" data-in="occasion">${["None","Honeymoon","Birthday","Anniversary","Family reunion","Proposal 💍"].map(o=>`<option ${f.occasion===o?"selected":""}>${o}</option>`).join("")}</select></div>`;
+  if(st===1)body=`<h3>What you'd like</h3><p class="muted small" style="margin-bottom:14px">Pick anything — we'll advise.</p>
+    <div class="field"><label>Budget</label>${seg("budget",["Budget","Mid","Luxury"])}</div>
+    <div class="field"><label>Activities</label><div class="checks">${ACTIVITIES.map(a=>`<button data-tog="${a.id}" class="${f.activities.includes(a.id)?"on":""}">${a.ic} ${esc(a.name)}</button>`).join("")}</div></div>
+    <div class="field"><label>Should your local come along?</label>${seg("companion",["No","Half days","Full days"])}</div>
+    <div class="field"><label>Help with currency or payments?</label>${seg("currencyHelp",["No","Yes"])}</div>
+    <div class="field"><label>Package (optional)</label><select class="inp" data-in="package"><option value="">Not sure yet — advise me</option>${PACKAGES.map(p=>`<option value="${p.id}" ${f.package===p.id?"selected":""}>${p.name} · ${p.price}</option>`).join("")}</select></div>
+    <div class="card" style="background:var(--sand2);box-shadow:none"><div class="small muted">Rough estimate</div><div style="font-family:var(--serif);font-size:26px;font-weight:600;color:var(--teal)">${eur(estimate(f))}</div><div class="small muted">Activities at "from" prices + package. Your proposal shows exact prices.</div></div>`;
+  if(st===2)body=`<h3>How we reach you</h3><p class="muted small" style="margin-bottom:14px">You'll get a clear proposal within 24 hours.</p>
+    <div class="field"><label>Name</label><input class="inp" data-in="name" value="${esc(f.name)}" autocomplete="name"></div>
+    <div class="field"><label>WhatsApp number</label><input class="inp" data-in="whatsapp" value="${esc(f.whatsapp)}" inputmode="tel" placeholder="+31 6 …"></div>
+    <div class="field"><label>E-mail</label><input class="inp" data-in="email" value="${esc(f.email)}" type="email" autocomplete="email"></div>
+    <div class="field"><label>Language</label>${seg("lang",["English","Dutch","Arabic"])}</div>
+    <div class="field"><label>Anything else?</label><textarea class="inp" data-in="notes" placeholder="Allergies, mobility, wishes, fears of the sea…">${esc(f.notes)}</textarea></div>
+    <p class="small muted">We use your details only to plan your trip. Ask us to delete them at any time.</p>`;
+  return `<div class="kick">Plan my trip</div><h2>${["Let's start","Your wishes","Almost there"][st]}</h2><div class="steps" style="margin-top:12px">${[0,1,2].map(i=>`<i class="${i<=st?"on":""}"></i>`).join("")}</div>
+   <div class="card">${body}</div>
+   <div class="row" style="margin-top:14px">${st>0?`<button class="btn ghost" data-act="back" style="flex:1">Back</button>`:""}<button class="btn ${st<2?"":"gold"}" data-act="${st<2?"next":"submit"}" style="flex:2">${st<2?"Next":"Send my request"}</button></div>`;
+}
+function estimate(f){const ppl=(f.adults||0)+(f.kids||0)*.5;let t=0;f.activities.forEach(id=>{const a=ACTIVITIES.find(x=>x.id===id);if(!a)return;t+=["privateboat"].includes(a.id)?a.from:a.cat==="Transfer"?a.from*2:a.from*ppl});
+  const pk={digital:39,assistant:79,companion:138,full:349,vip:699}[f.package]||(f.companion==="Half days"?138:f.companion==="Full days"?238:0);return t+pk}
+
+/* ================= CLIENT: MONEY ================= */
+function vMoney(){
+  const r=S.settings,rate=num(r.eurEgp)||0;const pc=S.priceChecks.slice().sort((x,y)=>(y.date||"").localeCompare(x.date||""));
+  return `<div class="split" style="margin:-18px -16px 16px;border-radius:0;box-shadow:none"><div class="pic" style="height:150px;background-image:linear-gradient(180deg,transparent,rgba(250,246,238,1)),url(${P("signpost")});background-position:center 35%"></div></div><div class="kick">Money</div><h2>Exchange smart, pay fair</h2><p class="muted small" style="margin:6px 0 14px">Only banks and licensed bureaus. Your local can come with you.</p>
+   <div class="fx"><div class="row" style="justify-content:space-between"><div><div class="small" style="opacity:.75">Checked rate · 1 EUR</div><div class="big">${rate?rate+" EGP":"—"}</div></div><div style="text-align:right"><div class="small" style="opacity:.75">1 USD</div><div style="font-family:var(--serif);font-size:26px;font-weight:600">${r.usdEgp?esc(r.usdEgp):"—"}</div></div></div>
+   <div class="small" style="opacity:.7;margin:6px 0 14px">${r.ratesDate?"Checked "+fmtDate(r.ratesDate)+" — rates move daily, confirm at the counter":"Not posted yet today"}</div>
+   <div class="kick" style="color:var(--gold2);margin-bottom:8px">Is this offer fair?</div>
+   <div class="grid2"><div class="field"><label>You exchange (€)</label><input class="inp" id="fxEur" inputmode="decimal" value="200"></div><div class="field"><label>Rate offered</label><input class="inp" id="fxOff" inputmode="decimal" placeholder="${rate||"e.g. 58"}"></div></div>
+   <div class="field"><label>Fee charged (EGP)</label><input class="inp" id="fxFee" inputmode="decimal" value="0"></div>
+   <div id="fxOut" class="card" style="background:rgba(255,255,255,.1);box-shadow:none;color:#fff"></div></div>
+
+   <div class="sec card"><div class="kick">Haggle helper</div><h3 style="margin:4px 0 6px">What should I offer?</h3><p class="small muted" style="margin-bottom:12px">In markets, the first price is an opening move. Type what they ask:</p>
+    <div class="field"><label>Price asked (EGP)</label><input class="inp" id="hgIn" inputmode="decimal" placeholder="e.g. 600"></div><div id="hgOut"></div>
+    <p class="small muted" style="margin-top:8px">Smile, take your time, and be ready to walk away — often that's when the real price comes. Fixed-price shops and restaurants: no haggling.</p></div>
+
+   <div class="sec">${secH("Honest prices","Price board")}<div class="card">${pc.length?pc.map(priceRow).join(""):`<div class="empty">Checked prices appear here, each with a date and proof.</div>`}</div></div>
+
+   <div class="sec card"><div class="kick">Tips</div><h3 style="margin:4px 0 4px">Smart money</h3><ul class="tips">
+    <li>At an ATM, always choose to be charged in <b>EGP</b> — never in euros.</li><li>Bring your passport: licensed bureaus must check ID.</li><li>Never exchange on the street, however good the offer.</li>
+    <li>Ask for some small notes for tips and taxis.</li><li>Count the money at the counter and keep the receipt.</li><li>Pay excursions in advance by card or payment link.</li><li>Don't leave with lots of Egyptian pounds: taking EGP out is limited.</li></ul></div>
+   <div class="sec card" style="text-align:center"><h3>Exchange together</h3><p class="small muted" style="margin:6px 0 14px">Your local compares bureaus, walks you there and checks the amount with you. Included in Personal Companion.</p>${waButton("Hi! Could you help me exchange money safely?","Ask for help")}</div>
+   <p class="small muted" style="margin-top:14px">Your advisor never exchanges money personally and never holds your cash.</p>`;
+}
+function calcFx(){
+  const o=$("#fxOut");if(!o)return;const e=num($("#fxEur").value)||0;const ref=num(S.settings.eurEgp)||0;const off=num($("#fxOff").value)||ref;const fee=num($("#fxFee").value)||0;
+  if(!off){o.innerHTML=`<span class="small">Enter the rate you're offered to see what you get.</span>`;return}
+  const net=e*off-fee,eff=e?net/e:0;let v="";
+  if(ref){const d=(eff/ref-1)*100;v=d>=-1.5?`<span style="color:#9be3b5">✓ Fair — within ${Math.abs(d).toFixed(1)}% of today's checked rate</span>`:d>=-4?`<span style="color:#f3d48a">⚠ ${Math.abs(d).toFixed(1)}% below today's rate — try another bureau</span>`:`<span style="color:#f2a493">✕ ${Math.abs(d).toFixed(1)}% below today's rate — don't accept</span>`}
+  o.innerHTML=`<div class="small" style="opacity:.75">You receive</div><div style="font-family:var(--serif);font-size:32px;font-weight:600">${egp(net)}</div><div class="small" style="opacity:.8">Effective rate ${eff.toFixed(2)}</div><div class="small" style="margin-top:6px">${v}</div>`;
+}
+function calcHaggle(){const o=$("#hgOut");if(!o)return;const p=num($("#hgIn").value);if(!(p>0)){o.innerHTML="";return}
+  const r=x=>Math.round(p*x/5)*5;
+  o.innerHTML=`<div class="grid2" style="grid-template-columns:repeat(3,1fr);text-align:center"><div class="card" style="padding:10px;background:var(--sand2);box-shadow:none"><div class="small muted">Open with</div><b class="price">${egp(r(.4))}</b></div><div class="card" style="padding:10px;background:#e7f3f4;box-shadow:none"><div class="small muted">Aim for</div><b class="price">${r(.55)}–${egp(r(.65))}</b></div><div class="card" style="padding:10px;background:#f7e8e4;box-shadow:none"><div class="small muted">Walk away</div><b style="color:var(--bad)">&gt; ${egp(r(.75))}</b></div></div>`}
+
+/* ================= CLIENT: GUIDE ================= */
+function vGuide(){
+  const g=S.guide;
+  const tabs=[["essentials","Essentials"],["destinations","Destinations"],["phrases","Phrases"],["weather","Weather"],["traps","Tourist traps"],["packing","Packing"]];
+  let body="";
+  if(g==="essentials")body=`<div class="card" style="padding:4px 14px">${ESSENTIALS.map(x=>`<div class="li" style="align-items:flex-start"><div class="ic" style="background:var(--sand2)">${x.e}</div><div class="t"><b>${x.t}</b><span>${x.d}</span></div></div>`).join("")}</div>`;
+  if(g==="destinations")body=DESTS.map(d=>`<button class="dest" style="background:${photo(d.id,d.g,.8)};width:100%;height:170px;margin-bottom:12px" data-dest="${d.id}"><span class="e">${IMG[d.id]?"":d.e}</span><b>${d.name}</b><span>${d.tag}</span></button>`).join("");
+  if(g==="phrases")body=`<p class="small muted" style="margin-bottom:10px">Egyptian Arabic. One word opens many doors — tap a phrase to copy it.</p><div class="card" style="padding:4px 14px">${PHRASES.map(p=>`<div class="ph-card" data-copy="${esc(p[1])}"><div class="t"><b>${p[1]}</b><span>${p[0]}</span></div><div class="ar">${p[2]}</div></div>`).join("")}</div>`;
+  if(g==="weather"){body=`<div class="card"><h3>Red Sea coast by month</h3><p class="small muted">Hurghada, approximate averages in °C</p>
+    <div class="wx">${WX.air.map((v,i)=>`<div><b>${v}°</b><span class="bars"><i style="height:${(v-14)/(36-14)*100}%"></i><i class="sea" style="height:${(WX.sea[i]-14)/(36-14)*100}%"></i></span><small>${MONTHS[i]}</small></div>`).join("")}</div>
+    <div class="legend"><span><i style="background:var(--gold)"></i>Day temperature</span><span><i style="background:var(--sea)"></i>Sea temperature</span></div>
+    <ul class="tips" style="margin-top:12px"><li><b>Oct–Apr:</b> warm days, cooler evenings — perfect for trips to Luxor and the desert.</li><li><b>May–Sep:</b> hot; plan sea in the morning, culture early or late.</li><li>Winter evenings in the desert can be cold — bring a sweater.</li></ul></div>`}
+  if(g==="traps")body=`<p class="small muted" style="margin-bottom:10px">Most Egyptians are warm and honest. These are the few tricks worth knowing — so you can relax.</p><div class="card" style="padding:4px 14px">${TRAPS.map(x=>`<div class="li" style="align-items:flex-start"><div class="ic" style="background:#f7e8e4">${x.e}</div><div class="t"><b>${x.t}</b><span>${x.d}</span></div></div>`).join("")}</div>`;
+  if(g==="packing")body=`<div class="card"><h3>Packing list</h3><p class="small muted" style="margin-bottom:6px">Tap to tick off — saved on this device.</p>${PACKLIST.map((p,i)=>`<div class="pack ${S.packed.has(i)?"on":""}" data-pack="${i}"><i>${S.packed.has(i)?"✓":""}</i><span>${p}</span></div>`).join("")}</div>`;
+  return `<div class="split" style="margin:-18px -16px 16px;border-radius:0;box-shadow:none"><div class="pic" style="height:170px;background-image:linear-gradient(180deg,transparent 40%,rgba(250,246,238,1)),url(${P("memnon")});background-position:center 60%"></div></div><div class="kick">Guide</div><h2>Egypt, the local way</h2><p class="muted small" style="margin:6px 0 14px">Everything we'd tell a friend before they fly.</p>
+   <div class="chips" style="margin-bottom:14px">${tabs.map(([k,l])=>`<button class="chip ${g===k?"on":""}" data-guide="${k}">${l}</button>`).join("")}</div>${body}
+   <div class="sec card" style="text-align:center"><h3>Still a question?</h3><p class="small muted" style="margin:6px 0 14px">Your local answers personally.</p>${waButton("Hi! I have a question about my trip to Egypt.")}</div>`;
+}
+
+/* ================= CLIENT: TRIP ================= */
+function vTrip(){
+  const r=S.myCode&&S.requests.find(x=>x.code===S.myCode);
+  if(!r)return `<div class="kick">My holiday</div><h2>Open your trip</h2><p class="muted small" style="margin:6px 0 14px">Enter the code from your confirmation.</p>
+   <div class="card"><div class="field"><label>Booking code</label><input class="inp" id="codeIn" placeholder="MY-1234" style="text-transform:uppercase" value="${esc(S.myCode||"")}"></div><button class="btn" data-act="findcode">Open my trip</button>
+   ${S.myCode&&S.loaded?`<p class="small" style="color:var(--bad);margin-top:10px">No trip found for ${esc(S.myCode)}.</p>`:""}</div>
+   <p class="small muted" style="margin-top:12px">Want to see an example? Try <span class="code">MY-DEMO</span></p>
+   <div class="sec card" style="text-align:center"><h3>No trip yet?</h3><p class="small muted" style="margin:6px 0 14px">Tell us what you'd like — proposal within 24 hours.</p><button class="btn gold" data-go="plan">Plan my trip</button></div>`;
+  const idx=["new","proposal","booked","travelling","done"].indexOf(r.status);const items=r.items||[];const tot=items.reduce((s,i)=>s+(+i.price||0),0);
+  const it=(r.itinerary||[]).slice().sort((a,b)=>((a.date||"")+(a.time||"")).localeCompare((b.date||"")+(b.time||"")));
+  const days=r.arrival?Math.ceil((new Date(r.arrival+"T00:00")-new Date(today()+"T00:00"))/864e5):null;
+  return `<div class="row" style="justify-content:space-between"><div><div class="kick">My holiday</div><h2>Hi ${esc((r.name||"").split(" ")[0]||"there")}!</h2></div><button class="link" data-act="logout">Switch</button></div>
+   <p class="muted small" style="margin-top:4px">${esc(r.destination)} · ${range(r.arrival,r.departure)} · <span class="code">${esc(r.code)}</span></p>
+   ${days!==null&&days>0?`<div class="fx" style="margin-top:14px;text-align:center"><div class="big">${days}</div><div class="small" style="opacity:.8">day${days===1?"":"s"} until ${esc(r.destination)} ☀️</div></div>`:""}
+   <div class="status">${["Request","Proposal","Booked","On holiday","Done"].map((l,i)=>`<div class="${i<=idx?"on":""}"><i></i>${l}</div>`).join("")}</div>
+   ${r.status==="cancelled"?`<div class="card" style="color:var(--bad)">This trip was cancelled.</div>`:""}
+   <div class="card"><h3>Your proposal</h3>${items.length?`<table class="lines" style="margin-top:8px">${items.map(i=>`<tr><td>${esc(i.label)}${i.commission?`<div class="small muted">incl. ${i.commission}% partner fee</div>`:""}</td><td>${eur(i.price)}</td></tr>`).join("")}<tr class="tot"><td>Total</td><td>${eur(tot)}</td></tr></table>
+     ${r.status==="proposal"&&!r.accepted?`<button class="btn gold" style="margin-top:12px" data-accept="${esc(r.code)}">Accept proposal</button>`:""}${r.accepted?`<p class="small" style="color:var(--ok);margin-top:10px">✓ Accepted — your local sends the payment link via WhatsApp.</p>`:""}`:`<p class="small muted" style="margin-top:6px">Your local is preparing it — usually within 24 hours.</p>`}</div>
+   <div class="sec card"><h3>Your days</h3>${it.length?`<div class="tl" style="margin-top:10px">${it.map(x=>`<div class="ti"><b>${fmtDate(x.date)} · ${esc(x.time||"")} — ${esc(x.title)}</b><span>${esc(x.note||"")}</span></div>`).join("")}</div>`:`<p class="small muted" style="margin-top:6px">Your day plan appears here once booked.</p>`}</div>
+   <div class="sec card"><div class="li" style="border:0;padding:0"><div class="ic" style="background:var(--sand2)">🧭</div><div class="t"><b>${esc(S.settings.advisorName||"Hassan Abdo")}</b><span>Your personal contact</span></div></div><div style="margin-top:12px">${waButton("Hi! Question about my trip "+r.code)}</div></div>
+   <div class="sec card"><h3>Before you fly</h3><p class="small muted" style="margin:4px 0 6px">${S.packed.size}/${PACKLIST.length} packed</p>${PACKLIST.map((p,i)=>`<div class="pack ${S.packed.has(i)?"on":""}" data-pack="${i}"><i>${S.packed.has(i)?"✓":""}</i><span>${p}</span></div>`).join("")}</div>
+   ${["travelling","done"].includes(r.status)?reviewForm(r):""}`;
+}
+function reviewForm(r){
+  if(S.reviewSent)return `<div class="sec card" style="text-align:center"><h3>Shukran! 🤍</h3><p class="small muted">Your review is sent and appears after a quick check.</p></div>`;
+  return `<div class="sec card"><h3>How was it?</h3><p class="small muted" style="margin:4px 0 10px">Your words help the next traveller.</p>
+   <div class="rate">${[1,2,3,4,5].map(i=>`<button data-rate="${i}" class="${i<=S.rating?"on":""}">★</button>`).join("")}</div>
+   <div class="field" style="margin-top:10px"><label>Your review</label><textarea class="inp" id="rvText" placeholder="What did you love?"></textarea></div>
+   <div class="grid2"><div class="field"><label>Name shown</label><input class="inp" id="rvName" value="${esc((r.name||"").split(" ")[0])}"></div><div class="field"><label>Country</label><input class="inp" id="rvCountry" placeholder="Netherlands"></div></div>
+   <label class="small" style="display:flex;gap:8px;align-items:flex-start;margin-bottom:12px"><input type="checkbox" id="rvOk"> I agree that Me & You may show this review on the website and Instagram.</label>
+   <button class="btn" data-act="sendreview">Send review</button></div>`;
+}
+
+/* ================= ADVISOR ================= */
+const sorted=()=>S.requests.slice().sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+const stBadge=s=>`<span class="st st-${s}">${ST_LABEL[s]||s}</span>`;
+function totals(r){let fee=0,com=0,gross=0;(r.items||[]).forEach(i=>{const p=+i.price||0;gross+=p;if(i.type==="fee")fee+=p;else com+=p*(+i.commission||0)/100});return{gross,fee,com}}
+const dis=()=>S.canWrite?"":"disabled";
+function vOverview(){
+  const R=S.requests,act=R.filter(r=>!["done","cancelled"].includes(r.status));
+  const soon=R.filter(r=>r.arrival&&r.arrival>=today()&&r.status!=="cancelled").sort((a,b)=>a.arrival.localeCompare(b.arrival)).slice(0,5);
+  const earned=R.filter(r=>["booked","travelling","done"].includes(r.status)).reduce((s,r)=>{const t=totals(r);return s+t.fee+t.com},0);
+  const todo=[];if(S.settings.ratesDate!==today())todo.push("Publish today's exchange rate");const nw=R.filter(r=>r.status==="new").length;if(nw)todo.push(`Answer ${nw} new request${nw>1?"s":""} within 24 h`);
+  if(S.reviewSubs.length)todo.push(`Check ${S.reviewSubs.length} new review${S.reviewSubs.length>1?"s":""}`);if(!S.settings.whatsapp)todo.push("Set the WhatsApp number (Content → Profile)");
+  const acc=R.filter(r=>r.accepted&&r.status==="proposal");acc.forEach(r=>todo.push(`Send payment link to ${r.name}`));
+  return `<div class="kick">${new Date().toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"})}</div><h2>Good day${S.settings.advisorName?", "+esc(S.settings.advisorName.split(" ")[0]):""}</h2>
+   <div class="kpis" style="margin-top:14px"><div class="kpi"><span>New requests</span><b>${nw}</b></div><div class="kpi"><span>Active trips</span><b>${act.length}</b></div><div class="kpi"><span>Awaiting answer</span><b>${R.filter(r=>r.status==="proposal").length}</b></div><div class="kpi"><span>Earned (booked)</span><b style="font-size:24px">${eur(earned)}</b></div></div>
+   <div class="sec card"><h3>To do today</h3>${todo.length?todo.map(t=>`<div class="pack"><i></i><span>${esc(t)}</span></div>`).join(""):`<div class="empty">All done. Time for content? 📸</div>`}</div>
+   <div class="sec card"><div class="sec-h" style="margin:0 0 4px"><h3>Rates of today</h3>${S.settings.ratesDate===today()?'<span class="st st-booked">Updated</span>':'<span class="st st-new">To do</span>'}</div>
+   <div class="grid2" style="margin-top:8px"><div class="field"><label>1 EUR in EGP</label><input class="inp" id="rEur" inputmode="decimal" value="${esc(S.settings.eurEgp||"")}"></div><div class="field"><label>1 USD in EGP</label><input class="inp" id="rUsd" inputmode="decimal" value="${esc(S.settings.usdEgp||"")}"></div></div>
+   <p class="small muted" style="margin:-4px 0 10px">Best net rate at licensed banks/bureaus after checking the Central Bank rate + 2 bureaus.</p><button class="btn" data-act="saverates" ${dis()}>Publish today's rate</button></div>
+   <div class="sec card"><h3>Arriving soon</h3>${soon.length?soon.map(r=>`<div class="li" data-open="${esc(r.code)}" style="cursor:pointer"><div class="ic" style="background:var(--sand2)">✈️</div><div class="t"><b>${esc(r.name)}</b><span>${fmtDate(r.arrival)} · ${esc(r.destination)} · ${r.adults+(r.kids||0)} p.</span></div>${stBadge(r.status)}</div>`).join(""):`<div class="empty">No arrivals planned.</div>`}</div>`;
+}
+function vRequests(){
+  const f=S.reqFilter;const list=sorted().filter(r=>f==="all"?true:f==="open"?!["done","cancelled"].includes(r.status):r.status===f);
+  return `<h2>Requests</h2><div class="chips" style="margin-top:12px">${[["open","Open"],["new","New"],["proposal","Proposal"],["booked","Booked"],["travelling","Travelling"],["all","All"]].map(([k,l])=>`<button class="chip ${f===k?"on":""}" data-rf="${k}">${l}</button>`).join("")}</div>
+   <div class="card" style="margin-top:14px;padding:4px 14px">${list.length?list.map(r=>`<div class="li" data-open="${esc(r.code)}" style="cursor:pointer"><div class="t"><b>${esc(r.name||"—")} <span class="small muted">${esc(r.code)}</span></b><span>${esc(r.destination)} · ${fmtDate(r.arrival)} · ${r.adults+(r.kids||0)} p. · ${esc(r.budget||"")}${r.companion&&r.companion!=="No"?" · 🤝":""}${r.currencyHelp?" · 💱":""}${r.occasion&&r.occasion!=="None"?" · 🎉":""}${r.accepted&&r.status==="proposal"?" · ✅ accepted":""}</span></div>${stBadge(r.status)}</div>`).join(""):`<div class="empty">${S.loaded?"Nothing here.":"Loading…"}</div>`}</div>`;
+}
+function vAgenda(){
+  const ev=[];S.requests.filter(r=>r.status!=="cancelled").forEach(r=>(r.itinerary||[]).forEach(x=>ev.push({...x,r})));
+  ev.sort((a,b)=>((a.date||"")+(a.time||"")).localeCompare((b.date||"")+(b.time||"")));const days={};ev.filter(e=>(e.date||"")>=today()).forEach(e=>{(days[e.date]=days[e.date]||[]).push(e)});
+  return `<h2>Agenda</h2><p class="muted small" style="margin:4px 0 14px">All planned moments of your travellers.</p>
+   ${Object.keys(days).length?Object.entries(days).map(([d,es])=>`<div class="card" style="margin-bottom:12px"><h3>${d===today()?"Today":new Date(d+"T12:00").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"short"})}</h3><div class="tl" style="margin-top:8px">${es.map(e=>`<div class="ti" data-open="${esc(e.r.code)}" style="cursor:pointer"><b>${esc(e.time||"")} — ${esc(e.title)}</b><span>${esc(e.r.name)} · ${esc(e.note||"")}</span></div>`).join("")}</div></div>`).join(""):`<div class="card empty">No upcoming moments. Add day items inside a request.</div>`}`;
+}
+function vContent(){
+  const c=S.content;const sub=`<div class="chips" style="margin:12px -16px 14px">${[["prices","Price board"],["reviews","Reviews"+(S.reviewSubs.length?` (${S.reviewSubs.length})`:"")],["profile","Profile"]].map(([k,l])=>`<button class="chip ${c===k?"on":""}" data-content="${k}">${l}</button>`).join("")}</div>`;
+  let b="";
+  if(c==="prices")b=`<div class="card"><h3>Add a price check</h3><p class="small muted" style="margin:4px 0 12px">Only with proof: receipt, photo or menu. Never name a business without facts.</p>
+    <div class="field"><label>Item</label><input class="inp" id="pcItem" placeholder="e.g. Fresh mango juice"></div><div class="field"><label>Where</label><input class="inp" id="pcPlace" placeholder="e.g. Hurghada boulevard vs El Dahar"></div>
+    <div class="grid2"><div class="field"><label>Tourist price (EGP)</label><input class="inp" id="pcT" inputmode="decimal"></div><div class="field"><label>Local price (EGP)</label><input class="inp" id="pcL" inputmode="decimal"></div></div>
+    <div class="grid2"><div class="field"><label>Date checked</label><input type="date" class="inp" id="pcDate" value="${today()}"></div><div class="field"><label>Proof</label><input class="inp" id="pcProof" placeholder="Receipt photo"></div></div>
+    <button class="btn" data-act="addprice" ${dis()}>Publish price check</button></div>
+    <div class="sec card">${S.priceChecks.length?S.priceChecks.slice().sort((x,y)=>(y.date||"").localeCompare(x.date||"")).map(p=>`<div style="position:relative">${priceRow(p)}<a class="link small" data-delprice="${esc(p.id)}">remove</a></div>`).join(""):`<div class="empty">No price checks yet.</div>`}</div>`;
+  if(c==="reviews")b=`<div class="card"><h3>Waiting for approval</h3>${S.reviewSubs.length?S.reviewSubs.map(r=>`<div style="padding:12px 0;border-bottom:1px solid var(--line)"><div class="stars">${stars(r.rating)}</div><p style="margin:6px 0;font-size:14px">“${esc(r.text)}”</p><div class="small muted">${esc(r.name)} · ${esc(r.country||"")} · ${esc(r.code||"")} · ${r.consent?"✓ consent":"✕ no consent"}</div><div class="row" style="margin-top:8px"><button class="btn sm" data-approve="${esc(r.id)}" ${r.consent?"":"disabled"}>Publish</button><button class="btn sm ghost" data-reject="${esc(r.id)}">Reject</button></div></div>`).join(""):`<div class="empty">No new reviews.</div>`}</div>
+    <div class="sec card"><h3>Add a review you received</h3><p class="small muted" style="margin:4px 0 12px">From WhatsApp or Instagram — only with the guest's permission.</p>
+    <div class="field"><label>Text</label><textarea class="inp" id="mrText"></textarea></div><div class="grid2"><div class="field"><label>Name</label><input class="inp" id="mrName"></div><div class="field"><label>Country</label><input class="inp" id="mrCountry"></div></div>
+    <div class="field"><label>Stars</label><select class="inp" id="mrStars">${[5,4,3,2,1].map(n=>`<option>${n}</option>`).join("")}</select></div>
+    <label class="small" style="display:flex;gap:8px;margin-bottom:12px"><input type="checkbox" id="mrOk"> The guest gave permission to publish this.</label><button class="btn" data-act="addreview" ${dis()}>Publish review</button></div>
+    <div class="sec card"><h3>Published</h3>${S.reviews.length?S.reviews.map(r=>`<div class="li"><div class="t"><b>${esc(r.name)} <span class="stars" style="font-size:12px">${stars(r.rating)}</span></b><span>${esc(r.text).slice(0,90)}…</span></div><a class="link small" data-delreview="${esc(r.id)}">remove</a></div>`).join(""):`<div class="empty">None yet.</div>`}</div>`;
+  if(c==="profile"){const a=S.settings;b=`<div class="card"><h3>Your public profile</h3><p class="small muted" style="margin:4px 0 12px">Shown on the home page under "Meet your local".</p>
+    <div class="field"><label>Name</label><input class="inp" id="pfName" value="${esc(a.advisorName||"")}"></div><div class="field"><label>Base</label><input class="inp" id="pfBase" value="${esc(a.base||"")}" placeholder="Hurghada"></div>
+    <div class="field"><label>Personal quote / bio</label><textarea class="inp" id="pfBio" placeholder="In your own words: why travellers can trust you">${esc(a.bio||"")}</textarea></div>
+    <div class="field"><label>Languages (comma separated)</label><input class="inp" id="pfLang" value="${esc(a.languages||"")}" placeholder="English, Arabic"></div>
+    <div class="field"><label>WhatsApp number (international)</label><input class="inp" id="pfWa" inputmode="tel" value="${esc(a.whatsapp||"")}" placeholder="+20 10 …"></div>
+    <button class="btn" data-act="saveprofile" ${dis()}>Save profile</button></div>`}
+  return `<h2>Content</h2>${sub}${b}`;
+}
+function vBusiness(){
+  const sub=`<div class="chips" style="margin:12px -16px 14px">${[["suppliers","Suppliers"],["finance","Finance"]].map(([k,l])=>`<button class="chip ${S.biz===k?"on":""}" data-biz="${k}">${l}</button>`).join("")}</div>`;
+  if(S.biz==="suppliers"){const list=S.suppliers.slice().sort((a,b)=>(a.category||"").localeCompare(b.category||"")||(a.name||"").localeCompare(b.name||""));
+    return `<div class="row" style="justify-content:space-between"><h2>Business</h2><button class="btn sm" data-act="addsup" ${dis()}>+ Supplier</button></div>${sub}
+     <p class="muted small" style="margin-bottom:12px">Only licensed and insured partners may be booked.</p>
+     <div class="card" style="padding:4px 14px">${list.length?list.map(s=>`<div class="li" data-sup="${esc(s.id)}" style="cursor:pointer"><div class="t"><b>${esc(s.name)}</b><span>${esc(s.category||"")} · ${s.commission?esc(s.commission)+"% fee":"no fee set"}${s.priceNote?" · "+esc(s.priceNote):""}</span></div>${s.licensed&&s.insured?'<span class="st st-booked">Verified</span>':'<span class="st st-cancelled">Check papers</span>'}</div>`).join(""):`<div class="empty">${S.loaded?"No suppliers yet — add your first partner.":"Loading…"}</div>`}</div>`}
+  const rows=sorted().filter(r=>["booked","travelling","done"].includes(r.status));let fee=0,com=0,gross=0;rows.forEach(r=>{const t=totals(r);fee+=t.fee;com+=t.com;gross+=t.gross});const fixed=1300;
+  return `<h2>Business</h2>${sub}<div class="kpis"><div class="kpi"><span>Service fees</span><b style="font-size:24px">${eur(fee)}</b></div><div class="kpi"><span>Partner fees</span><b style="font-size:24px">${eur(com)}</b></div><div class="kpi"><span>Our income</span><b style="font-size:24px">${eur(fee+com)}</b></div><div class="kpi"><span>Paid by travellers</span><b style="font-size:24px">${eur(gross)}</b></div></div>
+   <div class="sec card"><h3>Break-even</h3><p class="small muted" style="margin:6px 0 10px">Fixed costs ${eur(fixed)} per month (plan estimate).</p><div style="height:10px;background:var(--line);border-radius:6px;overflow:hidden"><div style="height:100%;width:${Math.min(100,(fee+com)/fixed*100)}%;background:var(--teal)"></div></div><p class="small" style="margin-top:8px">${Math.round((fee+com)/fixed*100)}% of monthly fixed costs covered</p></div>
+   <div class="sec card" style="padding:4px 14px">${rows.length?rows.map(r=>{const t=totals(r);return `<div class="li" data-open="${esc(r.code)}" style="cursor:pointer"><div class="t"><b>${esc(r.name)}</b><span>${esc(r.code)} · fee ${eur(t.fee)} · partner ${eur(t.com)}</span></div><b class="price">${eur(t.fee+t.com)}</b></div>`}).join(""):`<div class="empty">No booked trips yet.</div>`}</div>
+   <p class="small muted" style="margin-top:12px">Payments run via the partner agency or a payment provider — never in cash through the advisor.</p>`;
+}
+
+/* ================= SHEETS ================= */
+function closeSheet(quiet){S.openReq=null;S.openSup=null;S.openDest=null;S.zoom=null;const s=$("#sheet");if(s)s.remove();if(!quiet)syncHash()}
+function renderSheet(){
+  const old=$("#sheet");if(old)old.remove();let inner="";
+  if(S.zoom){const i=GAL.indexOf(S.zoom);const n=GAL[i];
+    inner=`<div style="position:relative;margin:0 -16px"><img src="${P(n)}" alt="" style="width:100%;max-height:70vh;object-fit:contain;display:block;background:#062a33"></div>
+     <div class="row" style="justify-content:space-between;margin-top:12px"><button class="btn sm ghost" data-zoomnav="-1">‹ Prev</button><span class="small muted">${esc(CAP[n])} · ${i+1}/${GAL.length}</span><button class="btn sm ghost" data-zoomnav="1">Next ›</button></div>
+     <button class="btn" style="margin-top:12px" data-act="close">Close</button>`}
+  else if(S.openDest){const d=DESTS.find(x=>x.id===S.openDest);
+    inner=`<div class="dhero" style="background:${photo(d.id,d.g,.85)}"><span class="e">${IMG[d.id]?"":d.e}</span><div><div class="kick" style="color:#fff;opacity:.8">Destination</div><h2 style="color:#fff">${d.name}</h2><div class="small" style="opacity:.9">${d.tag}</div></div></div>
+     <div class="langs" style="margin-bottom:14px">${d.best.map(b=>`<span class="tag">${b}</span>`).join("")}</div>
+     <div class="card"><h3>Highlights</h3><ul class="ticks" style="margin-top:8px">${d.hi.map(h=>`<li>${h}</li>`).join("")}</ul></div>
+     <div class="sec card" style="margin-top:12px"><div class="kick">Your local's tip</div><p style="font-family:var(--serif);font-size:19px;font-style:italic;color:var(--teal);margin-top:6px">“${d.tip}”</p><p class="small muted" style="margin-top:8px">🚗 ${d.dist}</p></div>
+     ${CREDIT[d.id]?`<p class="small muted" style="margin-top:10px">Photo: ${esc(CREDIT[d.id].a)} · <a href="${CREDIT[d.id].u}" target="_blank" rel="noopener">${esc(CREDIT[d.id].l)}</a> · Wikimedia Commons</p>`:""}
+     <div class="row" style="margin-top:14px"><button class="btn ghost" data-act="close" style="flex:1">Close</button><button class="btn gold" data-plandest="${esc(d.name)}" style="flex:2">Plan ${d.name}</button></div>`}
+  else if(S.openReq){const r=S.requests.find(x=>x.code===S.openReq);if(!r){S.openReq=null;return}
+    const t=totals(r);const acts=(r.activities||[]).map(id=>ACTIVITIES.find(a=>a.id===id)).filter(Boolean);const wa=(r.whatsapp||"").replace(/[^\d]/g,"");
+    inner=`<div class="row" style="justify-content:space-between"><h2>${esc(r.name)}</h2>${stBadge(r.status)}</div>
+     <p class="small muted">${esc(r.code)} · ${esc(r.destination)} · ${range(r.arrival,r.departure)} · ${esc(r.hotel||"hotel n/a")}</p>
+     <div class="card" style="margin-top:12px"><div class="grid2 small"><div><b>Group</b><br>${r.adults} adults, ${r.kids||0} kids</div><div><b>Budget</b><br>${esc(r.budget)}</div><div><b>Companion</b><br>${esc(r.companion)}</div><div><b>Currency help</b><br>${r.currencyHelp?"Yes":"No"}</div><div><b>Package</b><br>${esc((PACKAGES.find(p=>p.id===r.package)||{}).name||"Advise")}</div><div><b>Occasion</b><br>${esc(r.occasion||"None")}</div></div>
+     ${acts.length?`<p class="small" style="margin-top:10px"><b>Wishes:</b> ${acts.map(a=>a.ic+" "+esc(a.name)).join(", ")}</p>`:""}${r.notes?`<p class="small" style="margin-top:6px"><b>Notes:</b> ${esc(r.notes)}</p>`:""}
+     <p class="small" style="margin-top:10px">${wa?`<a href="https://wa.me/${wa}" target="_blank" rel="noopener">WhatsApp ${esc(r.whatsapp)}</a>`:esc(r.whatsapp||"")}${r.email?" · "+esc(r.email):""} · ${esc(r.lang||"")}</p>${r.accepted?`<p class="small" style="color:var(--ok);margin-top:6px">✓ Traveller accepted the proposal — send the payment link.</p>`:""}</div>
+     <div class="sec"><label class="small muted" style="font-weight:600">Status</label><div class="chips" style="margin-top:6px">${STATUSES.map(s=>`<button class="chip ${r.status===s?"on":""}" data-setst="${s}">${ST_LABEL[s]}</button>`).join("")}</div></div>
+     <div class="sec card"><h3>Proposal</h3><table class="lines" style="margin-top:6px">${(r.items||[]).map((i,ix)=>`<tr><td>${esc(i.label)}<div class="small muted">${i.type}${i.commission?" · "+i.commission+"% fee":""} <a class="link" data-delitem="${ix}">remove</a></div></td><td>${eur(i.price)}</td></tr>`).join("")}<tr class="tot"><td>Total · our income ${eur(t.fee+t.com)}</td><td>${eur(t.gross)}</td></tr></table>
+       <div class="grid2" style="margin-top:12px"><div class="field" style="grid-column:1/-1"><label>Line</label><input class="inp" id="itLabel" placeholder="e.g. Giftun snorkel trip (2 p.)" list="actList"></div>
+       <div class="field"><label>Type</label><select class="inp" id="itType"><option value="fee">Service fee</option><option value="excursion">Excursion</option><option value="transfer">Transfer</option><option value="other">Other</option></select></div>
+       <div class="field"><label>Price €</label><input class="inp" id="itPrice" inputmode="decimal"></div><div class="field"><label>Partner fee %</label><input class="inp" id="itCom" inputmode="decimal" value="0"></div>
+       <div class="field" style="align-self:end"><button class="btn sm" data-act="additem" style="width:100%">+ Add line</button></div></div>
+       <datalist id="actList">${ACTIVITIES.map(a=>`<option value="${esc(a.name)}">`).join("")}${PACKAGES.map(p=>`<option value="${esc(p.name)}">`).join("")}</datalist>
+       ${r.status==="new"&&(r.items||[]).length?`<button class="btn gold" data-setst="proposal">Send proposal to traveller</button>`:""}</div>
+     <div class="sec card"><h3>Day plan</h3>${(r.itinerary||[]).length?`<div class="tl" style="margin-top:8px">${r.itinerary.map((x,ix)=>`<div class="ti"><b>${fmtDate(x.date)} · ${esc(x.time)} — ${esc(x.title)}</b><span>${esc(x.note||"")} <a class="link" data-delit="${ix}">remove</a></span></div>`).join("")}</div>`:""}
+       <div class="grid2" style="margin-top:10px"><div class="field"><label>Date</label><input type="date" class="inp" id="dpDate" value="${esc(r.arrival||"")}"></div><div class="field"><label>Time</label><input type="time" class="inp" id="dpTime"></div>
+       <div class="field" style="grid-column:1/-1"><label>What</label><input class="inp" id="dpTitle" placeholder="e.g. Pick-up for Giftun trip"></div><div class="field" style="grid-column:1/-1"><label>Note for traveller</label><input class="inp" id="dpNote" placeholder="Meeting point, what to bring"></div></div>
+       <button class="btn sm" data-act="addday">+ Add to day plan</button></div>
+     <div class="sec row"><button class="btn ghost" data-act="close" style="flex:1">Close</button><button class="btn ghost" data-act="delreq" style="flex:1;border-color:var(--bad);color:var(--bad)">Delete</button></div>`}
+  else if(S.openSup){const s=S.openSup==="new"?{id:"s"+uid(),name:"",category:"Sea",phone:"",licence:"",licensed:false,insured:false,commission:"",priceNote:"",notes:""}:S.suppliers.find(x=>x.id===S.openSup);
+    if(!s){S.openSup=null;return}S._sup=s;
+    inner=`<h2>${s.name?esc(s.name):"New supplier"}</h2><div class="card" style="margin-top:12px">
+     <div class="field"><label>Name</label><input class="inp" id="sName" value="${esc(s.name)}"></div>
+     <div class="grid2"><div class="field"><label>Category</label><select class="inp" id="sCat">${CATS.slice(1).concat(["Restaurant","Exchange","Guide"]).map(c=>`<option ${s.category===c?"selected":""}>${c}</option>`).join("")}</select></div><div class="field"><label>Partner fee %</label><input class="inp" id="sCom" inputmode="decimal" value="${esc(s.commission)}"></div></div>
+     <div class="field"><label>Phone / WhatsApp</label><input class="inp" id="sPhone" value="${esc(s.phone)}"></div><div class="field"><label>Licence number (Ministry / ETAA)</label><input class="inp" id="sLic" value="${esc(s.licence||"")}"></div>
+     <div class="field"><label>Prices</label><input class="inp" id="sPrice" value="${esc(s.priceNote)}" placeholder="e.g. €30 p.p. shared, €200 private"></div>
+     <div class="field"><label>Checks</label><div class="checks"><button id="sLicB" class="${s.licensed?"on":""}" data-tg="1">Licence seen</button><button id="sInsB" class="${s.insured?"on":""}" data-tg="1">Insurance seen</button></div></div>
+     <div class="field"><label>Notes</label><textarea class="inp" id="sNotes">${esc(s.notes||"")}</textarea></div></div>
+     <div class="sec row"><button class="btn ghost" data-act="close" style="flex:1">Cancel</button>${S.openSup!=="new"?`<button class="btn ghost" data-act="delsup" style="flex:1;border-color:var(--bad);color:var(--bad)">Delete</button>`:""}<button class="btn" data-act="savesup" style="flex:1" ${dis()}>Save</button></div>`}
+  else return;
+  const bg=document.createElement("div");bg.className="sheet-bg";bg.id="sheet";bg.innerHTML=`<div class="sheet"><div class="grab"></div>${inner}</div>`;
+  bg.addEventListener("click",e=>{if(e.target===bg)closeSheet()});document.body.appendChild(bg);
+}
+
+/* ================= RENDER ================= */
+let io=null;
+function render(){
+  renderNav();
+  const h=S.mode==="client"?{home:vHome,explore:vExplore,plan:vPlan,money:vMoney,guide:vGuide,trip:vTrip}[S.tab]():{overview:vOverview,requests:vRequests,agenda:vAgenda,content:vContent,business:vBusiness}[S.advTab]();
+  const a=document.activeElement;const keep=a&&a.id&&$("#view").contains(a)?{id:a.id,s:a.selectionStart}:null;
+  const vals={};document.querySelectorAll("#view input[id],#view textarea[id]").forEach(el=>{if(el.type!=="checkbox"&&el.value&&!el.defaultValue)vals[el.id]=el.value;else if(el.value!==el.defaultValue)vals[el.id]=el.value});
+  $("#view").innerHTML=`<div class="view">${h}</div>`;
+  Object.entries(vals).forEach(([id,v])=>{const el=document.getElementById(id);if(el&&!["codeIn"].includes(id))el.value=v});
+  if(S.tab==="money"&&S.mode==="client"){calcFx();calcHaggle()}
+  if(keep){const el=document.getElementById(keep.id);if(el){el.focus();try{el.setSelectionRange(keep.s,keep.s)}catch(e){}}}
+  if(S.openReq||S.openSup||S.openDest||S.zoom){const sc=$("#sheet .sheet");const top=sc?sc.scrollTop:0;const sv={};document.querySelectorAll("#sheet input[id],#sheet textarea[id],#sheet select[id]").forEach(el=>sv[el.id]=el.value);
+    renderSheet();const n=$("#sheet .sheet");if(n){n.scrollTop=top;Object.entries(sv).forEach(([id,v])=>{const el=document.getElementById(id);if(el&&v)el.value=v})}}
+  if(io)io.disconnect();
+  if("IntersectionObserver"in window){io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}}),{threshold:.08});document.querySelectorAll(".reveal").forEach(el=>io.observe(el))}
+  else document.querySelectorAll(".reveal").forEach(el=>el.classList.add("in"));
+  setTimeout(()=>document.querySelectorAll(".reveal:not(.in)").forEach(el=>el.classList.add("in")),3500);
+  setTimeout(()=>document.querySelectorAll(".reveal:not(.in)").forEach(el=>{const r=el.getBoundingClientRect();if(r.top<innerHeight)el.classList.add("in")}),1200);
+}
+
+/* ================= EVENTS ================= */
+document.addEventListener("click",async e=>{
+  const t=e.target.closest("button,a,[data-open],[data-sup],[data-pack],[data-copy],[data-zoom],.brand");if(!t)return;const d=t.dataset;
+  if(d.nav)return go(d.nav);
+  if(d.go){S.mode="client";if(d.go==="plan")S.form=S.form||newForm();closeSheet(true);return go(d.go)}
+  if(t.id==="modeBtn"){S.mode=S.mode==="client"?"advisor":"client";closeSheet();window.scrollTo(0,0);return render()}
+  if(t.id==="tripBtn")return go("trip");
+  if(d.cat){S.cat=d.cat;return render()}
+  if(d.guide){S.guide=d.guide;return render()}
+  if(d.content){S.content=d.content;return render()}
+  if(d.biz){S.biz=d.biz;return render()}
+  if(d.dest){S.openDest=d.dest;return renderSheet()}
+  if(d.zoom){S.zoom=d.zoom;return renderSheet()}
+  if(d.zoomnav){const i=GAL.indexOf(S.zoom);S.zoom=GAL[(i+ +d.zoomnav+GAL.length)%GAL.length];return renderSheet()}
+  if(d.plandest){S.form=S.form||newForm();S.form.destination=DEST_OPTS.find(o=>d.plandest.startsWith(o.split(" ")[0]))||"Other";closeSheet(true);return go("plan")}
+  if(d.wish){S.wish.has(d.wish)?S.wish.delete(d.wish):S.wish.add(d.wish);if(S.form)S.form.activities=[...S.wish];saveLocal();return render()}
+  if(d.pack!==undefined){const i=+d.pack;S.packed.has(i)?S.packed.delete(i):S.packed.add(i);saveLocal();return render()}
+  if(d.copy){try{await navigator.clipboard.writeText(d.copy);toast("Copied: "+d.copy)}catch(_){toast(d.copy)}return}
+  if(d.rate){S.rating=+d.rate;document.querySelectorAll("[data-rate]").forEach(b=>b.classList.toggle("on",+b.dataset.rate<=S.rating));return}
+  if(d.pkg){S.form=S.form||newForm();S.form.package=d.pkg;if(d.pkg==="companion"&&S.form.companion==="No")S.form.companion="Half days";S.step=0;return go("plan")}
+  if(d.f){S.form[d.f]=d.f==="currencyHelp"?d.v==="Yes":d.v;return render()}
+  if(d.cnt){const[k,v]=d.cnt.split(":");S.form[k]=Math.max(k==="adults"?1:0,Math.min(20,S.form[k]+ +v));return render()}
+  if(d.tog){const a=S.form.activities;const i=a.indexOf(d.tog);i>=0?a.splice(i,1):a.push(d.tog);return render()}
+  if(d.rf){S.reqFilter=d.rf;return render()}
+  if(d.open)return(S.openReq=d.open,renderSheet());
+  if(d.sup)return(S.openSup=d.sup,renderSheet());
+  if(d.tg){t.classList.toggle("on");return}
+  if(d.accept)return guarded(()=>DATA.update("requests",d.accept,{accepted:true,acceptedAt:Date.now()}),"Thank you! Your local will be in touch.");
+  if(d.setst&&S.openReq)return guarded(()=>DATA.update("requests",S.openReq,{status:d.setst}),"Status: "+ST_LABEL[d.setst]);
+  if(d.delitem!==undefined){const r=S.requests.find(x=>x.code===S.openReq);return guarded(()=>DATA.update("requests",r.code,{items:(r.items||[]).filter((_,i)=>i!=d.delitem)}))}
+  if(d.delit!==undefined){const r=S.requests.find(x=>x.code===S.openReq);return guarded(()=>DATA.update("requests",r.code,{itinerary:(r.itinerary||[]).filter((_,i)=>i!=d.delit)}))}
+  if(d.delprice)return guarded(()=>DATA.del("priceChecks",d.delprice),"Removed");
+  if(d.delreview)return guarded(()=>DATA.del("reviews",d.delreview),"Removed");
+  if(d.reject)return guarded(()=>DATA.del("reviewSubs",d.reject),"Rejected");
+  if(d.approve){const r=S.reviewSubs.find(x=>x.id===d.approve);if(!r)return;const ok=await guarded(()=>DATA.set("reviews",{id:r.id,name:r.name,country:r.country,rating:r.rating,text:r.text,when:new Date(r.createdAt||Date.now()).toLocaleDateString("en-GB",{month:"long",year:"numeric"}),createdAt:r.createdAt||Date.now()}));if(ok)await guarded(()=>DATA.del("reviewSubs",r.id),"Published");return}
+  switch(d.act){
+    case"nowa":return toast("The WhatsApp number will be added soon.");
+    case"next":{const f=S.form;if(S.step===0&&!f.arrival)return toast("Please choose your arrival date.");if(f.departure&&f.arrival&&f.departure<f.arrival)return toast("Departure is before arrival.");S.step++;window.scrollTo(0,0);return render()}
+    case"back":S.step=Math.max(0,S.step-1);return render();
+    case"submit":{const f=S.form;if(!f.name.trim())return toast("Please add your name.");if(!f.whatsapp.trim()&&!f.email.trim())return toast("Add WhatsApp or e-mail so we can reach you.");
+      const code="MY-"+Math.floor(1000+Math.random()*9000)+Math.random().toString(36).slice(2,4).toUpperCase();
+      const req={code,name:f.name.trim(),email:f.email.trim(),whatsapp:f.whatsapp.trim(),lang:f.lang,destination:f.destination,arrival:f.arrival,departure:f.departure,hotel:f.hotel.trim(),adults:f.adults,kids:f.kids,budget:f.budget,activities:f.activities.slice(),companion:f.companion,currencyHelp:!!f.currencyHelp,package:f.package,occasion:f.occasion,notes:f.notes.trim(),status:"new",createdAt:Date.now(),items:[],itinerary:[]};
+      t.disabled=true;
+      try{await DATA.set("requests",req);S.myCode=code;S.form=null;S.step=0;S.wish.clear();saveLocal();S.tab="trip";render();toast("Request sent! Your code: "+code)}
+      catch(err){t.disabled=false;toast(err&&err.code==="invalid_argument"?"You can't send requests from this view.":"Could not send. Please try again or WhatsApp us.")}return}
+    case"findcode":{const v=($("#codeIn").value||"").trim().toUpperCase();if(!v)return;S.myCode=v;saveLocal();return render()}
+    case"logout":S.myCode=null;saveLocal();return render();
+    case"sendreview":{const r=S.requests.find(x=>x.code===S.myCode);const text=$("#rvText").value.trim();if(text.length<10)return toast("Write a few more words 🙂");if(!$("#rvOk").checked)return toast("Please tick the permission box.");
+      const ok=await guarded(()=>DATA.set("reviewSubs",{id:"r"+uid(),code:r.code,name:$("#rvName").value.trim()||"Guest",country:$("#rvCountry").value.trim(),rating:S.rating,text,consent:true,createdAt:Date.now()}));if(ok){S.reviewSent=true;render()}return}
+    case"saverates":{const eu=num($("#rEur").value),us=num($("#rUsd").value);if(!(eu>0))return toast("Enter the EUR rate.");return guarded(()=>DATA.settings({eurEgp:String(eu),usdEgp:us>0?String(us):"",ratesDate:today()}),"Rate published for travellers")}
+    case"saveprofile":return guarded(()=>DATA.settings({advisorName:$("#pfName").value.trim(),base:$("#pfBase").value.trim(),bio:$("#pfBio").value.trim(),languages:$("#pfLang").value.trim(),whatsapp:$("#pfWa").value.trim()}),"Profile saved");
+    case"addprice":{const item=$("#pcItem").value.trim(),tp=num($("#pcT").value),lp=num($("#pcL").value);if(!item||!(tp>0)||!(lp>0))return toast("Item and both prices are needed.");if(!$("#pcProof").value.trim())return toast("Add the proof (receipt, photo, menu).");
+      return guarded(()=>DATA.set("priceChecks",{id:"p"+uid(),item,place:$("#pcPlace").value.trim(),tourist:tp,local:lp,date:$("#pcDate").value||today(),proof:$("#pcProof").value.trim()}),"Price check published")}
+    case"addreview":{const text=$("#mrText").value.trim();if(!text||!$("#mrName").value.trim())return toast("Text and name are needed.");if(!$("#mrOk").checked)return toast("Only with the guest's permission.");
+      return guarded(()=>DATA.set("reviews",{id:"r"+uid(),name:$("#mrName").value.trim(),country:$("#mrCountry").value.trim(),rating:+$("#mrStars").value,text,when:new Date().toLocaleDateString("en-GB",{month:"long",year:"numeric"}),createdAt:Date.now()}),"Review published")}
+    case"close":return closeSheet();
+    case"additem":{const r=S.requests.find(x=>x.code===S.openReq);const label=$("#itLabel").value.trim(),price=num($("#itPrice").value);if(!label||!(price>=0))return toast("Add a line and a price.");
+      const ok=await guarded(()=>DATA.update("requests",r.code,{items:(r.items||[]).concat([{label,type:$("#itType").value,price,commission:num($("#itCom").value)||0}])}));if(ok){["itLabel","itPrice"].forEach(id=>{const el=document.getElementById(id);if(el)el.value=""})}return}
+    case"addday":{const r=S.requests.find(x=>x.code===S.openReq);const title=$("#dpTitle").value.trim();if(!title||!$("#dpDate").value)return toast("Add a date and what happens.");
+      const ok=await guarded(()=>DATA.update("requests",r.code,{itinerary:(r.itinerary||[]).concat([{date:$("#dpDate").value,time:$("#dpTime").value,title,note:$("#dpNote").value.trim()}])}));if(ok){["dpTitle","dpNote","dpTime"].forEach(id=>{const el=document.getElementById(id);if(el)el.value=""})}return}
+    case"delreq":{if(t.dataset.sure!=="1"){t.dataset.sure="1";t.textContent="Tap again to delete";return}const c=S.openReq;closeSheet();return guarded(()=>DATA.del("requests",c),"Request deleted")}
+    case"addsup":S.openSup="new";return renderSheet();
+    case"savesup":{const s=S._sup;const o={id:s.id,name:$("#sName").value.trim(),category:$("#sCat").value,commission:$("#sCom").value.trim(),phone:$("#sPhone").value.trim(),licence:$("#sLic").value.trim(),priceNote:$("#sPrice").value.trim(),licensed:$("#sLicB").classList.contains("on"),insured:$("#sInsB").classList.contains("on"),notes:$("#sNotes").value.trim()};
+      if(!o.name)return toast("Add a name.");closeSheet();return guarded(()=>DATA.set("suppliers",o),"Supplier saved")}
+    case"delsup":{if(t.dataset.sure!=="1"){t.dataset.sure="1";t.textContent="Tap again";return}const id=S._sup.id;closeSheet();return guarded(()=>DATA.del("suppliers",id),"Supplier deleted")}
+  }
+  if(t.classList.contains("brand")){S.mode="client";return go("home")}
+});
+document.addEventListener("input",e=>{
+  const k=e.target.dataset&&e.target.dataset.in;if(k&&S.form){S.form[k]=e.target.value;return}
+  if(["fxEur","fxOff","fxFee"].includes(e.target.id))calcFx();
+  if(e.target.id==="hgIn")calcHaggle();
+  if(e.target.id==="q"){S.q=e.target.value;render()}
+});
+document.addEventListener("change",e=>{const k=e.target.dataset&&e.target.dataset.in;if(k&&S.form){S.form[k]=e.target.value;if(k==="package")render()}});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet()});
+
+
+window.addEventListener("hashchange",applyRoute);window.addEventListener("popstate",applyRoute);
+{const _r=render;render=function(){_r();syncHash()};const _rs=renderSheet;renderSheet=function(){_rs();syncHash()}}
+applyRoute();initData();
+if("serviceWorker" in navigator&&location.protocol==="https:"){try{navigator.serviceWorker.register("sw.js")}catch(e){}}
+setTimeout(()=>{const sp=document.getElementById("splash");if(sp){sp.classList.add("out");setTimeout(()=>sp.remove(),600)}},1300);
+</script>
+</body>
+</html>
