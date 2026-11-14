@@ -458,8 +458,8 @@ async function guarded(fn,okMsg){try{await fn();if(okMsg)toast(okMsg);return tru
 
 async function initData(){
   let db=null,user=null;
-  try{db=await hostApi.use("db")}catch(e){}
-  try{user=await hostApi.use("user")}catch(e){}
+  try{db=await (window.hostApi&&hostApi.use("db"))}catch(e){}
+  try{user=await (window.hostApi&&hostApi.use("user"))}catch(e){}
   if(user){try{S.isAdvisor=!!(await user.canEdit())}catch(e){}try{if((await user.can("data.write"))===false)S.canWrite=false}catch(e){}}
   if(!db){S.loaded=true;seedDemo();render();return}
   S.db=db;S.demo=false;
