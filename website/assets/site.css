@@ -695,3 +695,5 @@ html[lang=ar] .mread .mname{letter-spacing:0}
 /* hero portal parallax */
 .portal .arch img.on{will-change:transform}
 .portal.tilt{transition:transform .4s var(--ease)}
+.brand{flex:none}
+@media (min-width:1240px) and (max-width:1439px){.nav{gap:16px}.nav a{font-size:14.5px}.hdr .bar{gap:14px}}
