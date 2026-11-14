@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://touta1111.github.io/me-and-you-tours/website/sitemap.xml
+Sitemap: https://touta1111.github.io/Me-and-you-tours/website/sitemap.xml
