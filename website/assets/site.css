@@ -695,5 +695,7 @@ html[lang=ar] .mread .mname{letter-spacing:0}
 /* hero portal parallax */
 .portal .arch img.on{will-change:transform}
 .portal.tilt{transition:transform .4s var(--ease)}
-.brand{flex:none}
+@media (min-width:1240px){.brand{flex:none}}
 @media (min-width:1240px) and (max-width:1439px){.nav{gap:16px}.nav a{font-size:14.5px}.hdr .bar{gap:14px}}
+@media (max-width:379px){.hdr .lang{display:none}.brand{gap:8px;min-width:0}.brand small{display:none}.brand b{font-size:18px;letter-spacing:.06em}.brand img{width:38px;height:38px}.hdr .bar{gap:10px}}
+@media (max-width:519px){.hdr .lang{display:none}}
