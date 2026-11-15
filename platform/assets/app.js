@@ -2,9 +2,10 @@
 import {
   api, ApiError, t, setStrings, setLang, lang, initialLang, money, fdate, ftime, fdt, cairoDay, duration, $, $$, esc, html, raw, H,
   toast, modal, confirmBox, act, errMsg, showFieldErrors, formData, route, go, current, startRouter, reveal, store, myRefs, favs, ICON,
-  EXAMPLE, startRuntime, resetExample, root, newKey,
+  EXAMPLE, startRuntime, resetExample, root, newKey, consent, SINGLE,
 } from "./core.js";
 import STR from "./i18n.js";
+import { DOCS, COMPANY, PLACEHOLDER, PH_LABEL, HOTLINES, LEGAL_UPDATED } from "./legal.js";
 
 setStrings(STR);
 setLang(initialLang());
@@ -50,11 +51,49 @@ function bindFavs(rootEl = document) {
   });
 }
 
+// ---------------------------------------------------------------- legal helpers
+/** a company detail, or a clearly marked placeholder until the company has filled it in */
+const ph = (k) => (COMPANY[k] ? html`${COMPANY[k]}` : html`<mark class="ph">${PH_LABEL[k]?.[lang()] ? PH_LABEL[k][lang()] + " — " : ""}${PLACEHOLDER[lang()]}</mark>`);
+function legalText(str) {
+  // paragraphs; lines starting with "• " become lists; {{key}} becomes the company detail or a placeholder
+  const fill = (line) => H(html`${line}`).replace(/\{\{(\w+)\}\}/g, (_, k) => H(ph(k)));
+  const out = []; let list = [];
+  const flush = () => { if (list.length) { out.push(`<ul>${list.map((l) => `<li>${fill(l)}</li>`).join("")}</ul>`); list = []; } };
+  for (const line of String(str).split("\n")) {
+    if (line.startsWith("• ")) list.push(line.slice(2));
+    else { flush(); if (line.trim()) out.push(`<p>${fill(line)}</p>`); }
+  }
+  flush(); return raw(out.join(""));
+}
+function consentBanner() {
+  if (consent.get() || $(".cbanner")) return;
+  const d = document.createElement("div"); d.className = "cbanner"; d.setAttribute("role", "region"); d.setAttribute("aria-label", t("cb_title"));
+  d.innerHTML = H(html`<div><b>${t("cb_title")}</b><p>${t("cb_text")}</p></div><div class="row"><button class="btn ghost sm" data-c="0">${t("cb_necessary")}</button><button class="btn sm" data-c="1">${t("cb_allow")}</button><a class="link small" href="#/legal/COOKIES">${t("cb_more")}</a></div>`);
+  d.addEventListener("click", (e) => { const b = e.target.closest("[data-c]"); if (b) { saveConsent(b.dataset.c === "1"); d.classList.add("out"); setTimeout(() => d.remove(), 400); } if (e.target.closest("a")) d.remove(); });
+  document.body.append(d);
+}
+function saveConsent(prefs) {
+  consent.set(prefs);
+  if (prefs) setLang(lang()); // write the current language now that it may be kept
+  api("POST", "/api/v1/consents", { body: { deviceId: consent.deviceId(), preferences: prefs, lang: lang() } }).catch(() => {});
+  toast(t("cb_saved"));
+}
+function storageSettings() {
+  const on = consent.prefs();
+  const m = modal(html`<h3>${t("storage_settings")}</h3>
+    <div class="card pad" style="margin:10px 0"><div class="spread"><b>${t("st_necessary")}</b><span class="badge ok">${t("always_on")}</span></div><p class="small muted" style="margin:6px 0 0">${t("st_necessary_d")}</p></div>
+    <label class="card pad check" style="margin:10px 0;display:flex"><input type="checkbox" data-prefs ${on ? raw("checked") : ""}><span><b>${t("st_prefs")}</b><br><span class="small muted">${t("st_prefs_d")}</span></span></label>
+    <div class="row"><button class="btn" data-save>${t("save")}</button><a class="link" href="#/legal/COOKIES" data-close>${t("cookies")}</a></div>`);
+  m.el.querySelector("[data-save]").addEventListener("click", () => { saveConsent(m.el.querySelector("[data-prefs]").checked); $(".cbanner")?.remove(); m.close(); });
+  return m;
+}
+
 // ---------------------------------------------------------------- shells
 function siteShell() {
   const p = current().path;
   const nav = [["#/experiences", t("nav_experiences")], ["#/transfers", t("nav_transfers")], ["#/planner", t("nav_planner")], ["#/trip", t("nav_trip")], ["#/bookings", t("nav_bookings")], ["#/support", t("nav_support")]];
   return html`
+  <a class="skip" href="#view">${t("skip_main")}</a><div class="progress" aria-hidden="true"><i></i></div>
   ${EXAMPLE ? html`<div class="examplebar">${raw(t("example_bar"))} <button data-reset>${t("reset_example")}</button></div>` : ""}
   <header class="top"><div class="wrap">
     <a class="brand" href="#/"><img src="${img("img/logo.png")}" alt=""><span><b>ME &amp; YOU</b><small>Tours Egypt</small></span></a>
@@ -72,11 +111,17 @@ function siteShell() {
         <p style="margin-top:12px">${t("footer_tag")}</p></div>
       <div><h4>${t("explore")}</h4><ul><li><a href="#/experiences">${t("nav_experiences")}</a></li><li><a href="#/experiences?type=PRIVATE">${t("private_tours")}</a></li><li><a href="#/transfers">${t("nav_transfers")}</a></li><li><a href="#/planner">${t("nav_planner")}</a></li></ul></div>
       <div><h4>${t("help")}</h4><ul><li><a href="#/bookings">${t("nav_bookings")}</a></li><li><a href="#/support">${t("nav_support")}</a></li><li><a href="#/faq">${t("faq")}</a></li><li><a href="#/contact">${t("contact")}</a></li><li><a href="#/about">${t("about")}</a></li></ul></div>
-      <div><h4>${t("legal")}</h4><ul><li><a href="#/legal/PRIVACY">${t("privacy")}</a></li><li><a href="#/legal/BOOKING_TERMS">${t("booking_terms")}</a></li><li><a href="#/legal/CANCELLATION_POLICY">${t("cancel_policy")}</a></li>
-        <li><a href="${root("app/")}">${t("open_app")}</a></li><li><a href="${root("hq/")}">Business HQ</a></li><li><a href="${root("partner/")}">${t("partner_portal")}</a></li></ul></div>
+      <div><h4>${t("legal")}</h4><ul><li><a href="#/legal/IMPRINT">${t("imprint")}</a></li><li><a href="#/legal/BOOKING_TERMS">${t("booking_terms")}</a></li><li><a href="#/legal/CANCELLATION_POLICY">${t("cancel_policy")}</a></li><li><a href="#/legal/CONSUMER">${t("consumer_rights")}</a></li>
+        <li><a href="#/legal/PRIVACY">${t("privacy")}</a></li><li><a href="#/legal/COOKIES">${t("cookies")}</a></li><li><a href="#/privacy-request">${t("privacy_request")}</a></li><li><a href="#/legal/ACCESSIBILITY">${t("accessibility")}</a></li><li><button class="linkbtn" type="button" data-storage>${t("storage_settings")}</button></li></ul></div>
     </div>
-    <p class="small" style="margin-top:26px;opacity:.75">Instagram: <a href="https://www.instagram.com/meandyoutoursegypt" target="_blank" rel="noopener">@meandyoutoursegypt</a> · ${t("made_by")}</p>
-  </div></footer>`;
+    <div class="footlegal">
+      <div><b>Me &amp; You Tours Egypt</b> · ${t("licence_short")}: ${ph("licence_no")} · ETAA: ${ph("etaa_no")}<br><span class="small">${t("arabic_official")}</span></div>
+      <div><b>${t("complaints_lines")}</b><br><span class="small">${HOTLINES.slice(0, 2).map((h) => html`<a href="tel:${h.num}">${h.num}</a> ${h.label[lang()]}`).reduce((a, b) => html`${a} · ${b}`)}</span></div>
+    </div>
+    <p class="small" style="margin-top:18px;opacity:.75"><a href="${root("app/")}">${t("open_app")}</a> · <a href="${root("hq/")}">Business HQ</a> · <a href="${root("partner/")}">${t("partner_portal")}</a> · Instagram: <a href="https://www.instagram.com/meandyoutoursegypt" target="_blank" rel="noopener">@meandyoutoursegypt</a></p>
+    <p class="small" style="margin-top:8px;opacity:.75">© ${new Date().getFullYear()} Me &amp; You Tours Egypt · ${t("made_by")}</p>
+  </div></footer>
+  <button class="totop" data-top aria-label="${t("scroll_top")}">${raw(ICON.back)}</button>`;
 }
 function appShell(title, { back = false, tab = "" } = {}) {
   const tabs = [["#/", "explore", t("tab_explore")], ["#/trip", "trip", t("tab_trip")], ["#/bookings", "ticket", t("tab_bookings")], ["#/support", "support", t("tab_support")], ["#/account", "user", t("tab_profile")]];
@@ -99,16 +144,20 @@ function mount(path) {
   $("[data-reset]")?.addEventListener("click", async () => { if (await confirmBox(t("reset_confirm"), t("reset_example"), true)) resetExample(); });
   $("[data-back]")?.addEventListener("click", () => (history.length > 1 ? history.back() : go("/")));
   $("[data-menu]")?.addEventListener("click", openMenu);
+  $("[data-storage]")?.addEventListener("click", storageSettings);
+  $("[data-top]")?.addEventListener("click", () => window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }));
 }
 function openMenu() {
   const d = document.createElement("div"); d.className = "drawer";
   d.innerHTML = H(html`<div role="dialog" aria-modal="true" aria-label="${t("menu")}"><div class="spread"><b>${t("menu")}</b><button class="iconbtn" data-x aria-label="${t("close")}">${raw(ICON.close)}</button></div>
-    <nav>${[["#/", t("home")], ["#/experiences", t("nav_experiences")], ["#/experiences?type=PRIVATE", t("private_tours")], ["#/transfers", t("nav_transfers")], ["#/planner", t("nav_planner")], ["#/concierge", t("concierge")], ["#/trip", t("nav_trip")], ["#/bookings", t("nav_bookings")], ["#/support", t("nav_support")], ["#/faq", t("faq")], ["#/about", t("about")], ["#/contact", t("contact")], ["#/account", t("account")]].map(([h, l]) => html`<a href="${h}">${l}</a>`)}</nav></div>`);
+    <nav>${[["#/", t("home")], ["#/experiences", t("nav_experiences")], ["#/experiences?type=PRIVATE", t("private_tours")], ["#/transfers", t("nav_transfers")], ["#/planner", t("nav_planner")], ["#/concierge", t("concierge")], ["#/trip", t("nav_trip")], ["#/bookings", t("nav_bookings")], ["#/support", t("nav_support")], ["#/destinations", t("dest_k")], ["#/how", t("how_it_works")], ["#/safety", t("safety_k")], ["#/faq", t("faq")], ["#/about", t("about")], ["#/contact", t("contact")], ["#/legal/CONSUMER", t("consumer_rights")], ["#/account", t("account")]].map(([h, l]) => html`<a href="${h}">${l}</a>`)}</nav></div>`);
   d.addEventListener("click", (e) => { if (e.target === d || e.target.closest("[data-x]") || e.target.closest("a")) d.remove(); });
   document.body.append(d); d.querySelector("[data-x]").focus();
 }
 function setView(content, title) {
-  view().innerHTML = H(content);
+  const v = view();
+  v.innerHTML = H(content);
+  v.classList.remove("viewin"); void v.offsetWidth; v.classList.add("viewin");
   document.title = `${title ? title + " · " : ""}Me & You Tours Egypt`;
   bindFavs(view()); reveal(view());
   if (!APP) window.scrollTo(0, 0);
@@ -136,26 +185,45 @@ route("/", async () => {
   setView(html`
     <section class="hero"><div class="bg"><img src="${img("img/orangebay.webp")}" alt=""></div><div class="wrap">
       <p class="k" style="color:var(--gold)">Hurghada · Red Sea · Egypt</p>
-      <h1>${t("hero_title")}</h1><p class="lead">${t("hero_sub")}</p>
+      <h1 class="words">${raw(t("hero_title").split(" ").map((w, i) => `<span style="--i:${i}">${esc(w)}</span>`).join(" "))}</h1><p class="lead">${t("hero_sub")}</p>
       <div class="row"><a class="btn" href="#/experiences">${t("cta_explore")}</a><a class="btn light" href="#/planner">${t("plan_my_trip")}</a><a class="btn ghost" style="color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.6)" href="#/support">${t("cta_contact")}</a></div>
       <form class="searchbar" data-search>
         <div><label for="q">${t("search")}</label><input id="q" class="inp" name="q" placeholder="${t("search_ph")}"></div>
         <div><label for="d">${t("date")}</label><input id="d" class="inp" type="date" name="date" min="${cairoDay(Date.now())}"></div>
         <div><label for="p">${t("people")}</label><input id="p" class="inp" type="number" name="people" min="1" max="30" value="2"></div>
         <button class="btn dark">${t("search")}</button></form>
-    </div></section>
+    </div><svg class="wave" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true"><path d="M0 40c160 30 320 30 480 0s320-30 480 0 320 30 480 0v40H0z"/></svg></section>
+    <section class="trust"><div class="wrap grid g4f">${[1, 2, 3, 4].map((i) => html`<div class="rv tr"><span class="ti">${raw(["🔒", "💷", "💬", "🛡"][i - 1])}</span><div><b>${t("trust" + i)}</b><p class="small muted">${t("trust" + i + "_d")}</p></div></div>`)}</div></section>
     <section class="s"><div class="wrap"><div class="head"><p class="k">${t("what_we_do")}</p><h2>${t("what_we_do_title")}</h2></div>
       <div class="chips">${cats.map((c) => html`<a class="chip" href="#/experiences?cat=${c}">${CAT_ICON[c]} ${catName(c)}</a>`)}</div>
       <div class="grid g3" style="margin-top:20px">${featured.map(card)}</div>
       <p style="margin-top:20px"><a class="btn ghost" href="#/experiences">${t("all_experiences")}</a></p></div></section>
+    ${destinationsBlock(cat.items, cfg.destinations, true)}
     <section class="s alt"><div class="wrap"><div class="head"><p class="k">${t("how_it_works")}</p><h2>${t("how_title")}</h2></div>
       <ol class="grid g4" style="list-style:none;padding:0;margin:0">${[1, 2, 3, 4, 5].map((i) => html`<li class="card pad rv"><b style="font:600 34px var(--serif);color:var(--gold)">0${i}</b><h3>${t("how" + i)}</h3><p class="muted small" style="margin:0">${t("how" + i + "_d")}</p></li>`)}</ol>
-      <p class="note" style="margin-top:18px">${t("how_note")}</p></div></section>
-    <section class="s"><div class="wrap grid g2" style="align-items:center">
+      <p class="note" style="margin-top:18px">${t("how_note")} <a class="link" href="#/how">${t("how_it_works")} →</a></p></div></section>
+    <section class="s"><div class="wrap"><div class="head"><p class="k">${t("why_k")}</p><h2>${t("why_title")}</h2></div>
+      <div class="grid g4f">${[1, 2, 3, 4].map((i) => html`<div class="card pad rv why"><span class="num">0${i}</span><h3>${t("why" + i)}</h3><p class="muted small" style="margin:0">${t("why" + i + "_d")}</p></div>`)}</div></div></section>
+    <section class="s"><div class="wrap grid g2f" style="align-items:center">
       <div class="rv"><p class="k">Me &amp; You Travel App</p><h2>${t("app_promo_title")}</h2><p class="muted">${t("app_promo")}</p><a class="btn dark" href="${root("app/")}">${t("open_app")}</a></div>
-      <div class="rv"><img src="${img("img/deck.webp")}" alt="" style="border-radius:22px;box-shadow:var(--shadow)"></div></div></section>`, t("home"));
+      <div class="rv"><div class="promo"><img data-par src="${img("img/deck.webp")}" alt=""></div></div></div></section>
+    <section class="s alt"><div class="wrap grid g2f" style="align-items:start">
+      <div class="rv"><p class="k">${t("safety_k")}</p><h2>${t("safety_title")}</h2><p class="muted">${t("safety_sub")}</p>
+        <div class="hot">${HOTLINES.slice(2).map((h) => html`<a href="tel:${h.num}"><b>${h.num}</b><span>${h.label[lang()]}</span></a>`)}</div>
+        <a class="btn ghost" href="#/safety">${t("safety_k")} →</a></div>
+      <div class="rv"><p class="k">${t("faq_k")}</p><h2>${t("faq")}</h2>${(cfg.faq || []).slice(0, 4).map((f) => html`<details class="card pad faqi"><summary>${f.q?.[lang()] || f.q?.en}</summary><p>${f.a?.[lang()] || f.a?.en}</p></details>`)}
+        <a class="link" href="#/faq">${t("all_questions")} →</a></div></div></section>
+    <section class="ctaband"><div class="wrap rv"><h2>${t("cta_band")}</h2><p>${t("cta_band_sub")}</p><div class="row" style="justify-content:center"><a class="btn gold" href="#/experiences">${t("cta_explore")}</a><a class="btn light" href="#/planner">${t("plan_my_trip")}</a></div></div></section>`, t("home"));
   bindSearch();
 });
+const DEST_IMG = { Hurghada: "img/giftunview.webp", "El Gouna": "img/elgouna.webp", Luxor: "img/luxor.webp", "Cairo & Giza": "img/pyramids.webp", Aswan: "img/aswan.webp" };
+function destinationsBlock(items, dests, compact = false) {
+  const count = (d) => items.filter((x) => x.destination === d && x.category !== "TRANSFER").length;
+  const list = dests.filter((d) => count(d) > 0);
+  return html`<section class="s ${compact ? "dark" : ""}"><div class="wrap">${compact ? html`<div class="head"><p class="k" style="color:var(--gold)">${t("dest_k")}</p><h2>${t("dest_title")}</h2><p class="muted">${t("dest_sub")}</p></div>` : ""}
+    <div class="dests">${list.map((d, i) => html`<a class="dest rv" style="--d:${i}" href="#/experiences?destination=${encodeURIComponent(d)}"><img src="${img(DEST_IMG[d] || "img/boats.webp")}" alt="" loading="lazy">
+      <div><b>${d}</b><span>${t("d_" + d)}</span><em>${count(d) === 1 ? t("n_exp1") : t("n_exp", { n: count(d) })} · ${t("explore_dest", { d })} →</em></div></a>`)}</div></div></section>`;
+}
 function greeting() { const h = Number(new Intl.DateTimeFormat("en-GB", { timeZone: "Africa/Cairo", hour: "2-digit", hour12: false }).format(new Date())); return t(h < 12 ? "good_morning" : h < 18 ? "good_afternoon" : "good_evening"); }
 function bindSearch() {
   $$("[data-search]").forEach((f) => f.onsubmit = (e) => {
@@ -344,6 +412,8 @@ route("/book/:slug", async ({ slug }) => {
           <div data-quote class="pricebox"><div class="skel" style="height:80px"></div></div>
           <div class="note ${x.booking_model === "INSTANT" ? "" : "warn"}" style="margin-top:12px">${x.booking_model === "INSTANT" ? t("review_instant") : t("review_request")}</div>
           <label class="check"><input type="checkbox" name="privacyAccepted" data-path="privacyAccepted"> <span>${raw(t("privacy_accept", { link: `<a href="#/legal/PRIVACY" target="_blank">${esc(t("privacy"))}</a>` }))}</span></label>
+          <label class="check"><input type="checkbox" name="marketingConsent"> <span class="small">${t("marketing_optin")}</span></label>
+          <p class="small muted">${t("arabic_official")} <a class="link" href="#/legal/BOOKING_TERMS" target="_blank">${t("booking_terms")}</a> · <a class="link" href="#/legal/CANCELLATION_POLICY" target="_blank">${t("cancel_policy")}</a> · <a class="link" href="#/legal/IMPRINT" target="_blank">${t("imprint")}</a></p>
           <div class="row"><button class="btn ghost" type="button" data-prev>${t("back")}</button><button class="btn" data-submit>${x.booking_model === "INSTANT" ? t("reserve_places") : t("send_request")}</button></div>
         </div>
       </form></div>`)}`, x.name);
@@ -363,7 +433,7 @@ route("/book/:slug", async ({ slug }) => {
       e.preventDefault();
       const d = formData(form);
       const body = { activityId: x.id, startAt: draft.start, adults: draft.adults, children: draft.children, pickup: d.pickup || null, notes: d.notes || null, tripId: d.tripId || null,
-        customer: { name: d["customer.name"], email: d["customer.email"], phone: d["customer.phone"] || null, lang: lang() }, privacyAccepted: d.privacyAccepted === true ? true : false,
+        customer: { name: d["customer.name"], email: d["customer.email"], phone: d["customer.phone"] || null, lang: lang() }, privacyAccepted: d.privacyAccepted === true ? true : false, marketingConsent: d.marketingConsent === true,
         transfer: transfer ? { pickupAddress: d["transfer.pickupAddress"], destination: d["transfer.destination"], flightNumber: d["transfer.flightNumber"] || null, luggage: Number(d["transfer.luggage"] || 0), childSeats: Number(d["transfer.childSeats"] || 0) } : null };
       const btn = $("[data-submit]");
       try {
@@ -783,7 +853,47 @@ route("/support", async (p, q) => {
 });
 
 // ---------------------------------------------------------------- content pages
-route("/about", async () => setView(html`${pageHead(t("about"), t("about_title"), t("about_sub"))}${W(html`<div class="grid g2" style="padding-bottom:40px;align-items:center"><div><p>${t("about_p1")}</p><p>${t("about_p2")}</p><p>${t("about_p3")}</p><a class="btn" href="#/experiences">${t("cta_explore")}</a></div><img src="${img("img/jetty.webp")}" alt="" style="border-radius:22px"></div>`)}`, t("about")));
+route("/destinations", async () => {
+  const [cfg, cat] = await Promise.all([config(), api("GET", `/api/v1/catalog?lang=${lang()}`)]);
+  setView(html`${pageHead(t("dest_k"), t("dest_title"), t("dest_sub"))}${destinationsBlock(cat.items, cfg.destinations)}`, t("dest_k"));
+});
+route("/how", async () => {
+  setView(html`${pageHead(t("how_it_works"), t("how_title"), t("how_page_sub"))}${W(html`
+    <ol class="timeline">${[1, 2, 3, 4, 5].map((i) => html`<li class="rv"><span>0${i}</span><div><h3>${t("how" + i)}</h3><p class="muted">${t("how" + i + "_d")}</p></div></li>`)}</ol>
+    <h2 style="margin-top:30px">${t("instant_vs_request")}</h2>
+    <div class="grid g2" style="margin-bottom:20px"><div class="card pad rv"><span class="badge ok">${t("live_places")}</span><p>${t("instant_d")}</p></div><div class="card pad rv"><span class="badge">${t("on_request")}</span><p>${t("request_d")}</p></div></div>
+    <div class="grid g4f" style="margin-bottom:40px">${[1, 2, 3, 4].map((i) => html`<div class="card pad rv"><b>${t("trust" + i)}</b><p class="small muted" style="margin:6px 0 0">${t("trust" + i + "_d")}</p></div>`)}</div>
+    <p style="padding-bottom:40px"><a class="btn" href="#/experiences">${t("cta_explore")}</a> <a class="btn ghost" href="#/legal/CONSUMER">${t("consumer_rights")}</a></p>`)}`, t("how_it_works"));
+});
+route("/safety", async () => {
+  setView(html`${pageHead(t("safety_k"), t("safety_title"), t("safety_sub"))}${W(html`
+    <div class="grid g4f">${[1, 2, 3, 4].map((i) => html`<div class="card pad rv"><h3>${t("tip" + i)}</h3><p class="muted" style="margin:0">${t("tip" + i + "_d")}</p></div>`)}</div>
+    <h2 style="margin-top:30px">${t("emergency")}</h2>
+    <div class="hot big" style="margin-bottom:40px">${HOTLINES.map((h) => html`<a href="tel:${h.num}" aria-label="${t("call", { n: h.num })}: ${h.label[lang()]}"><b>${h.num}</b><span>${h.label[lang()]}</span></a>`)}</div>`)}`, t("safety_k"));
+});
+route("/privacy-request", async () => {
+  const who = await me();
+  setView(html`${pageHead(t("privacy"), t("pr_title"), t("pr_sub"))}${W(html`<div class="grid g2" style="align-items:start;padding-bottom:40px">
+    <form data-pr class="card pad stack" novalidate>
+      <div class="formgrid"><label class="f">${t("full_name")}<input class="inp" name="name" value="${who?.name || ""}" required autocomplete="name"></label><label class="f">${t("email")}<input class="inp" type="email" name="email" value="${who?.email || ""}" required autocomplete="email"></label></div>
+      <fieldset class="f" style="border:0;padding:0;margin:0"><legend style="font-weight:700;margin-bottom:6px">${t("pr_kind")}</legend>
+        ${["ACCESS", "CORRECT", "DELETE", "OBJECT", "WITHDRAW"].map((k, i) => html`<label class="check"><input type="radio" name="kind" value="${k}" ${i === 0 ? raw("checked") : ""}> ${t("pr_" + k)}</label>`)}</fieldset>
+      <label class="f">${t("ref")}<span class="h">${t("if_relevant")}</span><input class="inp" name="reference"></label>
+      <label class="f">${t("pr_details")}<textarea class="inp" name="details" maxlength="3000"></textarea></label>
+      <p class="small muted">${t("pr_verify")}</p><button class="btn">${t("pr_send")}</button></form>
+    <div class="stack"><div class="card pad"><h3>${t("privacy")}</h3><p class="small muted">${DOCS.PRIVACY.intro[lang()]}</p><a class="link" href="#/legal/PRIVACY">${t("privacy")} →</a></div>
+      <div class="card pad"><h3>${t("storage_settings")}</h3><p class="small muted">${t("st_prefs_d")}</p><button class="btn ghost sm" type="button" data-storage2>${t("storage_settings")}</button></div></div></div>`)}`, t("privacy_request"));
+  $("[data-storage2]").onclick = storageSettings;
+  $("[data-pr]").onsubmit = async (e) => {
+    e.preventDefault(); const d = formData(e.target);
+    const message = `[${d.kind}] ${t("pr_" + d.kind)}${d.details ? "\n\n" + d.details : ""}`;
+    try {
+      const r = await act(e.target.querySelector(".btn"), () => api("POST", "/api/v1/support", { body: { name: d.name, email: d.email, topic: "PRIVACY_REQUEST", urgency: "NORMAL", reference: d.reference || null, message } }));
+      e.target.reset(); modal(html`<h3>${t("pr_done", { n: r.number })}</h3><p>${t("pr_done_expl")}</p><a class="btn" href="#/support" data-close>${t("nav_support")}</a>`);
+    } catch (err) { showFieldErrors(e.target, err); }
+  };
+});
+route("/about", async () => setView(html`${pageHead(t("about"), t("about_title"), t("about_sub"))}${W(html`<div class="grid g2f" style="padding-bottom:40px;align-items:center"><div><p>${t("about_p1")}</p><p>${t("about_p2")}</p><p>${t("about_p3")}</p><a class="btn" href="#/experiences">${t("cta_explore")}</a></div><div class="promo rv"><img data-par src="${img("img/jetty.webp")}" alt=""></div></div>`)}`, t("about")));
 route("/contact", async () => { const cfg = await config(); setView(html`${pageHead(t("contact"), t("contact_title"), cfg.support_hours || "")}${W(html`<div class="grid g3" style="padding-bottom:40px">
   <div class="card pad"><h3>${t("nav_support")}</h3><p class="small muted">${t("contact_support")}</p><a class="btn sm" href="#/support">${t("new_question")}</a></div>
   <div class="card pad"><h3>Instagram</h3><p class="small muted">${t("contact_insta")}</p><a class="btn ghost sm" href="https://www.instagram.com/meandyoutoursegypt" target="_blank" rel="noopener">@meandyoutoursegypt</a></div>
@@ -793,9 +903,25 @@ route("/faq", async () => {
   setView(html`${pageHead(t("faq"), t("faq_title"))}${W(html`<div style="max-width:780px;padding-bottom:40px">${faq.map(([q, a]) => html`<details class="card pad" style="margin-bottom:10px"><summary style="cursor:pointer;font-weight:800;color:var(--ocean);min-height:32px">${t(q)}</summary><p style="margin:10px 0 0">${t(a)}</p></details>`)}<a class="btn ghost" href="#/concierge">${t("open_concierge")}</a></div>`)}`, t("faq"));
 });
 route("/legal/:kind", async ({ kind }) => {
-  const doc = await api("GET", `/api/v1/terms/${kind}`);
-  const name = { PRIVACY: t("privacy"), BOOKING_TERMS: t("booking_terms"), CANCELLATION_POLICY: t("cancel_policy") }[kind];
-  setView(html`${pageHead(t("legal"), name, `${t("version")} ${doc.version} · ${fdate(doc.published_at, { year: true })}`)}${W(html`<div class="card pad prose" style="max-width:780px;margin-bottom:40px">${doc.body}</div>`)}`, name);
+  const doc = DOCS[kind];
+  if (!doc) return setView(html`${W(html`<div class="empty"><h2>${t("not_found")}</h2><a class="btn" href="#/">${t("home")}</a></div>`)}`, t("not_found"));
+  // terms that are accepted per booking are versioned in the database; show the version that is in force
+  let ver = null;
+  if (["PRIVACY", "BOOKING_TERMS", "CANCELLATION_POLICY"].includes(kind)) { try { ver = await api("GET", `/api/v1/terms/${kind}`); } catch {} }
+  const l = lang();
+  const meta = `${ver ? `${t("version")} ${ver.version} · ` : ""}${t("updated_on", { d: fdate(ver?.published_at || LEGAL_UPDATED, { year: true }) })}`;
+  const others = ["IMPRINT", "BOOKING_TERMS", "CANCELLATION_POLICY", "CONSUMER", "PRIVACY", "COOKIES", "ACCESSIBILITY"];
+  setView(html`${pageHead(t("legal"), doc.title[l], meta)}${W(html`<div class="legal">
+    <aside><p class="k">${t("on_this_page")}</p><ol>${doc.sections.map(([h], i) => html`<li><a href="#sec${i}">${h[l]}</a></li>`)}</ol>
+      <p class="k" style="margin-top:18px">${t("legal")}</p><ul>${others.map((k) => html`<li><a href="#/legal/${k}" ${k === kind ? raw('aria-current="page"') : ""}>${DOCS[k].title[l]}</a></li>`)}</ul></aside>
+    <article class="card pad legaldoc">
+      <p class="note">${t("legal_example")}</p>
+      ${legalText(doc.intro[l])}
+      ${doc.sections.map(([h, b], i) => html`<section id="sec${i}" class="rv"><h2>${h[l]}</h2>${legalText(b[l])}</section>`)}
+      ${l !== "ar" ? html`<details class="arcopy"><summary>${t("read_in_ar")}</summary><div dir="rtl" lang="ar">${legalText(doc.intro.ar)}${doc.sections.map(([h, b]) => html`<h3>${h.ar}</h3>${legalText(b.ar)}`)}</div></details>` : ""}
+      ${kind === "PRIVACY" ? html`<p><a class="btn" href="#/privacy-request">${t("privacy_request")}</a></p>` : kind === "COOKIES" ? html`<p><button class="btn" type="button" data-storage3>${t("storage_settings")}</button></p>` : kind === "CONSUMER" ? html`<div class="hot">${HOTLINES.slice(0, 2).map((h) => html`<a href="tel:${h.num}"><b>${h.num}</b><span>${h.label[l]}</span></a>`)}</div><p><a class="btn" href="#/support">${t("nav_support")}</a></p>` : ""}
+    </article></div>`)}`, doc.title[l]);
+  $("[data-storage3]")?.addEventListener("click", storageSettings);
 });
 route("/favorites", async () => {
   const cat = await api("GET", `/api/v1/catalog?lang=${lang()}`);
@@ -877,6 +1003,31 @@ route("/welcome", async () => {
   $$("[data-seen]").forEach((a) => a.addEventListener("click", () => store.set("myt_seen_welcome", true)));
 });
 
+// ---------------------------------------------------------------- motion: scroll progress, parallax, header shadow, back-to-top
+function effects() {
+  if (APP) return;
+  const calm = matchMedia("(prefers-reduced-motion: reduce)");
+  let busy = false;
+  const frame = () => {
+    busy = false;
+    const y = window.scrollY, h = document.documentElement.scrollHeight - innerHeight;
+    document.documentElement.style.setProperty("--scroll", h > 0 ? (y / h).toFixed(4) : "0");
+    document.body.classList.toggle("scrolled", y > 10);
+    document.body.classList.toggle("showtop", y > 700);
+    if (calm.matches) return;
+    for (const el of $$("[data-par]")) {
+      const r = el.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > innerHeight) continue;
+      el.style.transform = `translateY(${((r.top + r.height / 2 - innerHeight / 2) * -0.06).toFixed(1)}px)`;
+    }
+    const hero = $(".hero .bg img");
+    if (hero && y < innerHeight) hero.style.translate = `0 ${(y * 0.25).toFixed(1)}px`;
+  };
+  addEventListener("scroll", () => { if (!busy) { busy = true; requestAnimationFrame(frame); } }, { passive: true });
+  addEventListener("hashchange", () => requestAnimationFrame(frame));
+  frame();
+}
+
 // ---------------------------------------------------------------- boot
 async function render(fn, params = {}, query = {}, path = current().path) {
   if (fn === undefined) { const c = current(); return startRouterOnce(); }
@@ -900,11 +1051,15 @@ function dispatchAgain() { window.dispatchEvent(new HashChangeEvent("hashchange"
   try {
     await startRuntime((s) => { const el = $("#splash-msg"); if (el) el.textContent = t("boot_" + s.replace(/\s/g, "_")); });
   } catch (e) {
+    console.error("start failed", e?.message || e);
     if (splash) splash.innerHTML = `<div><h1>Me &amp; You</h1><p>${esc(errMsg(e))}</p><button class="btn" onclick="location.reload()">${esc(t("try_again"))}</button></div>`;
     return;
   }
   if (APP && !store.get("myt_seen_welcome", false) && (!location.hash || location.hash === "#/")) location.hash = "#/welcome";
   splash?.remove();
   startRouterOnce();
-  if ("serviceWorker" in navigator && window.isSecureContext) navigator.serviceWorker.register(root("sw.js")).catch(() => {});
+  consentBanner();
+  if (EXAMPLE && window.MYT_RUNTIME_MEMORY) toast(t("memory_mode"));
+  effects();
+  if ("serviceWorker" in navigator && window.isSecureContext && !SINGLE) navigator.serviceWorker.register(root("sw.js")).catch(() => {});
 })();

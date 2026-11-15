@@ -2,17 +2,24 @@
 const MODE = window.MYT_MODE || "server";
 export const EXAMPLE = MODE === "example";
 const ROOT = new URL("./", import.meta.url).href.replace(/assets\/$/, ""); // site root (works in sub-folders and on GitHub Pages)
-export const root = (p = "") => ROOT + p.replace(/^\//, "");
+// single-file edition: pictures are embedded and the other environments open from the published site
+export const SINGLE = !!window.MYT_SINGLE;
+export const root = (p = "") => {
+  const k = p.replace(/^\//, "");
+  if (SINGLE) return window.MYT_ASSETS?.[k] || (window.MYT_LINK_BASE || "") + k;
+  return ROOT + k;
+};
 
 let runtime = null;
 export async function startRuntime(onProgress) {
   if (!EXAMPLE) return;
   if (!runtime) runtime = await import("./runtime.js");
   // the example database lives in this browser; one tab at a time keeps it consistent
-  if (navigator.locks) {
-    const got = await new Promise((res) => navigator.locks.request("myt-example-db", { ifAvailable: true }, (lock) => { res(!!lock); return lock ? new Promise(() => {}) : null; }));
-    if (!got) throw Object.assign(new Error("OTHER_TAB"), { code: "OTHER_TAB" });
-  }
+  let got = true;
+  try {
+    if (navigator.locks) got = await new Promise((res, rej) => navigator.locks.request("myt-example-db", { ifAvailable: true }, (lock) => { res(!!lock); return lock ? new Promise(() => {}) : null; }).catch(rej));
+  } catch { got = true; } // viewers without Web Locks: continue
+  if (!got) throw Object.assign(new Error("OTHER_TAB"), { code: "OTHER_TAB" });
   await runtime.boot(onProgress);
 }
 export async function resetExample() { if (runtime) await runtime.resetExample(); location.reload(); }
@@ -42,12 +49,12 @@ export function setStrings(s) { STR = s; }
 export function lang() { return LANG; }
 export function setLang(l) {
   LANG = ["en", "nl", "de", "ar"].includes(l) ? l : "en";
-  try { localStorage.setItem("myt_lang", LANG); } catch {}
+  store.set("myt_lang", LANG);
   document.documentElement.lang = LANG;
   document.documentElement.dir = LANG === "ar" ? "rtl" : "ltr";
 }
 export function initialLang() {
-  try { const s = localStorage.getItem("myt_lang"); if (s) return s; } catch {}
+  const s = store.get("myt_lang", null); if (s) return s;
   const n = (navigator.language || "en").slice(0, 2);
   return ["nl", "de", "ar"].includes(n) ? n : "en";
 }
@@ -184,9 +191,45 @@ export function reveal(root = document) {
 }
 
 // ---------------------------------------------------------------- local storage helpers (device-only conveniences)
+// Storage on this device. "Necessary" items keep the service working (your session, the bookings you made here,
+// your storage choice). "Preference" items (language, favourites) are only kept between visits after you allow it.
+const PREF_KEYS = new Set(["myt_lang", "myt_favs"]);
+const isPref = (k) => PREF_KEYS.has(k) || k.startsWith("myt_form_");
+const mem = {};
+const ls = {
+  get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); return true; } catch { return false; } },
+  del(k) { try { localStorage.removeItem(k); } catch {} },
+};
+export const consent = {
+  get() { try { return JSON.parse(ls.get("myt_consent") || "null"); } catch { return null; } },
+  prefs() { return this.get()?.preferences === true; },
+  set(preferences) {
+    const c = { v: 1, necessary: true, preferences: !!preferences, at: new Date().toISOString() };
+    ls.set("myt_consent", JSON.stringify(c)); mem.myt_consent = JSON.stringify(c);
+    const keys = new Set([...PREF_KEYS, ...Object.keys(mem).filter(isPref)]);
+    try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (isPref(k)) keys.add(k); } } catch {}
+    for (const k of keys) {
+      if (preferences) { if (mem[k] != null) ls.set(k, mem[k]); }
+      else { const v = ls.get(k); if (v != null) mem[k] = v; ls.del(k); }
+    }
+    return c;
+  },
+  deviceId() {
+    let id = ls.get("myt_device") || mem.myt_device;
+    if (!id) { id = Array.from(crypto.getRandomValues(new Uint8Array(16)), (b) => b.toString(16).padStart(2, "0")).join(""); ls.set("myt_device", id); mem.myt_device = id; }
+    return id;
+  },
+};
 export const store = {
-  get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } },
-  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+  get(k, d) {
+    const v = isPref(k) && !consent.prefs() ? mem[k] ?? null : ls.get(k) ?? mem[k] ?? null;
+    if (v == null) return d; try { return JSON.parse(v); } catch { return d; }
+  },
+  set(k, v) {
+    const s = JSON.stringify(v); mem[k] = s;
+    if (!isPref(k) || consent.prefs()) ls.set(k, s);
+  },
 };
 /** guest bookings remembered on this device: [{reference, accessCode}] */
 export const myRefs = {
