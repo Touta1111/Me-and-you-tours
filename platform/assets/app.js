@@ -23,12 +23,17 @@ const credBody = (ref) => { const c = myRefs.code(ref); return c ? { reference: 
 // ---------------------------------------------------------------- data helpers
 async function config() { return (CONFIG ||= await api("GET", "/api/v1/config")); }
 async function me(force = false) { if (ME === undefined || force) ME = (await api("GET", "/api/v1/me")).customer; return ME; }
-const CAT_ICON = { BOAT: "⛵", DIVING_SNORKELLING: "🐬", DESERT: "🏜", CULTURE: "🏛", PRIVATE_TOUR: "✦", TRANSFER: "🚘", OTHER: "•" };
+const CAT_ICON = { BOAT: "⛵", DIVING_SNORKELLING: "🐬", DESERT: "🏜", CULTURE: "🏛", PRIVATE_TOUR: "✦", TRANSFER: "🚘", ADVISOR: "🧭", OTHER: "•" };
 const catName = (c) => t("cat_" + c);
 const STATUS_TONE = { CONFIRMED: "ok", IN_PROGRESS: "ok", COMPLETED: "ok", OFFER_SENT: "info", AWAITING_CUSTOMER_APPROVAL: "info", CUSTOMER_ACCEPTED: "warn", PAYMENT_PENDING: "warn", PAYMENT_VERIFICATION: "warn",
   AVAILABILITY_REQUESTED: "warn", AWAITING_PARTNER: "warn", OFFER_READY: "warn", CANCELLATION_REQUESTED: "warn", REFUND_PENDING: "warn", CANCELLED: "bad", EXPIRED: "bad", FAILED: "bad", REFUNDED: "", PARTIALLY_REFUNDED: "", DRAFT: "" };
 const statusBadge = (s) => html`<span class="badge ${STATUS_TONE[s] || ""}"><span class="dot"></span>${t("st_" + s)}</span>`;
 
+const LEVEL_ICON = { PRIVATE_GUIDE: "👤", PRIVATE_TRANSPORT: "🚘", PRIVATE_TRANSPORT_GUIDE: "⛵", FULLY_PRIVATE: "✦" };
+const levelBadge = (lvl, cls = "") => (lvl ? html`<span class="lvl ${lvl === "FULLY_PRIVATE" ? "full" : ""} ${cls}" title="${t("lvl_" + lvl + "_d")}">${LEVEL_ICON[lvl] || ""} ${t("lvl_" + lvl)}</span>` : "");
+const scopeBox = (x, scope) => html`<div class="scope"><div class="spread"><b>${t("private_scope")}</b>${levelBadge(x.privacy_level)}</div>
+  <p>${scope || t("lvl_" + x.privacy_level + "_d")}</p>${x.privacy_level === "FULLY_PRIVATE" && x.privacy_guaranteed ? html`<p class="small"><span class="badge ok">✓ ${t("guaranteed")}</span></p>` : ""}
+  ${x.exclusive_departure && x.booking_model === "INSTANT" ? html`<p class="small muted" style="margin:0">${t("private_departure_note")}</p>` : ""}</div>`;
 function card(x) {
   const on = favs.has(x.slug);
   const avail = x.availability === "AVAILABLE" ? html`<span class="badge ok">${t("live_places")}</span>` : x.availability === "SOLD_OUT" ? html`<span class="badge bad">${t("sold_out")}</span>` : html`<span class="badge">${t("on_request")}</span>`;
@@ -39,8 +44,9 @@ function card(x) {
       <p class="k">${catName(x.category)} · ${x.destination}</p>
       <h3>${x.name}</h3>
       <p class="muted small" style="margin:0 0 10px">${x.short_desc}</p>
-      <div class="spread"><span class="small muted">${duration(x.duration_minutes)}${x.private_or_group === "PRIVATE" ? " · " + t("private") : ""}</span>
-      <span class="price">${x.from_minor ? t("from_pp", { p: money(x.from_minor, x.currency) }) : t("price_on_offer")}</span></div>
+      <p style="margin:0 0 10px">${levelBadge(x.privacy_level)}</p>
+      <div class="spread"><span class="small muted">${x.duration_minutes ? duration(x.duration_minutes) + " · " : ""}${t("only_your_party")}</span>
+      <span class="price">${x.from_party_minor ? t("from_party", { p: money(x.from_party_minor, x.currency), n: x.from_party }) : t("price_on_offer")}</span></div>
     </a></article>`;
 }
 function bindFavs(rootEl = document) {
@@ -91,7 +97,7 @@ function storageSettings() {
 // ---------------------------------------------------------------- shells
 function siteShell() {
   const p = current().path;
-  const nav = [["#/experiences", t("nav_experiences")], ["#/transfers", t("nav_transfers")], ["#/planner", t("nav_planner")], ["#/trip", t("nav_trip")], ["#/bookings", t("nav_bookings")], ["#/support", t("nav_support")]];
+  const nav = [["#/experiences", t("private_tours")], ["#/private", t("nav_private")], ["#/advisor", t("nav_advisor")], ["#/trip", t("nav_trip")], ["#/bookings", t("nav_bookings")], ["#/support", t("nav_support")]];
   return html`
   <a class="skip" href="#view">${t("skip_main")}</a><div class="progress" aria-hidden="true"><i></i></div>
   ${EXAMPLE ? html`<div class="examplebar">${raw(t("example_bar"))} <button data-reset>${t("reset_example")}</button></div>` : ""}
@@ -109,7 +115,7 @@ function siteShell() {
     <div class="cols4">
       <div><a class="brand" href="#/" style="color:#fff"><img src="${img("img/logo.png")}" alt=""><span><b>ME &amp; YOU</b><small style="color:var(--gold)">Tours Egypt</small></span></a>
         <p style="margin-top:12px">${t("footer_tag")}</p></div>
-      <div><h4>${t("explore")}</h4><ul><li><a href="#/experiences">${t("nav_experiences")}</a></li><li><a href="#/experiences?type=PRIVATE">${t("private_tours")}</a></li><li><a href="#/transfers">${t("nav_transfers")}</a></li><li><a href="#/planner">${t("nav_planner")}</a></li></ul></div>
+      <div><h4>${t("explore")}</h4><ul><li><a href="#/experiences">${t("nav_experiences")}</a></li><li><a href="#/experiences?type=PRIVATE">${t("private_tours")}</a></li><li><a href="#/transfers">${t("nav_transfers")}</a></li><li><a href="#/private">${t("pr2_title")}</a></li><li><a href="#/advisor">${t("nav_advisor")}</a></li><li><a href="#/planner">${t("nav_planner")}</a></li><li><a href="#/destinations">${t("dest_k")}</a></li></ul></div>
       <div><h4>${t("help")}</h4><ul><li><a href="#/bookings">${t("nav_bookings")}</a></li><li><a href="#/support">${t("nav_support")}</a></li><li><a href="#/faq">${t("faq")}</a></li><li><a href="#/contact">${t("contact")}</a></li><li><a href="#/about">${t("about")}</a></li></ul></div>
       <div><h4>${t("legal")}</h4><ul><li><a href="#/legal/IMPRINT">${t("imprint")}</a></li><li><a href="#/legal/BOOKING_TERMS">${t("booking_terms")}</a></li><li><a href="#/legal/CANCELLATION_POLICY">${t("cancel_policy")}</a></li><li><a href="#/legal/CONSUMER">${t("consumer_rights")}</a></li>
         <li><a href="#/legal/PRIVACY">${t("privacy")}</a></li><li><a href="#/legal/COOKIES">${t("cookies")}</a></li><li><a href="#/privacy-request">${t("privacy_request")}</a></li><li><a href="#/legal/ACCESSIBILITY">${t("accessibility")}</a></li><li><button class="linkbtn" type="button" data-storage>${t("storage_settings")}</button></li></ul></div>
@@ -150,7 +156,7 @@ function mount(path) {
 function openMenu() {
   const d = document.createElement("div"); d.className = "drawer";
   d.innerHTML = H(html`<div role="dialog" aria-modal="true" aria-label="${t("menu")}"><div class="spread"><b>${t("menu")}</b><button class="iconbtn" data-x aria-label="${t("close")}">${raw(ICON.close)}</button></div>
-    <nav>${[["#/", t("home")], ["#/experiences", t("nav_experiences")], ["#/experiences?type=PRIVATE", t("private_tours")], ["#/transfers", t("nav_transfers")], ["#/planner", t("nav_planner")], ["#/concierge", t("concierge")], ["#/trip", t("nav_trip")], ["#/bookings", t("nav_bookings")], ["#/support", t("nav_support")], ["#/destinations", t("dest_k")], ["#/how", t("how_it_works")], ["#/safety", t("safety_k")], ["#/faq", t("faq")], ["#/about", t("about")], ["#/contact", t("contact")], ["#/legal/CONSUMER", t("consumer_rights")], ["#/account", t("account")]].map(([h, l]) => html`<a href="${h}">${l}</a>`)}</nav></div>`);
+    <nav>${[["#/", t("home")], ["#/experiences", t("private_tours")], ["#/private", t("pr2_title")], ["#/advisor", t("nav_advisor")], ["#/transfers", t("nav_transfers")], ["#/planner", t("nav_planner")], ["#/concierge", t("concierge")], ["#/trip", t("nav_trip")], ["#/bookings", t("nav_bookings")], ["#/support", t("nav_support")], ["#/destinations", t("dest_k")], ["#/how", t("how_it_works")], ["#/safety", t("safety_k")], ["#/faq", t("faq")], ["#/about", t("about")], ["#/contact", t("contact")], ["#/legal/CONSUMER", t("consumer_rights")], ["#/account", t("account")]].map(([h, l]) => html`<a href="${h}">${l}</a>`)}</nav></div>`);
   d.addEventListener("click", (e) => { if (e.target === d || e.target.closest("[data-x]") || e.target.closest("a")) d.remove(); });
   document.body.append(d); d.querySelector("[data-x]").focus();
 }
@@ -174,11 +180,12 @@ route("/", async () => {
   if (APP) {
     const who = await me();
     return setView(html`
-      <div class="greet rv"><p class="k" style="color:var(--gold)">${greeting()}</p><h2>${who ? t("hello_name", { n: who.name.split(" ")[0] }) : t("explore_egypt")}</h2><p>${t("app_intro")}</p>
+      <div class="greet rv"><p class="k" style="color:var(--gold)">${greeting()}</p><h2>${who ? t("hello_name", { n: who.name.split(" ")[0] }) : t("hero_title")}</h2><p>${t("app_intro")}</p>
         <form class="row" data-search style="margin-top:12px"><input class="inp" name="q" placeholder="${t("search_ph")}" aria-label="${t("search")}" style="flex:1;margin:0"><button class="btn gold sm" aria-label="${t("search")}">${raw(ICON.search)}</button></form></div>
       <h3 style="margin-top:22px">${t("categories")}</h3>
       <div class="chips">${cats.map((c) => html`<a class="chip" href="#/experiences?cat=${c}">${CAT_ICON[c]} ${catName(c)}</a>`)}</div>
-      <div class="row" style="margin:18px 0"><a class="btn dark sm" href="#/planner">${raw(ICON.sparkle)} ${t("plan_my_trip")}</a><a class="btn ghost sm" href="#/concierge">${t("concierge")}</a></div>
+      <div class="row" style="margin:18px 0"><a class="btn dark sm" href="#/private">${raw(ICON.sparkle)} ${t("cta_plan_private")}</a><a class="btn ghost sm" href="#/concierge">${t("cta_chat_advisor")}</a><a class="btn ghost sm" href="#/advisor">${t("nav_advisor")}</a></div>
+      <p class="small muted">${t("promise")}</p>
       <h3>${t("popular")}</h3><div class="grid g2">${cat.items.slice(0, 6).map(card)}</div>`, t("tab_explore"));
   }
   const featured = cat.items.filter((x) => x.category !== "TRANSFER").slice(0, 6);
@@ -186,19 +193,24 @@ route("/", async () => {
     <section class="hero"><div class="bg"><img src="${img("img/orangebay.webp")}" alt=""></div><div class="wrap">
       <p class="k" style="color:var(--gold)">Hurghada · Red Sea · Egypt</p>
       <h1 class="words">${raw(t("hero_title").split(" ").map((w, i) => `<span style="--i:${i}">${esc(w)}</span>`).join(" "))}</h1><p class="lead">${t("hero_sub")}</p>
-      <div class="row"><a class="btn" href="#/experiences">${t("cta_explore")}</a><a class="btn light" href="#/planner">${t("plan_my_trip")}</a><a class="btn ghost" style="color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.6)" href="#/support">${t("cta_contact")}</a></div>
+      <div class="row"><a class="btn gold" href="#/private">${t("cta_plan_private")}</a><a class="btn light" href="#/concierge">${t("cta_chat_advisor")}</a><a class="btn ghost" style="color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.6)" href="#/experiences">${t("cta_explore_private")}</a></div>
+      <p class="promise">${t("promise")}</p>
       <form class="searchbar" data-search>
         <div><label for="q">${t("search")}</label><input id="q" class="inp" name="q" placeholder="${t("search_ph")}"></div>
         <div><label for="d">${t("date")}</label><input id="d" class="inp" type="date" name="date" min="${cairoDay(Date.now())}"></div>
         <div><label for="p">${t("people")}</label><input id="p" class="inp" type="number" name="people" min="1" max="30" value="2"></div>
         <button class="btn dark">${t("search")}</button></form>
     </div><svg class="wave" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true"><path d="M0 40c160 30 320 30 480 0s320-30 480 0 320 30 480 0v40H0z"/></svg></section>
-    <section class="trust"><div class="wrap grid g4f">${[1, 2, 3, 4].map((i) => html`<div class="rv tr"><span class="ti">${raw(["🔒", "💷", "💬", "🛡"][i - 1])}</span><div><b>${t("trust" + i)}</b><p class="small muted">${t("trust" + i + "_d")}</p></div></div>`)}</div></section>
+    <section class="trust"><div class="wrap grid g3f">${[1, 2, 3, 4, 5, 6].map((i) => html`<div class="rv tr"><span class="ti">${raw(["🔒", "🚫", "🤝", "🧭", "💷", "👨‍👩‍👧"][i - 1])}</span><div><b>${t("ben" + i)}</b><p class="small muted">${t("ben" + i + "_d")}</p></div></div>`)}</div></section>
+    <section class="s"><div class="wrap"><div class="head"><p class="k">${t("types_k")}</p><h2>${t("types_title")}</h2></div>
+      <div class="ptypes">${["COUPLE", "FAMILY", "FRIENDS", "VIP", "COMPANION"].map((k, i) => html`<a class="ptype rv" style="--d:${i}" href="${k === "COMPANION" ? "#/x/private-companion" : `#/experiences?party=${k}`}">
+        <img src="${img(["img/swing.webp", "img/watertables.webp", "img/boats.webp", "img/deck.webp", "img/beachbar.webp"][i])}" alt="" loading="lazy"><div><b>${t("pt_" + k)}</b><span>${t("pt_" + k + "_d")}</span></div></a>`)}</div></div></section>
     <section class="s"><div class="wrap"><div class="head"><p class="k">${t("what_we_do")}</p><h2>${t("what_we_do_title")}</h2></div>
       <div class="chips">${cats.map((c) => html`<a class="chip" href="#/experiences?cat=${c}">${CAT_ICON[c]} ${catName(c)}</a>`)}</div>
       <div class="grid g3" style="margin-top:20px">${featured.map(card)}</div>
       <p style="margin-top:20px"><a class="btn ghost" href="#/experiences">${t("all_experiences")}</a></p></div></section>
     ${destinationsBlock(cat.items, cfg.destinations, true)}
+    ${levelsBlock()}
     <section class="s alt"><div class="wrap"><div class="head"><p class="k">${t("how_it_works")}</p><h2>${t("how_title")}</h2></div>
       <ol class="grid g4" style="list-style:none;padding:0;margin:0">${[1, 2, 3, 4, 5].map((i) => html`<li class="card pad rv"><b style="font:600 34px var(--serif);color:var(--gold)">0${i}</b><h3>${t("how" + i)}</h3><p class="muted small" style="margin:0">${t("how" + i + "_d")}</p></li>`)}</ol>
       <p class="note" style="margin-top:18px">${t("how_note")} <a class="link" href="#/how">${t("how_it_works")} →</a></p></div></section>
@@ -224,6 +236,17 @@ function destinationsBlock(items, dests, compact = false) {
     <div class="dests">${list.map((d, i) => html`<a class="dest rv" style="--d:${i}" href="#/experiences?destination=${encodeURIComponent(d)}"><img src="${img(DEST_IMG[d] || "img/boats.webp")}" alt="" loading="lazy">
       <div><b>${d}</b><span>${t("d_" + d)}</span><em>${count(d) === 1 ? t("n_exp1") : t("n_exp", { n: count(d) })} · ${t("explore_dest", { d })} →</em></div></a>`)}</div></div></section>`;
 }
+/** total for a party of two, private surcharges and tax included (the same rule the server uses) */
+function partyFrom(pr) {
+  const n = 2; let base = pr.adult_minor * n;
+  for (const sc of pr.surcharges || []) base += sc.per === "PERSON" ? sc.amount_minor * n : sc.amount_minor;
+  return Math.round(base * (1 + pr.tax_rate_bp / 10000));
+}
+function levelsBlock() {
+  return html`<section class="s"><div class="wrap"><div class="head"><p class="k">${t("lvl_k")}</p><h2>${t("lvl_title")}</h2><p class="muted" style="max-width:62ch">${t("lvl_sub")}</p></div>
+    <div class="grid g4f">${["PRIVATE_GUIDE", "PRIVATE_TRANSPORT_GUIDE", "FULLY_PRIVATE"].map((l) => html`<div class="card pad rv lvlcard"><p>${levelBadge(l)}</p><p class="muted small" style="margin:0">${t("lvl_" + l + "_d")}</p></div>`)}
+      <div class="card pad rv lvlcard alt2"><b>${t("not_luxury")}</b><p class="muted small" style="margin:6px 0 0">${t("not_luxury_d")}</p></div></div></div></section>`;
+}
 function greeting() { const h = Number(new Intl.DateTimeFormat("en-GB", { timeZone: "Africa/Cairo", hour: "2-digit", hour12: false }).format(new Date())); return t(h < 12 ? "good_morning" : h < 18 ? "good_afternoon" : "good_evening"); }
 function bindSearch() {
   $$("[data-search]").forEach((f) => f.onsubmit = (e) => {
@@ -235,13 +258,14 @@ function bindSearch() {
 route("/experiences", async (p, q) => {
   const cfg = await config();
   const params = new URLSearchParams({ lang: lang() });
-  for (const k of ["q", "cat", "destination", "date", "people", "min", "max", "maxHours", "type", "kids"]) if (q[k]) params.set(k === "cat" ? "category" : k, q[k]);
+  for (const k of ["q", "cat", "destination", "date", "people", "min", "max", "maxHours", "type", "kids", "party", "level"]) if (q[k]) params.set(k === "cat" ? "category" : k, q[k]);
   const res = await api("GET", `/api/v1/catalog?${params}`);
-  const title = q.cat ? catName(q.cat) : q.type === "PRIVATE" ? t("private_tours") : t("all_experiences");
+  const title = q.cat ? catName(q.cat) : q.party ? t("pt_" + q.party) : q.level ? t("lvl_" + q.level) : t("private_tours");
   const f = (k) => esc(q[k] || "");
   setView(html`${APP ? "" : pageHead(t("explore"), title, q.cat ? t("catdesc_" + q.cat) : t("list_sub"))}
     ${W(html`
-    <div class="chips" style="margin-bottom:12px"><a class="chip ${!q.cat && !q.type ? "on" : ""}" href="#/experiences">${t("all")}</a>${cfg.categories.map((c) => html`<a class="chip ${q.cat === c ? "on" : ""}" href="#/experiences?cat=${c}">${CAT_ICON[c]} ${catName(c)}</a>`)}<a class="chip ${q.type === "PRIVATE" ? "on" : ""}" href="#/experiences?type=PRIVATE">${t("private_tours")}</a></div>
+    <div class="chips" style="margin-bottom:12px"><a class="chip ${!q.cat && !q.type ? "on" : ""}" href="#/experiences">${t("all")}</a>${cfg.categories.map((c) => html`<a class="chip ${q.cat === c ? "on" : ""}" href="#/experiences?cat=${c}">${CAT_ICON[c] || "•"} ${catName(c)}</a>`)}</div>
+    <div class="chips" style="margin-bottom:12px">${["COUPLE", "FAMILY", "FRIENDS", "VIP"].map((k) => html`<a class="chip ${q.party === k ? "on" : ""}" href="#/experiences?party=${k}">${t("pt_" + k)}</a>`)}</div>
     <details class="card pad" ${APP ? "" : raw("open")} style="margin-bottom:16px"><summary style="cursor:pointer;font-weight:800;color:var(--ocean);min-height:32px">${t("filters")}</summary>
       <form data-filter class="formgrid" style="margin-top:12px">
         <label class="f">${t("search")}<input class="inp" name="q" value="${f("q")}" placeholder="${t("search_ph")}"></label>
@@ -251,7 +275,8 @@ route("/experiences", async (p, q) => {
         <label class="f">${t("price_min")}<input class="inp" type="number" min="0" step="50" name="min" value="${f("min")}"></label>
         <label class="f">${t("price_max")}<input class="inp" type="number" min="0" step="50" name="max" value="${f("max")}"></label>
         <label class="f">${t("max_duration")}<select class="inp" name="maxHours"><option value="">${t("any")}</option>${[4, 8, 12, 24].map((h) => html`<option value="${h}" ${q.maxHours == h ? raw("selected") : ""}>${t("up_to_h", { h })}</option>`)}</select></label>
-        <label class="f">${t("private_or_group")}<select class="inp" name="type"><option value="">${t("any")}</option><option value="PRIVATE" ${q.type === "PRIVATE" ? raw("selected") : ""}>${t("private")}</option><option value="GROUP" ${q.type === "GROUP" ? raw("selected") : ""}>${t("group")}</option></select></label>
+        <label class="f">${t("party_type")}<select class="inp" name="party"><option value="">${t("any")}</option>${["COUPLE", "FAMILY", "FRIENDS", "VIP"].map((k) => html`<option value="${k}" ${q.party === k ? raw("selected") : ""}>${t("pt_" + k)}</option>`)}</select></label>
+        <label class="f">${t("lvl_k")}<select class="inp" name="level"><option value="">${t("any")}</option>${["PRIVATE_GUIDE", "PRIVATE_TRANSPORT", "PRIVATE_TRANSPORT_GUIDE", "FULLY_PRIVATE"].map((k) => html`<option value="${k}" ${q.level === k ? raw("selected") : ""}>${t("lvl_" + k)}</option>`)}</select></label>
         <label class="check" style="align-self:end"><input type="checkbox" name="kids" ${q.kids ? raw("checked") : ""}> ${t("child_friendly")}</label>
         <input type="hidden" name="cat" value="${f("cat")}">
         <div class="row" style="align-self:end"><button class="btn">${t("show_results")}</button><a class="link" href="#/experiences">${t("clear")}</a></div>
@@ -277,9 +302,10 @@ route("/x/:slug", async ({ slug }) => {
       ${x.fallback_lang ? html`<p class="note small">${t("shown_in_english")}</p>` : ""}
       <div class="gal" style="margin:16px 0"><button data-lb="0" aria-label="${t("open_photo")}"><img src="${img(photos[0])}" alt="${x.name}"></button>
         <div class="side">${photos.slice(1, 3).map((p, i) => html`<button data-lb="${i + 1}" aria-label="${t("open_photo")}"><img src="${img(p)}" alt="" loading="lazy"></button>`)}</div></div>
-      <div class="facts"><div><b>${t("duration")}</b>${duration(x.duration_minutes)}</div><div><b>${t("type")}</b>${x.private_or_group === "PRIVATE" ? t("private") : t("group")}</div>
+      <div class="facts"><div><b>${t("duration")}</b>${duration(x.duration_minutes)}</div><div><b>${t("lvl_k")}</b>${t("lvl_" + x.privacy_level)}</div>
         <div><b>${t("group_size")}</b>${x.min_participants}–${x.max_capacity || "—"}</div><div><b>${t("min_age")}</b>${x.min_age ? x.min_age : t("all_ages")}</div>
         <div><b>${t("availability")}</b>${instant ? t("live_places") : t("on_request")}</div><div><b>${t("languages")}</b>${x.languages.map((l) => l.toUpperCase()).join(" · ")}</div></div>
+      ${scopeBox(x, tx.private_scope)}
       <h2 style="margin-top:28px">${t("about_experience")}</h2><p class="prose">${tx.full_desc}</p>
       ${tx.included?.length ? html`<h3>${t("included")}</h3><ul>${tx.included.map((i) => html`<li>${i}</li>`)}</ul>` : ""}
       ${tx.not_included?.length ? html`<h3>${t("not_included")}</h3><ul>${tx.not_included.map((i) => html`<li>${i}</li>`)}</ul>` : ""}
@@ -290,7 +316,8 @@ route("/x/:slug", async ({ slug }) => {
     </div>
     <aside class="sticky"><div class="card pad" id="bk">
       <p class="k">${instant ? t("reserve_now") : t("request_availability")}</p>
-      <div class="spread"><b style="font-size:22px;color:var(--ocean)">${t("from_pp", { p: money(Math.round(x.price.adult_minor * (1 + x.price.tax_rate_bp / 10000)), x.price.currency) })}</b>${instant ? html`<span class="badge ok">${t("live_places")}</span>` : html`<span class="badge">${t("on_request")}</span>`}</div>
+      <p style="margin:0 0 6px">${levelBadge(x.privacy_level)} <span class="small muted">· ${t("only_your_party")}</span></p>
+      <div class="spread"><b style="font-size:20px;color:var(--ocean)">${t("from_party", { p: money(partyFrom(x.price), x.price.currency), n: 2 })}</b>${instant ? html`<span class="badge ok">${t("live_places")}</span>` : html`<span class="badge">${t("on_request")}</span>`}</div>
       <p class="small muted">${instant ? t("instant_expl") : t("onrequest_expl")}</p>
       <form data-widget class="stack">
         ${instant ? html`<label class="f">${t("date")}<input class="inp" type="date" name="day" value="${firstDay || ""}" min="${firstDay || ""}" required></label><div data-slots></div>`
@@ -312,7 +339,7 @@ route("/x/:slug", async ({ slug }) => {
     const day = form.day.value, n = Number(form.adults.value) + Number(form.children.value);
     const list = x.slots.filter((s) => cairoDay(s.starts_at) === day);
     chosen = null;
-    ($("[data-slots]") || {}).innerHTML = H(list.length ? html`<p class="small" style="margin:0 0 6px;font-weight:700">${t("choose_departure")}</p><div class="slots">${list.map((s) => html`<button type="button" class="slot" data-s="${s.starts_at}" ${s.free < n ? raw("disabled") : ""} aria-pressed="false">${ftime(s.starts_at)}<small>${s.free < n ? t("not_enough") : t("n_free", { n: s.free })}</small></button>`)}</div>`
+    ($("[data-slots]") || {}).innerHTML = H(list.length ? html`<p class="small" style="margin:0 0 6px;font-weight:700">${t("choose_departure")}</p><div class="slots">${list.map((s) => html`<button type="button" class="slot" data-s="${s.starts_at}" ${s.free < n ? raw("disabled") : ""} aria-pressed="false">${ftime(s.starts_at)}<small>${s.free < n ? t("not_enough") : x.exclusive_departure ? t("only_your_party") : t("n_free", { n: s.free })}</small></button>`)}</div>`
       : html`<p class="note warn small">${t("no_departures_day")}</p>`);
     $$("[data-s]").forEach((b) => b.onclick = () => { $$("[data-s]").forEach((o) => o.setAttribute("aria-pressed", "false")); b.setAttribute("aria-pressed", "true"); chosen = b.dataset.s; });
     const first = $$("[data-s]:not([disabled])")[0]; first?.click();
@@ -402,7 +429,10 @@ route("/book/:slug", async ({ slug }) => {
             <label class="f">${t("flight_no")}<span class="h">${t("if_relevant")}</span><input class="inp" name="transfer.flightNumber" maxlength="12"></label>
             <label class="f">${t("luggage")}<input class="inp" type="number" min="0" max="30" name="transfer.luggage" value="2"></label>
             <label class="f">${t("child_seats")}<input class="inp" type="number" min="0" max="6" name="transfer.childSeats" value="${draft.children}"></label></div>` : ""}
-          <label class="f" style="margin-top:14px">${t("practical_requests")}<span class="h">${t("practical_hint")}</span><textarea class="inp" name="notes" maxlength="1000"></textarea></label>
+          <div class="formgrid" style="margin-top:14px">
+            <label class="f">${t("party_type")}<select class="inp" name="partyType">${["COUPLE", "FAMILY", "FRIENDS", "VIP", "SOLO"].map((k) => html`<option value="${k}" ${(draft.children > 0 ? "FAMILY" : draft.adults === 2 ? "COUPLE" : draft.adults === 1 ? "SOLO" : "FRIENDS") === k ? raw("selected") : ""}>${t("pt_" + k)}</option>`)}</select></label>
+            <label class="f">${t("your_stay")}<input class="inp" name="stay" maxlength="160" autocomplete="off"></label></div>
+          <label class="f" style="margin-top:14px">${t("special_requests")}<span class="h">${t("practical_hint")}</span><textarea class="inp" name="notes" maxlength="1000"></textarea></label>
           ${trips.length ? html`<label class="f">${t("add_to_trip")}<select class="inp" name="tripId"><option value="">${t("no_trip")}</option>${trips.map((tr) => html`<option value="${tr.id}">${tr.title} (${fdate(tr.starts_on)} – ${fdate(tr.ends_on)})</option>`)}</select></label>` : ""}
           <p class="small muted">${t("no_passport")}</p>
           <button class="btn block" type="button" data-next>${t("continue")}</button>
@@ -434,6 +464,7 @@ route("/book/:slug", async ({ slug }) => {
       const d = formData(form);
       const body = { activityId: x.id, startAt: draft.start, adults: draft.adults, children: draft.children, pickup: d.pickup || null, notes: d.notes || null, tripId: d.tripId || null,
         customer: { name: d["customer.name"], email: d["customer.email"], phone: d["customer.phone"] || null, lang: lang() }, privacyAccepted: d.privacyAccepted === true ? true : false, marketingConsent: d.marketingConsent === true,
+        privateRequest: { partyType: d.partyType || undefined, stay: d.stay || null, specialRequests: d.notes || null },
         transfer: transfer ? { pickupAddress: d["transfer.pickupAddress"], destination: d["transfer.destination"], flightNumber: d["transfer.flightNumber"] || null, luggage: Number(d["transfer.luggage"] || 0), childSeats: Number(d["transfer.childSeats"] || 0) } : null };
       const btn = $("[data-submit]");
       try {
@@ -853,17 +884,71 @@ route("/support", async (p, q) => {
 });
 
 // ---------------------------------------------------------------- content pages
+route("/advisor", async () => {
+  const cat = await api("GET", `/api/v1/catalog?category=ADVISOR&lang=${lang()}`);
+  const order = ["private-planning", "private-assistant", "private-companion", "full-private-holiday"];
+  const items = cat.items.sort((a, b) => order.indexOf(a.slug) - order.indexOf(b.slug));
+  setView(html`${APP ? "" : pageHead(t("nav_advisor"), t("adv_title"), t("adv_sub"))}${W(html`${APP ? html`<p class="muted">${t("adv_sub")}</p>` : ""}
+    <div class="grid ${APP ? "g2" : "g4f"}">${items.map(card)}</div>
+    <div class="grid g2f" style="margin:26px 0 40px;align-items:start">
+      <div class="card pad rv fx"><span class="ti">💱</span><h3>${t("fx_title")}</h3><p class="muted" style="margin:0">${t("fx_text")}</p></div>
+      <div class="card pad rv"><h3>${t("pr2_title")}</h3><p class="muted">${t("pr2_sub")}</p><div class="row"><a class="btn" href="#/private">${t("cta_plan_private")}</a><a class="btn ghost" href="#/concierge">${t("cta_chat_advisor")}</a></div></div></div>`)}`, t("nav_advisor"));
+});
+route("/private", async (p, q) => {
+  const [cfg, who] = await Promise.all([config(), me()]);
+  const tomorrow = cairoDay(Date.now() + 86400000);
+  const pre = q.party && ["COUPLE", "FAMILY", "FRIENDS", "VIP", "SOLO"].includes(q.party) ? q.party : "COUPLE";
+  setView(html`${APP ? "" : pageHead(t("promise"), t("pr2_title"), t("pr2_sub"))}${W(html`<div class="grid privform" style="align-items:start;padding-bottom:40px">
+    <form data-prv class="card pad stack" novalidate>${APP ? html`<p class="muted">${t("pr2_sub")}</p>` : ""}
+      <fieldset class="f" style="border:0;padding:0;margin:0"><legend style="font-weight:800;margin-bottom:8px">${t("party_type")}</legend>
+        <div class="chips">${["COUPLE", "FAMILY", "FRIENDS", "VIP", "SOLO"].map((k) => html`<label class="chip"><input type="radio" name="partyType" value="${k}" ${k === pre ? raw("checked") : ""}> ${t("pt_" + k)}</label>`)}</div></fieldset>
+      <div class="formgrid">
+        <label class="f">${t("adults")}<input class="inp" type="number" name="adults" min="1" max="30" value="${pre === "SOLO" ? 1 : 2}" required></label>
+        <label class="f">${t("children")}<input class="inp" type="number" name="children" min="0" max="20" value="${pre === "FAMILY" ? 2 : 0}"></label>
+        <label class="f">${t("arrival")}<input class="inp" type="date" name="dateFrom" min="${tomorrow}" required data-path="dateFrom"></label>
+        <label class="f">${t("departure")}<input class="inp" type="date" name="dateTo" min="${tomorrow}" required data-path="dateTo"></label>
+        <label class="f">${t("your_stay")}<input class="inp" name="stay" maxlength="160"></label>
+        <label class="f">${t("budget")}<input class="inp" type="number" name="budget" min="0" step="500" inputmode="numeric"></label></div>
+      <p class="small muted" style="margin-top:-4px">${t("budget_note")}</p>
+      <fieldset class="f" style="border:0;padding:0;margin:0"><legend style="font-weight:800;margin-bottom:8px">${t("interests")}</legend>
+        <div class="chips">${cfg.categories.filter((c) => c !== "ADVISOR").map((c) => html`<label class="chip"><input type="checkbox" name="int_${c}"> ${CAT_ICON[c] || "•"} ${catName(c)}</label>`)}</div></fieldset>
+      <label class="f">${t("advisor_wish")}<select class="inp" name="advisorLevel">${["NONE", "PLANNING", "ASSISTANT", "COMPANION", "FULL_HOLIDAY"].map((k) => html`<option value="${k}" ${k === (pre === "VIP" ? "FULL_HOLIDAY" : "NONE") ? raw("selected") : ""}>${t("adv_" + k)}</option>`)}</select></label>
+      <label class="check"><input type="checkbox" name="privateTransport" checked> ${t("private_transport")}</label>
+      <label class="f">${t("special_requests")}<textarea class="inp" name="specialRequests" maxlength="3000"></textarea></label>
+      <div class="formgrid"><label class="f">${t("full_name")}<input class="inp" name="name" value="${who?.name || ""}" required autocomplete="name"></label>
+        <label class="f">${t("email")}<input class="inp" type="email" name="email" value="${who?.email || ""}" required autocomplete="email"></label>
+        <label class="f">${t("phone")}<span class="h">${t("phone_hint")}</span><input class="inp" type="tel" name="phone" value="${who?.phone || ""}" autocomplete="tel"></label></div>
+      <label class="check"><input type="checkbox" name="privacyAccepted" data-path="privacyAccepted"> <span>${raw(t("privacy_accept", { link: `<a href="#/legal/PRIVACY" target="_blank">${esc(t("privacy"))}</a>` }))}</span></label>
+      <button class="btn">${t("send_private")}</button></form>
+    <aside class="stack">${[1, 2, 3, 5].map((i) => html`<div class="card pad"><b>${t("ben" + i)}</b><p class="small muted" style="margin:4px 0 0">${t("ben" + i + "_d")}</p></div>`)}
+      <div class="card pad fx"><b>${t("fx_title")}</b><p class="small muted" style="margin:4px 0 0">${t("fx_text")}</p></div></aside></div>`)}`, t("pr2_title"));
+  const f = $("[data-prv]");
+  f.dateFrom.onchange = () => { f.dateTo.min = f.dateFrom.value; if (!f.dateTo.value || f.dateTo.value < f.dateFrom.value) f.dateTo.value = f.dateFrom.value; };
+  f.onsubmit = async (e) => {
+    e.preventDefault(); const d = formData(f);
+    const body = { name: d.name, email: d.email, phone: d.phone || null, partyType: d.partyType, adults: Number(d.adults || 0), children: Number(d.children || 0), dateFrom: d.dateFrom, dateTo: d.dateTo,
+      stay: d.stay || null, interests: Object.keys(d).filter((k) => k.startsWith("int_") && d[k] === true).map((k) => k.slice(4)), advisorLevel: d.advisorLevel, privateTransport: d.privateTransport === true,
+      budget: d.budget ? Number(d.budget) : null, specialRequests: d.specialRequests || null, lang: lang(), privacyAccepted: d.privacyAccepted === true };
+    const miss = [...f.querySelectorAll("[required]")].filter((i) => !String(i.value).trim());
+    if (miss.length) return showFieldErrors(f, { fields: miss.map((i) => ({ path: i.name, message: t("err_required") })) });
+    try {
+      const r = await act(f.querySelector(".btn"), () => api("POST", "/api/v1/private-requests", { body }));
+      f.reset(); modal(html`<h3>${t("prv_done", { n: r.number })}</h3><p>${t("prv_done_expl")}</p><a class="btn" href="#/support" data-close>${t("nav_support")}</a>`);
+    } catch (err) { showFieldErrors(f, err); }
+  };
+});
 route("/destinations", async () => {
   const [cfg, cat] = await Promise.all([config(), api("GET", `/api/v1/catalog?lang=${lang()}`)]);
   setView(html`${pageHead(t("dest_k"), t("dest_title"), t("dest_sub"))}${destinationsBlock(cat.items, cfg.destinations)}`, t("dest_k"));
 });
 route("/how", async () => {
   setView(html`${pageHead(t("how_it_works"), t("how_title"), t("how_page_sub"))}${W(html`
-    <ol class="timeline">${[1, 2, 3, 4, 5].map((i) => html`<li class="rv"><span>0${i}</span><div><h3>${t("how" + i)}</h3><p class="muted">${t("how" + i + "_d")}</p></div></li>`)}</ol>
-    <h2 style="margin-top:30px">${t("instant_vs_request")}</h2>
-    <div class="grid g2" style="margin-bottom:20px"><div class="card pad rv"><span class="badge ok">${t("live_places")}</span><p>${t("instant_d")}</p></div><div class="card pad rv"><span class="badge">${t("on_request")}</span><p>${t("request_d")}</p></div></div>
-    <div class="grid g4f" style="margin-bottom:40px">${[1, 2, 3, 4].map((i) => html`<div class="card pad rv"><b>${t("trust" + i)}</b><p class="small muted" style="margin:6px 0 0">${t("trust" + i + "_d")}</p></div>`)}</div>
-    <p style="padding-bottom:40px"><a class="btn" href="#/experiences">${t("cta_explore")}</a> <a class="btn ghost" href="#/legal/CONSUMER">${t("consumer_rights")}</a></p>`)}`, t("how_it_works"));
+    <ol class="timeline">${[1, 2, 3, 4, 5].map((i) => html`<li class="rv"><span>0${i}</span><div><h3>${t("how" + i)}</h3><p class="muted">${t("how" + i + "_d")}</p></div></li>`)}</ol>`)}
+    ${levelsBlock()}${W(html`
+    <h2>${t("instant_vs_request")}</h2>
+    <div class="grid g2" style="margin-bottom:20px"><div class="card pad rv"><span class="badge ok">${t("live_places")}</span><p>${t("instant_d")}</p><p class="small muted" style="margin:0">${t("private_departure_note")}</p></div><div class="card pad rv"><span class="badge">${t("on_request")}</span><p>${t("request_d")}</p></div></div>
+    <div class="grid g3f" style="margin-bottom:40px">${[1, 2, 3, 4, 5, 6].map((i) => html`<div class="card pad rv"><b>${t("ben" + i)}</b><p class="small muted" style="margin:6px 0 0">${t("ben" + i + "_d")}</p></div>`)}</div>
+    <p style="padding-bottom:40px"><a class="btn" href="#/private">${t("cta_plan_private")}</a> <a class="btn ghost" href="#/legal/CONSUMER">${t("consumer_rights")}</a></p>`)}`, t("how_it_works"));
 });
 route("/safety", async () => {
   setView(html`${pageHead(t("safety_k"), t("safety_title"), t("safety_sub"))}${W(html`
