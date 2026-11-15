@@ -10,17 +10,72 @@ export const root = (p = "") => {
   return ROOT + k;
 };
 
-let runtime = null;
-export async function startRuntime(onProgress) {
-  if (!EXAMPLE) return;
-  if (!runtime) runtime = await import("./runtime.js");
-  // the example database lives in this browser; one tab at a time keeps it consistent
-  let got = true;
-  try {
-    if (navigator.locks) got = await new Promise((res, rej) => navigator.locks.request("myt-example-db", { ifAvailable: true }, (lock) => { res(!!lock); return lock ? new Promise(() => {}) : null; }).catch(rej));
-  } catch { got = true; } // viewers without Web Locks: continue
-  if (!got) throw Object.assign(new Error("OTHER_TAB"), { code: "OTHER_TAB" });
-  await runtime.boot(onProgress);
+let runtime = null, runtimeReady = null, runtimeDone = false;
+/** starts the in-browser booking system. The website does not wait for it: public pages are shown at once from
+ *  prepared data (window.MYT_STATIC) and everything that books, pays or signs in waits until it is ready. */
+export function startRuntime(onProgress) {
+  if (!EXAMPLE) return Promise.resolve();
+  if (!runtimeReady) runtimeReady = (async () => {
+    if (!runtime) runtime = await import("./runtime.js");
+    // the example database lives in this browser; one tab at a time keeps it consistent
+    let got = true;
+    try {
+      if (navigator.locks) got = await new Promise((res, rej) => navigator.locks.request("myt-example-db", { ifAvailable: true }, (lock) => { res(!!lock); return lock ? new Promise(() => {}) : null; }).catch(rej));
+    } catch { got = true; } // viewers without Web Locks: continue
+    if (!got) throw Object.assign(new Error("OTHER_TAB"), { code: "OTHER_TAB" });
+    await runtime.boot(onProgress);
+    runtimeDone = true; window.MYT_READY = true;
+  })();
+  return runtimeReady;
+}
+export const runtimeIsReady = () => runtimeDone || !EXAMPLE;
+
+// ---------------------------------------------------------------- prepared public data (example only)
+const cairoOffsetMin = (d) => { const p = Object.fromEntries(new Intl.DateTimeFormat("en-US", { timeZone: "Africa/Cairo", hourCycle: "h23", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" }).formatToParts(d).map((x) => [x.type, x.value]));
+  return (Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute) - Math.floor(d.getTime() / 60000) * 60000) / 60000; };
+function freshSlots(dep) {
+  // today's live places, rebuilt from the departure plan (the real database confirms them when booking)
+  const out = [], now = Date.now();
+  for (let i = 0; i <= 75; i++) {
+    const day = new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Cairo" }).format(new Date(now + i * 86400000));
+    for (const t of dep.times) {
+      const guess = new Date(`${day}T${t}:00Z`);
+      const at = new Date(guess.getTime() - cairoOffsetMin(guess) * 60000);
+      if (at.getTime() > now + 2 * 3600000 && at.getTime() < now + 120 * 86400000) out.push({ starts_at: at.toISOString(), free: dep.capacity });
+    }
+  }
+  return out;
+}
+function hasSession() { try { const j = JSON.parse(localStorage.getItem("myt_cookies") || "{}"); return !!j.myt_c; } catch { return false; } }
+function fromStatic(path) {
+  const S = window.MYT_STATIC; if (!S) return undefined;
+  const u = new URL(path, "http://x"), q = Object.fromEntries(u.searchParams), l = q.lang || "en";
+  if (u.pathname === "/api/v1/me") return hasSession() ? undefined : { customer: null };
+  if (u.pathname === "/api/v1/config" || u.pathname.startsWith("/api/v1/terms/")) return S[u.pathname];
+  const det = /^\/api\/v1\/catalog\/([^/]+)$/.exec(u.pathname);
+  if (det) {
+    const d = S[`/api/v1/catalog/${decodeURIComponent(det[1])}?lang=${l}`]; if (!d) return undefined;
+    const dep = S.__departures?.[d.slug];
+    return { ...d, slots: dep ? freshSlots(dep) : [], __prepared: true };
+  }
+  if (u.pathname === "/api/v1/catalog") {
+    if (q.date) return undefined; // availability on a date: ask the real database
+    let rows = S[`/api/v1/catalog?lang=${l}`]?.items; if (!rows) return undefined;
+    const has = (k) => q[k] != null && q[k] !== "";
+    if (has("category")) rows = rows.filter((r) => r.category === q.category);
+    if (has("destination")) rows = rows.filter((r) => r.destination.toLowerCase() === q.destination.toLowerCase());
+    if (has("q")) { const s = q.q.toLowerCase(); rows = rows.filter((r) => `${r.name} ${r.short_desc} ${r.destination} ${r.category}`.toLowerCase().includes(s)); }
+    if (has("type")) rows = rows.filter((r) => r.private_or_group === q.type);
+    if (has("level")) rows = rows.filter((r) => r.privacy_level === q.level);
+    if (has("party")) rows = rows.filter((r) => (r.party_types || []).includes(q.party));
+    if (has("kids")) rows = rows.filter((r) => r.child_friendly === true);
+    if (has("maxHours")) rows = rows.filter((r) => r.duration_minutes != null && r.duration_minutes <= Number(q.maxHours) * 60);
+    if (has("people")) rows = rows.filter((r) => (!r.max_capacity || r.max_capacity >= Number(q.people)) && r.min_participants <= Number(q.people));
+    if (has("min")) rows = rows.filter((r) => r.from_minor >= Number(q.min) * 100);
+    if (has("max")) rows = rows.filter((r) => r.from_minor <= Number(q.max) * 100);
+    return { items: rows };
+  }
+  return undefined;
 }
 export async function resetExample() { if (runtime) await runtime.resetExample(); location.reload(); }
 
@@ -33,6 +88,8 @@ export async function api(method, path, opts = {}) {
   if (opts.idem) headers["idempotency-key"] = opts.key || idem();
   let status, body;
   if (EXAMPLE) {
+    if (!runtimeDone && method === "GET") { const pre = fromStatic(path); if (pre !== undefined) return JSON.parse(JSON.stringify(pre)); }
+    await startRuntime();
     ({ status, body } = await runtime.api(method, path, { body: opts.body, headers }));
   } else {
     const r = await fetch(path, { method, headers: { ...headers, ...(opts.body !== undefined ? { "content-type": "application/json" } : {}) }, body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined, credentials: "same-origin" });

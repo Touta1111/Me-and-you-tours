@@ -2,9 +2,10 @@
 import {
   api, ApiError, t, setStrings, setLang, lang, initialLang, money, fdate, ftime, fdt, cairoDay, duration, $, $$, esc, html, raw, H,
   toast, modal, confirmBox, act, errMsg, showFieldErrors, formData, route, go, current, startRouter, reveal, store, myRefs, favs, ICON,
-  EXAMPLE, startRuntime, resetExample, root, newKey, consent, SINGLE,
+  EXAMPLE, startRuntime, resetExample, root, newKey, consent, SINGLE, runtimeIsReady,
 } from "./core.js";
 import STR from "./i18n.js";
+import { calculatePrice } from "./money.js";
 import { DOCS, COMPANY, PLACEHOLDER, PH_LABEL, HOTLINES, LEGAL_UPDATED } from "./legal.js";
 
 setStrings(STR);
@@ -346,13 +347,22 @@ route("/x/:slug", async ({ slug }) => {
   };
   const quote = debounce(async () => {
     try {
-      const qt = await api("POST", "/api/v1/quote", { body: { activityId: x.id, adults: Number(form.adults.value), children: Number(form.children.value) } });
+      const party = { adults: Number(form.adults.value), children: Number(form.children.value) };
+      // before the booking system runs, the same calculation runs here; the server always recalculates when booking
+      const qt = runtimeIsReady() ? await api("POST", "/api/v1/quote", { body: { activityId: x.id, ...party } }) : calculatePrice(x.price, party, x);
       ($("[data-quote]") || {}).innerHTML = H(priceLines(qt));
     } catch (e) { ($("[data-quote]") || {}).innerHTML = H(html`<p class="err">${e.message}</p>`); }
   }, 150);
   bindParty(form, () => { drawSlots(); quote(); });
   form.day.onchange = drawSlots;
   drawSlots(); quote();
+  // shown from prepared data: once the booking system runs, take the live places from it
+  if (x.__prepared) startRuntime().then(async () => {
+    if (!$("[data-widget]") || $("[data-widget]") !== form) return;
+    const live = await api("GET", `/api/v1/catalog/${encodeURIComponent(slug)}?lang=${lang()}`);
+    x.id = live.id; x.slots = live.slots;
+    const keep = chosen; drawSlots(); if (keep) $(`[data-s="${keep}"]:not([disabled])`)?.click(); quote();
+  }).catch(() => {});
   form.onsubmit = (e) => {
     e.preventDefault();
     let start;
@@ -1133,18 +1143,17 @@ function dispatchAgain() { window.dispatchEvent(new HashChangeEvent("hashchange"
 
 (async function boot() {
   const splash = $("#splash");
-  try {
-    await startRuntime((s) => { const el = $("#splash-msg"); if (el) el.textContent = t("boot_" + s.replace(/\s/g, "_")); });
-  } catch (e) {
+  // the website shows at once; the booking system starts in the background (example: in this browser)
+  startRuntime().then(() => { if (EXAMPLE && window.MYT_RUNTIME_MEMORY) toast(t("memory_mode")); }).catch((e) => {
     console.error("start failed", e?.message || e);
-    if (splash) splash.innerHTML = `<div><h1>Me &amp; You</h1><p>${esc(errMsg(e))}</p><button class="btn" onclick="location.reload()">${esc(t("try_again"))}</button></div>`;
-    return;
-  }
+    const d = document.createElement("div"); d.className = "startfail"; d.setAttribute("role", "alert");
+    d.innerHTML = `<p>${esc(errMsg(e))}</p><button class="btn sm" onclick="location.reload()">${esc(t("try_again"))}</button>`;
+    document.body.append(d);
+  });
   if (APP && !store.get("myt_seen_welcome", false) && (!location.hash || location.hash === "#/")) location.hash = "#/welcome";
   splash?.remove();
   startRouterOnce();
   consentBanner();
-  if (EXAMPLE && window.MYT_RUNTIME_MEMORY) toast(t("memory_mode"));
   effects();
   if ("serviceWorker" in navigator && window.isSecureContext && !SINGLE) navigator.serviceWorker.register(root("sw.js")).catch(() => {});
 })();
