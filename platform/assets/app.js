@@ -439,6 +439,8 @@ route("/booking/:ref", async ({ ref }, q) => {
       <dl class="kv"><dt>${t("paid")}</dt><dd>${money(b.paid_minor, b.currency)}</dd><dt>${t("refunded")}</dt><dd>${money(b.refunded_minor, b.currency)}</dd></dl>
       ${b.refunds.map((r) => html`<p class="small">${fdate(r.created_at)} · ${money(r.amount_minor, b.currency)} · ${t("rf_" + r.status)}</p>`)}
       ${b.status === "REFUND_PENDING" ? html`<p class="note small">${t("refund_pending_expl")}</p>` : ""}</div>` : ""}
+    ${b.status === "COMPLETED" ? html`<form class="card pad stack" data-review><h3>${t("leave_review")}</h3><div class="chips" role="radiogroup" aria-label="${t("leave_review")}">${[1, 2, 3, 4, 5].map((n) => html`<label class="chip"><input type="radio" name="rating" value="${n}" ${n === 5 ? raw("checked") : ""} style="accent-color:var(--gold)"> ${"★".repeat(n)}<span class="sr">${t("stars", { n })}</span></label>`)}</div>
+      <label class="f">${t("review_text")}<textarea class="inp" name="body" maxlength="2000"></textarea></label><p class="small muted">${t("review_note")}</p><div class="row"><button class="btn">${t("send_review")}</button><a class="link" href="#/planner">${t("plan_next")}</a></div></form>` : ""}
     <details class="card pad"><summary style="cursor:pointer;font-weight:800;color:var(--ocean)">${t("history")}</summary><ol class="timeline" style="margin-top:12px">${b.history.map((h, i) => html`<li class="${i === b.history.length - 1 ? "cur" : "done"}"><b>${t("st_" + h.to_status)}</b><div class="small muted">${fdt(h.at)}</div></li>`)}</ol></details>
     ${b.paid_minor ? html`<button class="link" data-invoices>${t("invoices")}</button>` : ""}
     <div class="row">${canCancel ? html`<button class="btn ghost" data-cancel>${b.status === "CONFIRMED" ? t("request_cancellation") : t("cancel_booking")}</button>` : ""}
@@ -446,6 +448,8 @@ route("/booking/:ref", async ({ ref }, q) => {
   </div>`)}`, `${t("booking")} ${ref}`);
 
   const reload = () => go(`/booking/${ref}?t=${Date.now()}`);
+  $("[data-review]")?.addEventListener("submit", async (e) => { e.preventDefault(); const d = formData(e.target);
+    try { await act(e.target.querySelector(".btn"), () => api("POST", "/api/v1/bookings/review", { body: { ...cb, rating: Number(d.rating), body: d.body || null } }), t("review_thanks")); e.target.remove(); } catch {} });
   $("[data-accept]")?.addEventListener("click", async (e) => {
     if (!$("[data-terms]").checked) return toast(t("accept_terms_first"), true);
     try { await act(e.currentTarget, () => api("POST", "/api/v1/bookings/accept", { body: { ...cb, offerId: o.id, termsId: o.terms_id, cancelPolicyId: o.cancel_policy_id, termsAccepted: true } }), t("accepted")); }
@@ -550,6 +554,21 @@ route("/bookings", async (p, q) => {
   };
 });
 
+// ---------------------------------------------------------------- travel wallet
+route("/wallet", async () => {
+  const who = await me();
+  const list = who ? (await api("GET", "/api/v1/me/bookings")).items : [];
+  for (const r of myRefs.all()) if (!list.some((b) => b.reference === r.reference)) { try { list.push(await api("POST", "/api/v1/bookings/lookup", { body: r })); } catch {} }
+  const cur = list.find((b) => b.currency)?.currency || "EGP";
+  const paid = list.reduce((s, b) => s + (b.paid_minor || 0) - (b.refunded_minor || 0), 0);
+  const open = list.filter((b) => b.status === "CONFIRMED").reduce((s, b) => s + Math.max(0, (b.total_minor || 0) - (b.paid_minor || 0)), 0);
+  const withTicket = list.filter((b) => b.ticket && b.ticket.status !== "VOID").sort((a, b) => new Date(a.start) - new Date(b.start));
+  setView(html`${APP ? "" : pageHead(t("nav_trip"), t("wallet"), t("wallet_sub"))}${W(html`<div class="stack" style="padding-bottom:40px">${APP ? html`<p class="muted">${t("wallet_sub")}</p>` : ""}
+    <div class="kpis"><div class="kpi"><b>${money(paid, cur)}</b><span>${t("total_paid")}</span></div><div class="kpi"><b>${money(open, cur)}</b><span>${t("to_pay")}</span></div></div>
+    <h3>${t("ticket")}</h3>${withTicket.length ? withTicket.map((b) => html`<a class="card pad xcard" href="#/ticket/${b.reference}" style="display:block"><div class="spread"><div><b>${nm(b.activity)}</b><div class="small muted">${fdt(b.start)} · ${b.reference}</div></div><span class="badge ${b.ticket.status === "VALID" ? "ok" : ""}">${t("tk_" + b.ticket.status)}</span></div></a>`) : html`<p class="muted">${t("no_tickets_yet")}</p>`}
+    <h3>${t("payment")}</h3><div class="tw"><table>${list.filter((b) => b.paid_minor || b.total_minor).map((b) => html`<tr><td>${nm(b.activity)}<div class="small muted">${b.reference}</div></td><td class="num">${money(b.paid_minor - b.refunded_minor, b.currency || cur)}</td><td class="num">${statusBadge(b.status)}</td></tr>`)}</table></div></div>`)}`, t("wallet"));
+});
+
 // ---------------------------------------------------------------- My Trip
 route("/trip", async (p, q) => {
   const who = await me();
@@ -594,7 +613,7 @@ route("/trip", async (p, q) => {
     <div class="daystrip" role="tablist" aria-label="${t("trip_calendar")}">${days.map((d) => { const has = items.some((i) => cairoDay(i.starts_at) === d && i.state !== "CANCELLED"); const dt = new Date(d + "T12:00:00Z"); return html`<button class="day" role="tab" data-day="${d}" aria-pressed="${d === sel}" aria-selected="${d === sel}"><small>${new Intl.DateTimeFormat(lang(), { weekday: "short", timeZone: "UTC" }).format(dt)}</small><b>${dt.getUTCDate()}</b>${has ? html`<i class="pip"></i>` : ""}</button>`; })}</div>
     <div class="row small"><span class="badge ok">${t("state_CONFIRMED")}</span><span class="badge warn">${t("state_PENDING")}</span><span class="badge">${t("state_SUGGESTED")}</span><span class="badge info">${t("state_OWN_PLAN")}</span><span class="badge bad">${t("state_CANCELLED")}</span></div>
     <h3 data-dayh>${fdate(sel + "T12:00:00Z", { weekday: true })}</h3><div data-agenda></div>
-    ${trip.guest ? html`<p class="note small">${t("trip_guest_note")}</p>` : html`<div class="row"><button class="btn sm" data-addplan>${t("add_own_plan")}</button><button class="btn ghost sm" data-share>${raw(ICON.share)} ${t("share_trip")}</button><button class="btn ghost sm" data-newtrip>${t("create_trip")}</button><a class="btn ghost sm" href="#/planner">${t("nav_planner")}</a></div>`}
+    ${trip.guest ? html`<p class="note small">${t("trip_guest_note")}</p>` : html`<div class="row"><button class="btn sm" data-addplan>${t("add_own_plan")}</button><button class="btn ghost sm" data-share>${raw(ICON.share)} ${t("share_trip")}</button><button class="btn ghost sm" data-newtrip>${t("create_trip")}</button><a class="btn ghost sm" href="#/planner">${t("nav_planner")}</a><a class="btn ghost sm" href="#/wallet">${raw(ICON.wallet)} ${t("wallet")}</a></div>`}
     <details class="card pad"><summary style="cursor:pointer;font-weight:800;color:var(--ocean)">${t("week_overview")}</summary>
       <div class="tw" style="margin-top:10px"><table>${days.map((d) => html`<tr><th style="width:120px">${fdate(d + "T12:00:00Z", { weekday: true })}</th><td>${items.filter((i) => cairoDay(i.starts_at) === d).map((i) => html`<div>${ftime(i.starts_at)} ${nm(i)} <span class="small muted">(${t("state_" + i.state)})</span></div>`)}</td></tr>`)}</table></div></details>
     <div class="card pad"><h3>${t("contact_on_trip")}</h3><p class="small">${(await config()).support_hours || ""}</p><a class="btn ghost sm" href="#/support">${t("nav_support")}</a></div>
@@ -808,7 +827,7 @@ route("/account", async (p, q) => {
   const tp = who.preferences || {};
   setView(html`${APP ? "" : pageHead(t("account"), who.name, who.email)}${W(html`<div class="grid g2" style="align-items:start;padding-bottom:40px">
     <div class="stack">
-      <nav class="card pad listnav"><a href="#/bookings">${t("booking_history")} ${raw(ICON.chev)}</a><a href="#/trip">${t("my_trip")} ${raw(ICON.chev)}</a><a href="#/favorites">${t("favorites")} ${raw(ICON.chev)}</a><a href="#/notifications">${t("notifications")} ${raw(ICON.chev)}</a><a href="#/support">${t("support_history")} ${raw(ICON.chev)}</a><button data-lang2>${t("language")}: ${lang().toUpperCase()} ${raw(ICON.chev)}</button></nav>
+      <nav class="card pad listnav"><a href="#/bookings">${t("booking_history")} ${raw(ICON.chev)}</a><a href="#/trip">${t("my_trip")} ${raw(ICON.chev)}</a><a href="#/wallet">${t("wallet")} ${raw(ICON.chev)}</a><a href="#/favorites">${t("favorites")} ${raw(ICON.chev)}</a><a href="#/notifications">${t("notifications")} ${raw(ICON.chev)}</a><a href="#/support">${t("support_history")} ${raw(ICON.chev)}</a><button data-lang2>${t("language")}: ${lang().toUpperCase()} ${raw(ICON.chev)}</button></nav>
       <form data-prof class="card pad stack"><h3>${t("profile")}</h3><label class="f">${t("full_name")}<input class="inp" name="name" value="${who.name}"></label><label class="f">${t("phone")}<input class="inp" name="phone" value="${who.phone || ""}"></label><button class="btn sm">${t("save")}</button></form>
       <form data-tp class="card pad stack"><h3>${t("travel_prefs")}</h3>
         <fieldset class="fieldset"><legend class="small muted">${t("interests")}</legend><div class="chips">${["sea", "snorkelling", "desert", "history", "culture", "relax", "adventure"].map((i) => html`<label class="chip"><input type="checkbox" name="interests" data-multi value="${i}" ${tp.interests?.includes(i) ? raw("checked") : ""}> ${t("int_" + i)}</label>`)}</div></fieldset>
