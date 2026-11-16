@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Travel Concierge · D9 Luxury Suites</title>
+<meta name="description" content="Personal help with excursions, restaurants, transfers and planning your days in Hurghada.">
+<meta name="theme-color" content="#0f1d26">
+<link rel="icon" href="img/favicon.png"><link rel="apple-touch-icon" href="img/apple-touch-icon.png"><link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/d9.css"><link rel="stylesheet" href="assets/pages.css">
+</head>
+<body>
+<main id="main">
+
+<section class="pg-hero" style="min-height:min(54vh,460px)"><img src="img/x/deck.webp" alt="">
+ <div class="wrap"><p class="eyebrow">Travel Concierge</p><h1>Tell us your wishes. We plan the rest.</h1><p>One request, one personal proposal — excursions, restaurants, transfers and tips that fit your budget and your people.</p></div></section>
+<section class="sec"><div class="wrap">
+ <ol class="steps"><li class="rv"><b>Share your wishes</b><br><span class="muted">Dates, people, budget and interests.</span></li><li class="rv"><b>We prepare a proposal</b><br><span class="muted">Our team checks dates and prices with licensed partners.</span></li><li class="rv"><b>You decide</b><br><span class="muted">Nothing is booked until you say yes.</span></li><li class="rv"><b>Enjoy</b><br><span class="muted">Your confirmed plans appear in My D9 Stay.</span></li></ol>
+ <form class="blk" id="cf" style="margin-top:26px"><h2>Your concierge request</h2>
+  <div class="formgrid">
+   <label>Arrival<input class="inp" type="date" name="in" required></label>
+   <label>Departure<input class="inp" type="date" name="out" required></label>
+   <label>Adults<select class="inp" name="adults"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>8</option><option>10</option></select></label>
+   <label>Children<select class="inp" name="kids"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option></select></label>
+   <label>Where are you staying?<select class="inp" name="stay"><option>D9 Luxury Suites</option><option>Not booked yet</option><option>Other accommodation</option></select></label>
+   <label>Budget for activities (per person)<select class="inp" name="budget"><option>Flexible</option><option>Up to €75</option><option>€75 – €150</option><option>€150 – €300</option><option>€300+</option></select></label>
+   <div class="full"><b style="display:block;margin-bottom:8px">Interests</b><div class="checks" id="ints"></div></div>
+   <div class="full"><b style="display:block;margin-bottom:8px">I would like help with</b><div class="checks" id="helps"></div></div>
+   <label class="full"><span><input type="checkbox" name="priv" checked style="width:18px;height:18px;vertical-align:-3px;accent-color:var(--sea)"> I prefer private activities (only our party)</span></label>
+   <label class="full">Special wishes<textarea class="inp" name="wish" placeholder="Birthday, anniversary, mobility needs, food preferences…"></textarea></label>
+   <label>Your name<input class="inp" name="name" autocomplete="name" required></label>
+   <label>Email or phone<input class="inp" name="contact" required></label>
+  </div>
+  <p class="err" id="er"></p>
+  <button class="btn btn-gold">Send to the concierge via WhatsApp</button>
+  <p class="small muted" style="margin:12px 0 0">We use your details only to prepare your proposal. You start the WhatsApp conversation yourself.</p>
+ </form>
+</div></section>
+
+</main>
+<script src="assets/config.js"></script>
+
+<script src="assets/site.js"></script>
+<script>
+(function(){var D=window.D9,$=D.$,$$=D.$$,esc=D.esc;D.chrome("concierge.html");
+
+var INT=["Island & beach days","Snorkelling","Diving","Desert","History & temples","Food & restaurants","Relaxing","Family fun","Photography","Nightlife"];
+var HELP=["Choosing excursions","A day-by-day plan","Restaurant tips","Airport transfer","Day trip to Luxor or Cairo","Surprise or celebration","Practical tips"];
+function chk(id,a,pre){$(id).innerHTML=a.map(function(s){return '<label><input type="checkbox" value="'+esc(s)+'"'+(pre&&pre.indexOf(s)>=0?' checked':'')+'> '+esc(s)+'</label>';}).join('');}
+chk("#ints",INT);chk("#helps",HELP,["Choosing excursions"]);
+var f=$("#cf"),today=new Date().toISOString().slice(0,10);f["in"].min=today;f.out.min=today;f["in"].onchange=function(){f.out.min=f["in"].value||today;};
+function picked(id){return $$(id+" input:checked").map(function(i){return i.value;});}
+f.onsubmit=function(e){e.preventDefault();
+ if(!f["in"].value||!f.out.value||!f.name.value.trim()||!f.contact.value.trim()){$("#er").textContent="Please fill in your dates, name and contact details.";return;}
+ if(f.out.value<=f["in"].value){$("#er").textContent="Departure must be after arrival.";return;}$("#er").textContent="";
+ var lines=["Dates: "+f["in"].value+" → "+f.out.value,"People: "+f.adults.value+" adults, "+f.kids.value+" children","Staying at: "+f.stay.value,"Budget p.p.: "+f.budget.value,"Interests: "+(picked("#ints").join(", ")||"open"),"Help with: "+(picked("#helps").join(", ")||"general advice"),"Private activities: "+(f.priv.checked?"yes":"no preference")];
+ if(f.wish.value.trim())lines.push("Wishes: "+f.wish.value.trim());
+ D.request("concierge",f.name.value.trim(),lines.join(" · ")+" · contact: "+f.contact.value.trim(),{checkin:f["in"].value,checkout:f.out.value});
+ window.open(D.wa("Hello D9 Luxury Suites, I would like help from the Travel Concierge.\n• "+lines.join("\n• ")+"\n• Name: "+f.name.value.trim()+"\n• Contact: "+f.contact.value.trim()),"_blank","noopener");
+ D.toast("Your concierge request is ready in WhatsApp");};
+D.setWa("Hello D9 Luxury Suites, I would like personal travel advice.");
+
+})();
+</script>
+</body>
+</html>

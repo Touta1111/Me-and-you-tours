@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Suites · D9 Luxury Suites</title>
+<meta name="description" content="Camellia studio, Lotus 2-bedroom and Lily 3-bedroom apartment at D9 Luxury Suites, Hurghada.">
+<meta name="theme-color" content="#0f1d26">
+<link rel="icon" href="img/favicon.png"><link rel="apple-touch-icon" href="img/apple-touch-icon.png"><link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/d9.css"><link rel="stylesheet" href="assets/pages.css">
+</head>
+<body>
+<main id="main">
+
+<section class="pg-head"><div class="wrap"><p class="eyebrow">Stay</p><h1>Suites & apartments</h1><p>From a cosy studio for two to an apartment for the whole family — around a shared pool and garden.</p>
+<div class="fbar" id="tabs" style="margin-top:18px"></div></div></section>
+<section class="sec"><div class="wrap" id="s"></div></section>
+
+</main>
+<script src="assets/config.js"></script>
+
+<script src="assets/site.js"></script>
+<script>
+(function(){var D=window.D9,$=D.$,$$=D.$$,esc=D.esc;D.chrome("suite.html");
+
+var U={camellia:{n:"Camellia Studio",k:"Studio",d:"A cosy studio for up to 3 guests with one bed and a private bathroom — ideal for couples.",beds:"1 bed",guests:"Up to 3",l:D.listings.camellia},
+ lotus:{n:"Lotus · 2-bedroom apartment",k:"2 bedrooms",d:"Two bedrooms, three beds and a private balcony, with access to the shared pool.",beds:"3 beds",guests:"Ask us",l:D.listings.lotus},
+ lily:{n:"Lily · 3-bedroom apartment",k:"3 bedrooms",d:"Space for families and friends: three bedrooms, four beds and room to cook and dine together.",beds:"4 beds · 1 bathroom",guests:"Ask us",l:D.listings.lily}};
+var cur=U[D.q.get("u")]?D.q.get("u"):"camellia";
+function draw(){var u=U[cur];
+ $("#tabs").innerHTML=Object.keys(U).map(function(k){return '<button class="chip'+(k===cur?' on':'')+'" data-u="'+k+'" style="'+(k===cur?'':'background:transparent;color:#fff;border-color:rgba(255,255,255,.35)')+'">'+esc(U[k].n.split(" ·")[0])+'</button>';}).join('');
+ $$("#tabs .chip").forEach(function(b){b.onclick=function(){cur=b.getAttribute("data-u");history.replaceState(null,"","?u="+cur);draw();};});
+ $("#s").innerHTML='<div class="dgrid"><div><div class="blk"><p class="eyebrow">'+esc(u.k)+'</p><h2>'+esc(u.n)+'</h2><p class="lead">'+esc(u.d)+'</p>'+
+ '<div class="facts"><div class="fact"><span>Beds</span><b>'+esc(u.beds)+'</b></div><div class="fact"><span>Guests</span><b>'+esc(u.guests)+'</b></div><div class="fact"><span>Check-in</span><b>From '+D.checkIn+'</b></div><div class="fact"><span>Check-out</span><b>Until '+D.checkOut+'</b></div></div></div>'+
+ '<div class="blk"><h3>In and around your suite</h3><ul class="tick"><li>Air-conditioning</li><li>Kitchen facilities</li><li>Free Wi-Fi</li><li>Shared outdoor pool, garden and terrace</li><li>Personal host on WhatsApp</li></ul></div>'+
+ '<div class="blk"><h3>Make it special</h3><p>Add a Romantic Experience, Birthday Experience, VIP Arrival or comfort upgrades (breakfast in your suite, early check-in or late check-out when available) to your request. Prices on request.</p></div>'+
+ '<div class="note">Photos of this suite are being prepared. Until then you can see the suite and its reviews on <a target="_blank" rel="noopener" href="'+u.l+'">Airbnb ↗</a>.</div></div>'+
+ '<aside class="side"><div class="bookbox"><h3>Book '+esc(u.n.split(" ·")[0])+' direct</h3><p class="muted small">We confirm availability and your rate personally. Nothing is booked or charged until you confirm.</p><a class="btn btn-gold" href="book.html?suite='+encodeURIComponent(u.n)+'">Request this suite</a><a class="btn btn-wa" style="margin-top:10px" target="_blank" rel="noopener" href="'+D.wa("Hello D9 Luxury Suites, I have a question about "+u.n+".")+'">Ask on WhatsApp</a></div></aside></div>';
+ D.setWa("Hello D9 Luxury Suites, I have a question about "+u.n+".");}
+draw();
+
+})();
+</script>
+</body>
+</html>

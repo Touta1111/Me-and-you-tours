@@ -12,7 +12,8 @@ window.D9 = {
   lng: 33.820584,
   checkIn: "14:00",
   checkOut: "12:00",
-  rating: "9.1",
+  rating: "4.38",
+  // Source of the rating above: Airbnb listing "Lily", 8 reviews, checked 2026-11-16. Update together with reviews.html.
   // Wi-Fi details shown on the guest welcome page. Leave empty to show "details are on the card in your suite".
   wifi: { network: "", password: "" },
   listings: {

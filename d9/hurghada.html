@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Hurghada · D9 Luxury Suites</title>
+<meta name="description" content="Why Hurghada: Red Sea islands, reefs, desert and easy day trips — with D9 as your base.">
+<meta name="theme-color" content="#0f1d26">
+<link rel="icon" href="img/favicon.png"><link rel="apple-touch-icon" href="img/apple-touch-icon.png"><link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/d9.css"><link rel="stylesheet" href="assets/pages.css">
+</head>
+<body>
+<main id="main">
+
+<section class="pg-hero"><img src="img/x/orangebay.webp" alt="Orange Bay, Giftun Islands">
+ <div class="wrap"><p class="eyebrow">Destination</p><h1>Hurghada & the Red Sea</h1><p>Turquoise water, coral reefs and desert mountains — all within a short drive of your suite.</p>
+ <a class="btn btn-gold" href="experiences.html?dest=Hurghada">See experiences in Hurghada</a></div></section>
+<section class="sec"><div class="wrap">
+ <div class="split"><div class="rv"><p class="eyebrow">Why Hurghada</p><h2>Sea, desert and history in one stay</h2>
+ <p class="lead">Hurghada sits on Egypt's Red Sea coast. Boats leave from the city's marinas to the protected Giftun Islands; the Eastern Desert begins right behind the town; and Luxor's temples can be reached on a long day trip.</p>
+ <ul class="tick"><li>Island days and snorkelling on the reefs</li><li>Desert evenings with the Bedouin</li><li>Day trips to El Gouna, Luxor and Cairo</li><li>Sunny weather most of the year</li></ul></div>
+ <img class="rv" src="img/x/dolphins2.webp" alt="Dolphins in the Red Sea" loading="lazy"></div></div></section>
+<section class="sec alt"><div class="wrap"><p class="eyebrow">Experiences</p><h2>What you can do here</h2><div class="xgrid" id="grid"></div></div></section>
+<section class="sec"><div class="wrap"><p class="eyebrow">Practical</p><h2>Good to know</h2>
+ <div class="facts">
+  <div class="fact rv"><span>Airport</span><b>Hurghada International (HRG) — about 3.5 km from D9 in a straight line</b></div>
+  <div class="fact rv"><span>Flight from Amsterdam</span><b>About 5 hours, direct</b></div>
+  <div class="fact rv"><span>Time zone</span><b>Cairo time (EET/EEST)</b></div>
+  <div class="fact rv"><span>Visa</span><b>Most EU visitors buy a visa on arrival (about USD 30) — check your own country's rules</b></div>
+  <div class="fact rv"><span>Currency</span><b>Egyptian pound (EGP); cards accepted in many places, carry some cash</b></div>
+  <div class="fact rv"><span>Emergency</span><b>Ambulance 123 · Police 122 · Tourist police 126</b></div>
+ </div>
+ <div class="blk rv"><h3>Travel times by road (indicative)</h3><p style="margin:0">Luxor about 4 h · Cairo about 5–7 h. Exact times depend on traffic, stops and checkpoints and are confirmed with each trip.</p></div>
+ <div class="note rv">Travel advice can change. Before you travel, check your government's travel advice for Egypt.</div>
+</div></section>
+<section class="sec alt"><div class="wrap split"><img class="rv" src="img/x/jetty.webp" alt="" loading="lazy"><div class="rv"><p class="eyebrow">Your base</p><h2>Stay at D9, explore with ease</h2><p class="lead">Suites around a pool and garden, a personal host on WhatsApp and help with every excursion you want to take.</p><a class="btn btn-dark" href="book.html">Request your stay</a> <a class="btn btn-ghost" href="concierge.html">Plan my days</a></div></div></section>
+
+</main>
+<script src="assets/config.js"></script>
+<script src="assets/experiences.js"></script>
+<script src="assets/site.js"></script>
+<script>
+(function(){var D=window.D9,$=D.$,$$=D.$$,esc=D.esc;D.chrome("hurghada.html");
+
+$("#grid").innerHTML=window.D9X.filter(function(x){return x.destination==="Hurghada"||x.destination==="El Gouna";}).map(D.card).join('');D.reveal(document);
+D.setWa("Hello D9 Luxury Suites, I am planning a trip to Hurghada and have a question.");
+
+})();
+</script>
+</body>
+</html>

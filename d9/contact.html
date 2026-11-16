@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Contact & support · D9 Luxury Suites</title>
+<meta name="description" content="Contact D9 Luxury Suites by WhatsApp, ask for travel advice or report a problem.">
+<meta name="theme-color" content="#0f1d26">
+<link rel="icon" href="img/favicon.png"><link rel="apple-touch-icon" href="img/apple-touch-icon.png"><link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/d9.css"><link rel="stylesheet" href="assets/pages.css">
+</head>
+<body>
+<main id="main">
+
+<section class="pg-head"><div class="wrap"><p class="eyebrow">Contact & support</p><h1>We are here for you</h1><p>Before, during and after your stay — start a WhatsApp chat or use one of the forms below.</p></div></section>
+<section class="sec"><div class="wrap">
+ <div class="grid g3">
+  <a class="blk rv" style="text-decoration:none;color:inherit" id="c1" target="_blank" rel="noopener"><h3>💬 General question</h3><p class="muted" style="margin:0">Availability, rates, directions.</p></a>
+  <a class="blk rv" style="text-decoration:none;color:inherit" href="concierge.html"><h3>🧭 Personal travel advice</h3><p class="muted" style="margin:0">Excursions, restaurants, planning.</p></a>
+  <a class="blk rv" style="text-decoration:none;color:inherit" id="c3" target="_blank" rel="noopener"><h3>🔁 Change my booking</h3><p class="muted" style="margin:0">Dates, guests or extras.</p></a>
+ </div>
+ <form class="blk rv" id="problem" style="margin-top:20px"><h2>Report a problem during your stay</h2><p class="muted">We respond as quickly as possible. For an emergency, call 123 (ambulance) or 122 (police) first.</p>
+  <div class="formgrid"><label>Your name<input class="inp" name="name" required></label><label>Suite<select class="inp" name="suite"><option>Camellia Studio</option><option>Lotus · 2-bedroom apartment</option><option>Lily · 3-bedroom apartment</option><option>Other</option></select></label>
+  <label>Type<select class="inp" name="type"><option>Air-conditioning</option><option>Wi-Fi</option><option>Water / bathroom</option><option>Cleaning</option><option>Noise</option><option>Safety</option><option>Something else</option></select></label>
+  <label>How urgent?<select class="inp" name="urg"><option>Today</option><option>Urgent — now</option><option>When convenient</option></select></label>
+  <label class="full">What happened?<textarea class="inp" name="desc" required></textarea></label></div>
+  <p class="err" id="er"></p><button class="btn btn-dark">Send via WhatsApp</button></form>
+ <div class="blk rv"><h3>Address</h3><p id="ad"></p><a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" id="mp">Open in Google Maps ↗</a></div>
+</div></section>
+
+</main>
+<script src="assets/config.js"></script>
+
+<script src="assets/site.js"></script>
+<script>
+(function(){var D=window.D9,$=D.$,$$=D.$$,esc=D.esc;D.chrome("contact.html");
+
+$("#c1").href=D.wa("Hello D9 Luxury Suites, I have a question.");$("#c3").href=D.wa("Hello D9 Luxury Suites, I would like to change my booking.\n• Name:\n• Current dates:\n• Change:");
+$("#ad").textContent=D.address;$("#mp").href=D.maps;
+var f=$("#problem");f.onsubmit=function(e){e.preventDefault();if(!f.name.value.trim()||!f.desc.value.trim()){$("#er").textContent="Please fill in your name and what happened.";return;}$("#er").textContent="";
+ var d=f.type.value+" · "+f.urg.value+" · "+f.desc.value.trim();D.request("problem",f.name.value.trim(),d,{suite:f.suite.value});
+ window.open(D.wa("Hello D9 Luxury Suites, I want to report a problem.\n• Name: "+f.name.value.trim()+"\n• Suite: "+f.suite.value+"\n• Type: "+f.type.value+" ("+f.urg.value+")\n• "+f.desc.value.trim()),"_blank","noopener");D.toast("Your message is ready in WhatsApp");};
+if(location.hash==="#problem")setTimeout(function(){f.scrollIntoView();},300);
+
+})();
+</script>
+</body>
+</html>

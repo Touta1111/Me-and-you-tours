@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Experience · D9 Luxury Suites</title>
+<meta name="description" content="Private experience in and around Hurghada for D9 guests.">
+<meta name="theme-color" content="#0f1d26">
+<link rel="icon" href="img/favicon.png"><link rel="apple-touch-icon" href="img/apple-touch-icon.png"><link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/d9.css"><link rel="stylesheet" href="assets/pages.css">
+</head>
+<body>
+<main id="main">
+
+<div id="x"></div>
+
+</main>
+<script src="assets/config.js"></script>
+<script src="assets/experiences.js"></script>
+<script src="assets/site.js"></script>
+<script>
+(function(){var D=window.D9,$=D.$,$$=D.$$,esc=D.esc;D.chrome("experiences.html");
+
+var X=window.D9X,x=X.filter(function(i){return i.slug===D.q.get("x");})[0];
+if(!x){$("#x").innerHTML='<section class="pg-head"><div class="wrap"><h1>Experience not found</h1><p>This experience is no longer available.</p><a class="btn btn-gold" href="experiences.html">See all experiences</a></div></section>';return;}
+document.title=x.title+" · D9 Luxury Suites";
+function li(a){return a.map(function(s){return '<li>'+esc(s)+'</li>';}).join('');}
+var today=new Date().toISOString().slice(0,10);
+var parts=x.parties.map(function(p){return {COUPLE:"Couples",FAMILY:"Families",FRIENDS:"Friends",VIP:"VIP guests"}[p]||p;}).join(", ");
+$("#x").innerHTML='<section class="pg-head"><div class="wrap"><p class="eyebrow"><a href="experiences.html" style="color:inherit;text-decoration:none">Experiences</a> · '+esc(D.CATS[x.cat])+'</p><h1>'+esc(x.title)+'</h1><p>'+esc(x.short)+'</p></div></section>'+
+ '<section class="sec"><div class="wrap"><div class="gal rv">'+x.photos.slice(0,3).map(function(p,i){return '<img src="'+(i?D.small(p):p)+'" alt="'+esc(x.title)+'">';}).join('')+'</div>'+
+ '<div class="facts rv"><div class="fact"><span>Duration</span><b>'+D.dur(x.minutes)+'</b></div><div class="fact"><span>Starts from</span><b>'+esc(x.start.join(" · "))+'</b></div><div class="fact"><span>Ends</span><b>'+esc(x.end)+'</b></div><div class="fact"><span>Group</span><b>Private · up to '+x.maxGroup+'</b></div><div class="fact"><span>Suitable for</span><b>'+(x.family?'All ages':'Adults')+(x.minAge?' (from '+x.minAge+')':'')+'</b></div><div class="fact"><span>Price</span><b>On request</b></div></div>'+
+ '<div class="dgrid"><div>'+
+ '<div class="blk rv"><h2>About this experience</h2>'+x.body.map(function(p){return '<p>'+esc(p)+'</p>';}).join('')+(x.highlights.length?'<ul class="tick">'+li(x.highlights)+'</ul>':'')+'</div>'+
+ '<div class="blk rv"><h3>What is private — and what is shared</h3><p style="margin:0">'+esc(x.scope)+'</p></div>'+
+ '<div class="blk rv"><h3>Included</h3><ul class="tick">'+li(x.included)+'</ul><h3 style="margin-top:16px">Not included / possible extra costs</h3><ul class="cross">'+li(x.notIncluded.concat(x.extras.map(function(e){return e+" (supplement, shown in your offer)";})))+'</ul></div>'+
+ '<div class="blk rv"><h3>Who it suits</h3><p>'+esc(parts)+'. '+esc(x.access)+'</p><h3>Dates</h3><p style="margin:0">Dates are confirmed per request'+(x.times.length?' — usual start time '+esc(x.times.join(", "))+' (Cairo time)':'')+'. We never show availability we have not checked.</p></div>'+
+ '<div class="blk rv"><h3>Safety</h3><p style="margin:0">'+esc(x.safety)+'</p></div>'+
+ '<div class="blk rv"><h3>Cancellation</h3><p style="margin:0">The exact cancellation terms are stated in your offer, <b>before</b> you pay. Changes because of weather or sea conditions are decided by the operator for your safety; you then choose a new date or a refund as stated in the offer.</p></div>'+
+ '<div class="blk rv"><h3>Who carries it out</h3><p style="margin:0">Arranged with <b>Me & You Tours Egypt</b> and carried out by a licensed Egyptian tour operator. The operator is responsible for the activity, its licences and insurance; the operator\'s name is in your offer.</p></div>'+
+ '</div><aside class="side"><form class="bookbox" id="rq"><h3>Request this experience</h3><p class="small muted">Free and without obligation. You receive an offer with the final price and conditions.</p>'+
+ '<label>Preferred date<input class="inp" type="date" name="date" min="'+today+'" required></label>'+
+ '<label>Adults<select class="inp" name="adults">'+[1,2,3,4,5,6,7,8,9,10].map(function(n){return '<option'+(n===2?' selected':'')+'>'+n+'</option>';}).join('')+'</select></label>'+
+ '<label>Children<select class="inp" name="kids">'+[0,1,2,3,4,5,6].map(function(n){return '<option>'+n+'</option>';}).join('')+'</select></label>'+
+ '<label>Your name<input class="inp" name="name" autocomplete="name" required></label>'+
+ '<label>Staying at<select class="inp" name="stay"><option>D9 Luxury Suites</option><option>Other accommodation</option></select></label>'+
+ '<label>Message (optional)<textarea class="inp" name="msg" style="min-height:70px"></textarea></label>'+
+ '<p class="err" id="er"></p><button class="btn btn-gold">Send request via WhatsApp</button>'+
+ '<a class="btn btn-ghost" style="color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.4);margin-top:10px" target="_blank" rel="noopener" href="'+D.MYT+'#/x/'+x.slug+'">View on Me & You Tours Egypt ↗</a>'+
+ '<p class="small muted" style="margin:12px 0 0">You start the conversation yourself; we only use your details to answer this request.</p></form></aside></div></div></section>'+
+ '<section class="sec alt"><div class="wrap"><h2>You may also like</h2><div class="xgrid" id="more"></div></div></section>';
+var f=$("#rq");if(D.q.get("date")&&D.q.get("date")>=today)f.date.value=D.q.get("date");if(D.q.get("people"))f.adults.value=Math.min(10,+D.q.get("people"));
+function txt(){return "Hello D9 Luxury Suites, I would like to request: "+x.title+"\n• Date: "+(f.date.value||"flexible")+"\n• Adults: "+f.adults.value+", children: "+f.kids.value+"\n• Name: "+f.name.value.trim()+"\n• Staying at: "+f.stay.value+(f.msg.value.trim()?"\n• "+f.msg.value.trim():"");}
+D.setWa("Hello D9 Luxury Suites, I have a question about: "+x.title);
+f.onsubmit=function(e){e.preventDefault();if(!f.date.value||!f.name.value.trim()){$("#er").textContent="Please choose a date and fill in your name.";return;}$("#er").textContent="";
+ D.request("experience_request",f.name.value.trim(),x.title+" · "+f.date.value+" · "+f.adults.value+" adults, "+f.kids.value+" children · "+f.stay.value+(f.msg.value.trim()?" · "+f.msg.value.trim():""));
+ window.open(D.wa(txt()),"_blank","noopener");D.toast("Your request is ready in WhatsApp");};
+$("#more").innerHTML=X.filter(function(i){return i.slug!==x.slug;}).sort(function(a,b){return (b.cat===x.cat)-(a.cat===x.cat);}).slice(0,3).map(D.card).join('');D.reveal(document);
+
+})();
+</script>
+</body>
+</html>

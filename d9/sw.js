@@ -1,5 +1,5 @@
 /* D9: network first, cache as offline fallback. */
-const C='d9-v1';
+const C='d9-v2';
 self.addEventListener('install',e=>{self.skipWaiting()});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k.indexOf('d9-')===0&&k!==C).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',e=>{

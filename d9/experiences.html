@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Experiences · D9 Luxury Suites</title>
+<meta name="description" content="Private boat days, snorkelling, desert evenings and day trips from Hurghada, arranged for D9 guests.">
+<meta name="theme-color" content="#0f1d26">
+<link rel="icon" href="img/favicon.png"><link rel="apple-touch-icon" href="img/apple-touch-icon.png"><link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/d9.css"><link rel="stylesheet" href="assets/pages.css">
+</head>
+<body>
+<main id="main">
+
+<section class="pg-hero" style="min-height:min(56vh,480px)"><img src="img/x/giftunview.webp" alt="">
+ <div class="wrap"><p class="eyebrow">D9 Experiences</p><h1>Explore the Red Sea, your way</h1>
+ <p>Hand-picked private experiences from Hurghada. Choose what you like — we check the date and send you a clear offer before anything is booked.</p></div></section>
+<section class="sec"><div class="wrap">
+ <div class="fbar" id="cats" role="tablist" aria-label="Type of experience"></div>
+ <form class="filters" id="flt" onsubmit="return false">
+  <label>Destination<select class="inp" name="dest"><option value="">All destinations</option></select></label>
+  <label>Date<input class="inp" type="date" name="date"></label>
+  <label>Travellers<select class="inp" name="people"><option value="">Any</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>8</option><option>10</option><option>12</option></select></label>
+  <label>Duration<select class="inp" name="dur"><option value="">Any length</option><option value="300">Up to 5 hours</option><option value="540">Up to 9 hours</option><option value="9999">Full day or longer</option></select></label>
+  <label>Suitable for<select class="inp" name="age"><option value="">Everyone</option><option value="family">Families with children</option><option value="adults">Adults</option></select></label>
+  <label>Price<select class="inp" name="price"><option value="">All</option><option value="request">Price on request</option></select></label>
+ </form>
+ <p class="fcount" id="count" aria-live="polite"></p>
+ <div class="xgrid" id="grid"></div>
+ <div class="note" style="margin-top:26px">All experiences are <b>private</b> (only your party) and are carried out by a licensed Egyptian tour operator. <b>Availability and price are confirmed personally</b> for your date — nothing is booked or charged until you accept the offer.</div>
+</div></section>
+<section class="sec alt"><div class="wrap split"><div><p class="eyebrow">Not sure what to choose?</p><h2>Ask our Travel Concierge</h2><p class="lead">Tell us your dates, budget and interests. We put together a personal plan for your stay.</p><a class="btn btn-dark" href="concierge.html">Plan my days</a></div><img src="img/x/jetty.webp" alt="" loading="lazy"></div></section>
+
+</main>
+<script src="assets/config.js"></script>
+<script src="assets/experiences.js"></script>
+<script src="assets/site.js"></script>
+<script>
+(function(){var D=window.D9,$=D.$,$$=D.$$,esc=D.esc;D.chrome("experiences.html");
+
+var X=window.D9X,f=$("#flt"),cat=D.q.get("cat")||"";
+var dests=[];X.forEach(function(x){if(dests.indexOf(x.destination)<0)dests.push(x.destination);});
+f.dest.innerHTML+=dests.map(function(d){return '<option>'+esc(d)+'</option>';}).join('');
+var cats=[["","All"]].concat(Object.keys(D.CATS).filter(function(k){return X.some(function(x){return x.cat===k;});}).map(function(k){return [k,D.CATS[k]];})).concat([["family","Family Activities"]]);
+function drawCats(){$("#cats").innerHTML=cats.map(function(c){return '<button type="button" role="tab" class="chip'+(c[0]===cat?' on':'')+'" aria-selected="'+(c[0]===cat)+'" data-c="'+c[0]+'">'+esc(c[1])+'</button>';}).join('');
+ $$("#cats .chip").forEach(function(b){b.onclick=function(){cat=b.getAttribute("data-c");drawCats();draw();history.replaceState(null,"",cat?"?cat="+cat:"experiences.html");};});}
+var today=new Date().toISOString().slice(0,10);f.date.min=today;
+if(D.q.get("dest"))f.dest.value=D.q.get("dest");
+function draw(){var p=+f.people.value||0,du=+f.dur.value||0;
+ var r=X.filter(function(x){
+  if(cat==="family"){if(!x.family)return false;}else if(cat&&x.cat!==cat)return false;
+  if(f.dest.value&&x.destination!==f.dest.value)return false;
+  if(p&&p>x.maxGroup)return false;
+  if(du===300&&x.minutes>300)return false; if(du===540&&x.minutes>540)return false; if(du===9999&&x.minutes<600)return false;
+  if(f.age.value==="family"&&!x.family)return false;
+  return true;});
+ $("#count").textContent=r.length+(r.length===1?" experience":" experiences");
+ $("#grid").innerHTML=r.length?r.map(function(x){var c=D.card(x);return f.date.value||p?c.replace('?x='+x.slug,'?x='+x.slug+(f.date.value?'&date='+f.date.value:'')+(p?'&people='+p:'')):c;}).join(''):'<div class="empty">No experiences match these filters. <a href="concierge.html">Ask the concierge</a> — we can often arrange something similar.</div>';
+ D.reveal($("#grid"));}
+$$("#flt select,#flt input").forEach(function(el){el.onchange=draw;});
+drawCats();draw();
+
+})();
+</script>
+</body>
+</html>

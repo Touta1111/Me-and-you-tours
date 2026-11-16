@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Welcome · D9 Luxury Suites</title>
+<title>My D9 Stay · D9 Luxury Suites</title>
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#0f1d26">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -49,7 +49,7 @@ body{background:#efe8dc}
 .msg.bot{background:#fff;border:1px solid var(--line);align-self:flex-start}
 .msg.me{background:var(--night);color:#fff;align-self:flex-end}
 .ask{display:flex;gap:8px;margin-top:10px}.ask input{flex:1}
-.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:10}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:10}
 .nav button{background:none;border:0;padding:8px 2px;font:600 .72rem var(--sans);color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;border-radius:12px}
 .nav button i{font-style:normal;font-size:1.25rem}
 .nav button.on{color:var(--night);background:var(--sand)}
@@ -81,6 +81,13 @@ body{background:#efe8dc}
   <div class="card"><h2 data-i="contact"></h2><p class="small muted" data-i="contact_d"></p><a class="btn btn-wa btn-sm" id="waBtn" target="_blank" rel="noopener" href="#" data-i="wa"></a></div>
  </div>
 
+
+ <div class="pane" id="p-plan">
+  <div class="card"><h2 data-i="plan_conf"></h2><p class="small muted" data-i="plan_conf_d"></p><div id="confList"></div></div>
+  <div class="card"><h2 data-i="plan_tr"></h2><div id="trList"></div></div>
+  <div class="card"><h2 data-i="plan_req"></h2><p class="small muted" data-i="plan_req_d"></p><div id="reqList"></div></div>
+  <div class="card"><h2 data-i="plan_more"></h2><div class="btns"><a class="btn btn-dark btn-sm" href="experiences.html" data-i="plan_exp"></a><a class="btn btn-ghost btn-sm" href="concierge.html" data-i="plan_conc"></a></div></div>
+ </div>
  <div class="pane" id="p-extras">
   <div class="card"><h2 data-i="extras_t"></h2><p class="small muted" data-i="extras_d"></p><div id="xlist"></div></div>
  </div>
@@ -105,6 +112,7 @@ body{background:#efe8dc}
  <div class="foot"><a href="index.html" data-i="site"></a> · <span data-i="credit"></span></div>
  <nav class="nav" id="nav">
   <button class="on" data-p="home"><i>🏠</i><span data-i="tab_home"></span></button>
+  <button data-p="plan"><i>📋</i><span data-i="tab_plan"></span></button>
   <button data-p="extras"><i>✨</i><span data-i="tab_extras"></span></button>
   <button data-p="explore"><i>🧭</i><span data-i="tab_explore"></span></button>
   <button data-p="help"><i>💬</i><span data-i="tab_help"></span></button>
@@ -125,7 +133,7 @@ body{background:#efe8dc}
  function t(k){return T[lang][k]!==undefined?T[lang][k]:T.en[k];}
  function fmt(d){if(!d) return '—'; var x=new Date(d+'T12:00:00'); if(isNaN(x)) return d; try{return x.toLocaleDateString(lang==='ar'?'ar-EG':lang,{day:'numeric',month:'short',year:'numeric'});}catch(e){return d;}}
  function ctx(){return (G.name?G.name+' · ':'')+(G.unit?G.unit+' · ':'')+(G.ci?G.ci+'→'+G.co:'');}
- function save(type,detail){D.store.push('d9_inbox',{id:D.uid(),created:new Date().toISOString(),type:type,name:G.name||'(demo guest)',suite:G.unit||'-',checkin:G.ci,checkout:G.co,detail:detail,source:'welcome',lang:lang});}
+ function save(type,detail){var my=D.store.get('d9_my_requests',[]);my.unshift({id:D.uid(),created:new Date().toISOString(),type:type,detail:detail});D.store.set('d9_my_requests',my.slice(0,30));D.store.push('d9_inbox',{id:D.uid(),created:new Date().toISOString(),type:type,name:G.name||'(demo guest)',suite:G.unit||'-',checkin:G.ci,checkout:G.co,detail:detail,source:'welcome',lang:lang});}
  $('#art').innerHTML=D9Art.hero();
  $('#addr').textContent=D.address; $('#routeBtn').href='https://www.google.com/maps/dir/?api=1&destination='+D.lat+','+D.lng;
  var chatLog=[];
@@ -148,9 +156,20 @@ body{background:#efe8dc}
   $('#emerg').innerHTML=t('emerg_l').map(function(c){var num=c.replace(/\D/g,'');return '<li><a href="tel:'+num+'">'+c+'</a></li>';}).join('');
   $('#askIn').placeholder=t('ask_ph');
   $$('#lang button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-l')===lang);});
-  drawChat(); show(tab,true); bind();
+  drawChat(); drawPlan(); show(tab,true); bind();
  }
  function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+ function b64d(v){try{return JSON.parse(decodeURIComponent(escape(atob(v.replace(/-/g,'+').replace(/_/g,'/')))));}catch(e){return [];}}
+ var CONF=q.get('c')?b64d(q.get('c')):[];
+ function drawPlan(){
+  var conf=CONF.filter(function(c){return c.k!=='transfer';}),tr=CONF.filter(function(c){return c.k==='transfer';});
+  var row=function(c,st){return '<div class="place"><span><b>'+esc(c.t)+'</b>'+(c.d?'<br><span class="small muted">'+fmt(c.d)+(c.n?' · '+esc(c.n):'')+'</span>':'')+'</span><span class="pill" style="background:'+(st==='ok'?'#dff3ea;color:#2f7d5b':'#fff1d6;color:#8a5a00')+'">'+t(st==='ok'?'st_ok':'st_req')+'</span></div>';};
+  $('#confList').innerHTML=conf.length?conf.map(function(c){return row(c,'ok');}).join(''):'<p class="small muted" style="margin:0">'+t('plan_none')+'</p>';
+  $('#trList').innerHTML=tr.length?tr.map(function(c){return row(c,'ok');}).join(''):'<p class="small muted" style="margin:0">'+t('plan_tr_none')+'</p>';
+  var mine=D.store.get('d9_my_requests',[]);
+  $('#reqList').innerHTML=mine.length?mine.map(function(r){return row({t:r.detail,d:(r.created||'').slice(0,10)},'req');}).join(''):'<p class="small muted" style="margin:0">'+t('plan_req_none')+'</p>';
+ }
  function bind(){
   $$('[data-copy]').forEach(function(b){b.onclick=function(){copy(b.getAttribute('data-copy'));};});
   $$('.xitem').forEach(function(it){
