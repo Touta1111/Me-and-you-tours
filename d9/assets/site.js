@@ -32,7 +32,7 @@
       '<div><b>Stay</b><a href="suite.html">Suites</a><a href="book.html">Booking request</a><a href="welcome.html">My D9 Stay</a><a href="about.html">About D9</a></div>' +
       '<div><b>Explore</b><a href="experiences.html">Experiences</a><a href="hurghada.html">Hurghada</a><a href="concierge.html">Travel Concierge</a><a href="reviews.html">Reviews</a></div>' +
       '<div><b>Help</b><a href="contact.html">Contact & support</a><a href="contact.html#problem">Report a problem</a><a href="' + D.wa("Hello D9 Luxury Suites, I have a question.") + '" target="_blank" rel="noopener">WhatsApp</a></div></div>' +
-      '<p class="credit small muted">Website gemaakt door VormVivo Studios</p></div>';
+      '<p class="credit small muted">Website by VormVivo Studios</p></div>';
     document.body.appendChild(f);
     var wa = document.createElement("a"); wa.className = "pg-wa"; wa.id = "pgWa"; wa.target = "_blank"; wa.rel = "noopener"; wa.setAttribute("aria-label", "Chat on WhatsApp");
     wa.href = D.wa("Hello D9 Luxury Suites, I have a question.");

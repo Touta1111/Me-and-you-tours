@@ -11,7 +11,7 @@
 <link rel="icon" href="img/favicon.png">
 <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Noto+Kufi+Arabic:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/d9.css">
 <style>
 body{background:#efe8dc}
@@ -63,8 +63,7 @@ body{background:#efe8dc}
 <div class="app">
  <div class="head">
   <div class="art" id="art"></div>
-  <div class="row"><div class="brand"><img src="img/icon-192.png" alt="">D9 Luxury Suites</div>
-   <div class="lang" id="lang"><button data-l="en">EN</button><button data-l="ar">AR</button><button data-l="nl">NL</button><button data-l="de">DE</button></div></div>
+  <div class="row"><div class="brand"><img src="img/icon-192.png" alt="">D9 Luxury Suites</div></div>
   <h1><span data-i="hello"></span>, <span id="gname"></span></h1>
   <p id="gsub"></p>
  </div>
@@ -127,7 +126,7 @@ body{background:#efe8dc}
  var q=new URLSearchParams(location.search);
  var G={name:q.get('name')||'',unit:q.get('unit')||'',ci:q.get('in')||'',co:q.get('out')||''};
  var isDemo=!G.name;
- var lang=q.get('lang')||D.store.get('d9_lang','en'); if(!T[lang]) lang='en';
+ var lang='en';
  var tab=(location.hash||'#home').slice(1); if(!$('#p-'+tab)) tab='home';
  var places=[["Hurghada Marina","Hurghada Marina"],["Hurghada Grand Aquarium","Hurghada Grand Aquarium"],["Sand City Hurghada","Sand City Hurghada"],["El Dahar (old town)","El Dahar Hurghada"],["Senzo Mall","Senzo Mall Hurghada"],["Giftun Islands National Park","Giftun Island Hurghada"]];
  function t(k){return T[lang][k]!==undefined?T[lang][k]:T.en[k];}
@@ -155,7 +154,6 @@ body{background:#efe8dc}
   $('#pCat').innerHTML=t('p_cats').map(function(c){return '<option>'+c+'</option>';}).join('');
   $('#emerg').innerHTML=t('emerg_l').map(function(c){var num=c.replace(/\D/g,'');return '<li><a href="tel:'+num+'">'+c+'</a></li>';}).join('');
   $('#askIn').placeholder=t('ask_ph');
-  $$('#lang button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-l')===lang);});
   drawChat(); drawPlan(); show(tab,true); bind();
  }
  function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
@@ -182,7 +180,6 @@ body{background:#efe8dc}
  function copy(s){var ok=function(){D.toast(t('copied'));};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(s).then(ok,ok);}else ok();}
  function show(p,silent){tab=p;$$('.pane').forEach(function(x){x.classList.toggle('on',x.id==='p-'+p);});$$('#nav button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-p')===p);});if(!silent){history.replaceState(null,'','#'+p);window.scrollTo(0,0);}}
  $$('#nav button').forEach(function(b){b.addEventListener('click',function(){show(b.getAttribute('data-p'));});});
- $$('#lang button').forEach(function(b){b.addEventListener('click',function(){lang=b.getAttribute('data-l');D.store.set('d9_lang',lang);render();});});
  $('#transferBtn').addEventListener('click',function(){show('extras');var it=document.querySelector('.xitem[data-x="vip"]');if(it){it.classList.add('open');it.querySelector('.xo').textContent='−';it.scrollIntoView({behavior:'smooth',block:'center'});}});
  function answer(text){
   var s=' '+text.toLowerCase().replace(/hoe laat|what time|um wie viel uhr|wie spät/g,' time ')+' ';
