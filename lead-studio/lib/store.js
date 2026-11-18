@@ -8,13 +8,15 @@ export const PATH_RX = /^(opps|config)\/[A-Za-z0-9_.\-:@+~]{1,120}$/;
 export function send(res, status, body) { res.status(status).setHeader("Cache-Control", "no-store").json(body); }
 
 /** every request carries the secret access key from the private link */
+// The password is stored only as a SHA-256 fingerprint. An ACCESS_KEY set in Vercel replaces it when present.
+const PW_HASH = "54b67c1805b95919a022531c82823c46e4e3aa50dbf855c8efb72b32507bb9c0";
+const sha = (s) => crypto.createHash("sha256").update(s).digest();
 export function allowed(req, res) {
-  const want = process.env.ACCESS_KEY || "";
   const got = String(req.headers["x-access-key"] || "");
-  if (want.length < 16) { send(res, 500, { error: "SETUP", message: "De toegangscode (ACCESS_KEY) is nog niet ingesteld in Vercel." }); return false; }
-  const a = Buffer.from(want), b = Buffer.from(got);
-  if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) { send(res, 401, { error: "NO_ACCESS", message: "Deze link geeft geen toegang. Vraag de juiste link aan de beheerder." }); return false; }
-  if (!URL_ || !TOKEN) { send(res, 500, { error: "SETUP", message: "De opslag is nog niet gekoppeld in Vercel (Storage → Upstash for Redis)." }); return false; }
+  const env = process.env.ACCESS_KEY || "";
+  const want = env.length >= 8 ? sha(env) : Buffer.from(PW_HASH, "hex");
+  if (!got || !crypto.timingSafeEqual(sha(got), want)) { send(res, 401, { error: "NO_ACCESS", message: "Dit wachtwoord klopt niet." }); return false; }
+  if (!URL_ || !TOKEN) { send(res, 500, { error: "SETUP", message: "Bijna klaar: koppel nog de opslag. Ga in Vercel naar je project → Storage → Create Database → Upstash for Redis (gratis) → Connect, en daarna Deployments → ⋯ → Redeploy." }); return false; }
   return true;
 }
 
