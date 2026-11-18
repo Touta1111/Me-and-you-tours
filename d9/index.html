@@ -10,7 +10,7 @@
 <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Noto+Kufi+Arabic:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/d9.css">
 <style>
 header.top{position:sticky;top:0;z-index:20;background:rgba(15,29,38,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#fff}
@@ -75,6 +75,7 @@ summary{cursor:pointer;font-weight:600}
   <a class="logo" href="#home"><img src="img/icon-192.png" alt="">D9 Luxury Suites</a>
   <nav id="nav">
    <a href="suite.html" data-i="nav_suites">Suites</a><a href="#experiences" data-i="nav_exp">Experiences</a><a href="experiences.html" data-i="nav_exc">Excursions</a><a href="concierge.html">Concierge</a><a href="#location" data-i="nav_loc">Location</a><a href="#book" data-i="nav_book">Book</a>
+   <div class="lang" id="lang" role="group" aria-label="Language"><button data-l="en">EN</button><button data-l="ar">AR</button><button data-l="nl">NL</button><button data-l="de">DE</button></div>
   </nav>
   <button class="burger" id="burger" aria-label="Menu">☰</button>
  </div>
@@ -196,7 +197,7 @@ summary{cursor:pointer;font-weight:600}
 <script>
 (function(){
  var D=window.D9, T=window.D9T, $=function(s){return document.querySelector(s)}, $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
- var lang='en';
+ var lang=D.store.get('d9_lang','en'); if(!T[lang]) lang='en';
  var chosen={};
  $('#heroArt').innerHTML=D9Art.hero();
  $$('[data-art]').forEach(function(el){var a=D9Art[el.getAttribute('data-art')]; if(a) el.insertAdjacentHTML('afterbegin',a());});
@@ -213,9 +214,11 @@ summary{cursor:pointer;font-weight:600}
   $('#excList').innerHTML=t('exc_list').map(function(x){return '<li>'+x+'</li>';}).join('');
   $('#polList').innerHTML=t('pol').map(function(x){return '<li>'+x+'</li>';}).join('');
   $('#faq').innerHTML=t('faq').map(function(q){return '<details><summary>'+q[0]+'</summary><p class="muted" style="margin:.6em 0 0">'+q[1]+'</p></details>';}).join('');
+  $$('#lang button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-l')===lang);});
   $$('[data-add]').forEach(function(b){var k=b.getAttribute('data-add'); b.classList.toggle('on',!!chosen[k]); b.textContent=chosen[k]?t('added'):t('add_req');});
   setWa();
  }
+ $$('#lang button').forEach(function(b){b.addEventListener('click',function(){lang=b.getAttribute('data-l');D.store.set('d9_lang',lang);render();$('#nav').classList.remove('open');});});
  $('#burger').addEventListener('click',function(){$('#nav').classList.toggle('open');});
  $$('#nav a').forEach(function(a){a.addEventListener('click',function(){$('#nav').classList.remove('open');});});
  $$('[data-unit]').forEach(function(a){a.addEventListener('click',function(){$('#fSuite').value=a.getAttribute('data-unit');});});
