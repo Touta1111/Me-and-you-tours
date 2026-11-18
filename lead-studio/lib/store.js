@@ -11,12 +11,13 @@ export function send(res, status, body) { res.status(status).setHeader("Cache-Co
 // The password is stored only as a SHA-256 fingerprint. An ACCESS_KEY set in Vercel replaces it when present.
 const PW_HASH = "54b67c1805b95919a022531c82823c46e4e3aa50dbf855c8efb72b32507bb9c0";
 const sha = (s) => crypto.createHash("sha256").update(s).digest();
-export function allowed(req, res) {
+export const hasStore = () => !!(URL_ && TOKEN);
+export function allowed(req, res, { store = true } = {}) {
   const got = String(req.headers["x-access-key"] || "");
   const env = process.env.ACCESS_KEY || "";
   const want = env.length >= 8 ? sha(env) : Buffer.from(PW_HASH, "hex");
   if (!got || !crypto.timingSafeEqual(sha(got), want)) { send(res, 401, { error: "NO_ACCESS", message: "Dit wachtwoord klopt niet." }); return false; }
-  if (!URL_ || !TOKEN) { send(res, 500, { error: "SETUP", message: "Bijna klaar: koppel nog de opslag. Ga in Vercel naar je project → Storage → Create Database → Upstash for Redis (gratis) → Connect, en daarna Deployments → ⋯ → Redeploy." }); return false; }
+  if (store && (!URL_ || !TOKEN)) { send(res, 500, { error: "SETUP", message: "Bijna klaar: koppel nog de opslag. Ga in Vercel naar je project → Storage → Create Database → Upstash for Redis (gratis) → Connect, en daarna Deployments → ⋯ → Redeploy." }); return false; }
   return true;
 }
 

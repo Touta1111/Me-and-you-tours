@@ -2,7 +2,7 @@
 import { allowed, send } from "../lib/store.js";
 export const config = { maxDuration: 60 };
 export default async function handler(req, res) {
-  if (!allowed(req, res)) return;
+  if (!allowed(req, res, { store: false })) return;
   const key = process.env.ANTHROPIC_API_KEY;
   if (!key) return send(res, 400, { code: "not_granted", message: "Slimme hulp staat uit: er is geen API-sleutel ingesteld." });
   const prompt = String(req.body?.prompt || "").slice(0, 30000);
